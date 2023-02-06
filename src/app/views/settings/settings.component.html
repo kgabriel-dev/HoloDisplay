@@ -1,0 +1,31 @@
+<div class="p-3 grid gap-3 sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-4 text-center text-white">
+    <div class="flex flex-col rounded-xl overflow-hidden border-4">
+        <div class="bg-cyan-800 p-3">
+            <h1 class="font-medium text-lg">Einstellungen speichern & laden</h1>
+        </div>
+        <div class="px-5 grow bg-cyan-700">
+            <p class="my-5">Hier können sie die gegenwärtig verwendeten Einstellungen in einer Datei auf Ihrem PC speichern.</p>
+            <p class="my-5">Außerdem können Sie zuvor gespeicherte Einstellungen, welche auf Ihrem PC gespeichert sind, wieder laden.</p>
+        </div>
+        <div class="p-5 bg-cyan-700">
+            <button type="button" data-mdb-ripple="true" data-mdb-ripple-color="light" class="p-3 mx-3 border-2 rounded-lg hover:bg-sky-800">Speichern</button>
+            <button type="button" data-mdb-ripple="true" data-mdb-ripple-color="light" class="p-3 mx-3 border-2 rounded-lg hover:bg-sky-800">Laden</button>
+        </div>
+    </div>
+
+    <div class="flex flex-col rounded-xl overflow-hidden border-4">
+        <div class="bg-cyan-800 p-3">
+            <h1 class="font-medium text-lg">Größe des mittleren Polygons</h1>
+        </div>
+        <div class="px-5 grow bg-cyan-700">
+            <p class="my-5">Stellen Sie hier die Größe des Polygons in der Mitte ein.</p>
+            <p class="my-5">Dieser Wert wird durch die Auflagefläche Ihres Spiegels bestimmt.</p>
+        </div>
+        <div class="p-5 bg-cyan-700">
+            <input type="range" min="0" max="500" [formControl]="innerPolygonSize" [value]="innerPolygonSize.value" class="w-full bg-gray-200 h-5 w-80 rounded-lg cursor-pointer">
+            <input type="number" [formControl]="innerPolygonSize" [value]="innerPolygonSize.value" class="text-white text-center appearance-none bg-inherit w-10 shrink h-5">
+            <span class="w-6">px</span>
+        </div>
+    </div>
+
+</div>

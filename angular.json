@@ -30,10 +30,12 @@
               "src/assets"
             ],
             "styles": [
-              "@angular/material/prebuilt-themes/deeppurple-amber.css",
-              "src/styles.scss"
+              "src/styles.scss",
+              "node_modules/tw-elements/dist/src/scss/index.scss"
             ],
-            "scripts": []
+            "scripts": [
+              "node_modules/tw-elements/dist/js/index.min.js"
+            ]
           },
           "configurations": {
             "production": {
