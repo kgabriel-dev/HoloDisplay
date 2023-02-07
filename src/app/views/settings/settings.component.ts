@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { BroadcastTarget, SettingsBroadcastingService } from 'src/app/services/settings-broadcasting.service';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-settings',
@@ -18,6 +19,8 @@ export class SettingsComponent {
   imageSwapTime = new FormControl(500);
 
   currentSettingsFile: File | undefined;
+  currentImages: {name: string, src: string}[] = [];
+  imagesChanged$ = new Subject<string[]>();
 
   readonly controlsAndTargets: {control: FormControl, target: BroadcastTarget}[] = [
     { control: this.innerPolygonSize, target: 'InnerPolygonSize' },
@@ -30,6 +33,10 @@ export class SettingsComponent {
     settingsBroadcaster.silentChangeOfSwapTime(this.imageSwapTime.value);
     this.imageSwapTime.valueChanges.subscribe((newValue) => {
       this.settingsBroadcaster.silentChangeOfSwapTime(newValue);
+    });
+
+    this.imagesChanged$.subscribe((imgList) => {
+      this.settingsBroadcaster.broadcastChange('NewImages', imgList);
     });
 
     this.controlsAndTargets.forEach((pair) => {
@@ -77,6 +84,44 @@ export class SettingsComponent {
       };
       fileReader.readAsText(this.currentSettingsFile);
     }
+  }
+
+  addImages(event: Event) {
+    const element = event.currentTarget as HTMLInputElement,
+      fileList = element.files;
+
+    if(fileList) {
+      const fileReader = new FileReader();
+      let readingIndex = 0;
+
+      fileReader.onload = (e) => {
+        this.currentImages.push({
+          src: e.target?.result?.toString() || 'FEHLER - ERROR',
+          name: fileList[readingIndex].name
+        });
+
+        if(++readingIndex < fileList.length)
+          fileReader.readAsDataURL(fileList[readingIndex])
+      };
+      
+      fileReader.readAsDataURL(fileList[readingIndex]);
+    }
+  }
+
+  pushImageUp(index: number) {
+    if(index <= 0) return;
+
+    this.currentImages.splice(index-1, 0, this.currentImages.splice(index, 1)[0]);
+
+    this.imagesChanged$.next(this.currentImages.map(imagePair => imagePair.src));
+  }
+
+  pushImageDown(index: number) {
+    if(index >= this.currentImages.length-1) return;
+
+    this.currentImages.splice(index+1, 0, this.currentImages.splice(index, 1)[0]);
+
+    this.imagesChanged$.next(this.currentImages.map(imagePair => imagePair.src));
   }
 }
 

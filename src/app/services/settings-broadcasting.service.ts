@@ -10,11 +10,12 @@ export class SettingsBroadcastingService {
   private readonly imagePosition$ = new Subject<number>();
   private readonly sideCount$ = new Subject<number>();
   private readonly imageSwap$ = new Subject<boolean>();
+  private readonly newImages$ = new Subject<string[]>();
 
   private imageSwapTime = 500;
   private imageSwapInterval: NodeJS.Timer | undefined;
 
-  public broadcastChange(target: BroadcastTarget, value: number | boolean): void {
+  public broadcastChange(target: BroadcastTarget, value: number | boolean | string[]): void {
     switch(target) {
       case 'InnerPolygonSize':
         if(typeof value == 'number')
@@ -40,6 +41,10 @@ export class SettingsBroadcastingService {
         if(typeof value == 'boolean' && value)
           this.imageSwap$.next(true);
         break;
+      
+      case 'NewImages':
+        if(Array.isArray(value) && value.every(entry => typeof entry == 'string'))
+          this.newImages$.next(value);
     }
   }
 
@@ -69,8 +74,11 @@ export class SettingsBroadcastingService {
 
       case 'SwapImage':
         return this.imageSwap$.asObservable();
+
+      case 'NewImages':
+        return this.newImages$.asObservable();
     }
   }
 }
 
-export type BroadcastTarget = "InnerPolygonSize" | "ImageSize" | 'ImagePosition' | "SideCount" | "SwapImage";
+export type BroadcastTarget = "InnerPolygonSize" | "ImageSize" | 'ImagePosition' | "SideCount" | "SwapImage" | "NewImages";
