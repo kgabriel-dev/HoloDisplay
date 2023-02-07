@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { BroadcastTarget, SettingsBroadcastingService } from 'src/app/services/settings-broadcasting.service';
 
 @Component({
   selector: 'app-settings',
@@ -17,6 +18,26 @@ export class SettingsComponent {
   imageSwapTime = new FormControl(500);
 
   currentSettingsFile: File | undefined;
+
+  readonly controlsAndTargets: {control: FormControl, target: BroadcastTarget}[] = [
+    { control: this.innerPolygonSize, target: 'InnerPolygonSize' },
+    { control: this.imageSize, target: 'ImageSize' },
+    { control: this.imageSize, target: 'ImagePosition' },
+    { control: this.imageSize, target: 'SideCount' }
+  ]
+
+  constructor(private settingsBroadcaster: SettingsBroadcastingService) {
+    settingsBroadcaster.silentChangeOfSwapTime(this.imageSwapTime.value);
+    this.imageSwapTime.valueChanges.subscribe((newValue) => {
+      this.settingsBroadcaster.silentChangeOfSwapTime(newValue);
+    });
+
+    this.controlsAndTargets.forEach((pair) => {
+      pair.control.valueChanges.subscribe((newValue) => {
+        this.settingsBroadcaster.broadcastChange(pair.target, newValue);
+      })
+    });
+  }
 
   saveSettings(): void {
     // build the settings string
