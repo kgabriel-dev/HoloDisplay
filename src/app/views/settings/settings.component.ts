@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { BroadcastTarget, SettingsBroadcastingService } from 'src/app/services/settings-broadcasting.service';
 import { Subject } from 'rxjs';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-settings',
@@ -29,7 +30,7 @@ export class SettingsComponent {
     { control: this.imageSize, target: 'SideCount' }
   ]
 
-  constructor(private settingsBroadcaster: SettingsBroadcastingService) {
+  constructor(private settingsBroadcaster: SettingsBroadcastingService, public router: Router) {
     settingsBroadcaster.silentChangeOfSwapTime(this.imageSwapTime.value);
     this.imageSwapTime.valueChanges.subscribe((newValue) => {
       this.settingsBroadcaster.silentChangeOfSwapTime(newValue);

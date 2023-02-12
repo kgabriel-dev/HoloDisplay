@@ -10,8 +10,8 @@
                 <ol *ngIf="currentImages.length" class="mx-5">
                     <li *ngFor="let image of currentImages; index as i" class="border rounded-lg my-2">
                         {{image.name}}
-                        <button type="button" (click)="pushImageUp(i)" class="ml-4 my-2 p-2 border rounded hover:bg-sky-800">Hoch</button>
-                        <button type="button" (click)="pushImageDown(i)" class="ml-4 my-2 p-2 border rounded hover:bg-sky-800">Runter</button>
+                        <button type="button" (click)="pushImageUp(i)" data-mdb-ripple="true" data-mdb-ripple-color="light" class="ml-4 my-2 p-2 border rounded hover:bg-sky-800">Hoch</button>
+                        <button type="button" (click)="pushImageDown(i)" data-mdb-ripple="true" data-mdb-ripple-color="light" class="ml-4 my-2 p-2 border rounded hover:bg-sky-800">Runter</button>
                     </li>
                 </ol>
                 <span *ngIf="!currentImages.length">(Sie haben noch keine Bilder geladen.)</span>
@@ -158,5 +158,7 @@
             <span class="w-16 inline-block text-left">ms</span>
         </div>
     </div>
+
+    <button type="button" (click)="router.navigate(['display'])" data-mdb-ripple="true" data-mdb-ripple-color="light" class="mt-5 py-3 border-2 rounded-full sm:col-span-1 md:col-span-2 xl:col-span-4 bg-cyan-700 hover:bg-sky-800">BILDER ANZEIGEN</button>
 
 </div>
