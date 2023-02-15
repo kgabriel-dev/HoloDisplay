@@ -16,7 +16,7 @@ export class HelperService {
 
   getEvenlySpacedPointsOnCircle(radius: number, center: Point, amount: number) {
     const points: Point[] = [],
-      angle = Math.PI / 180;
+      angle = 2 * Math.PI / amount;
 
     for(let i = 0; i < amount; i++) {
       points.push(this.getPointOnCircle(radius, i * angle, center));
