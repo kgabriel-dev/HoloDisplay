@@ -14,7 +14,7 @@ export class HelperService {
     }
   }
 
-  getEvenlySpacedPointsOnCircle(radius: number, center: Point, amount: number) {
+  getEvenlySpacedPointsOnCircle(radius: number, center: Point, amount: number): Point[] {
     const points: Point[] = [],
       angle = 2 * Math.PI / amount;
 
@@ -23,6 +23,27 @@ export class HelperService {
     }
 
     return points;
+  }
+
+  connectPointsWithStraightLines(canvasContext: CanvasRenderingContext2D, points: Point[], color: string): void {
+    if(points.length < 2) return;
+
+    // store the old settings to restore them later
+    canvasContext.save();
+    
+    // set the color
+    canvasContext.strokeStyle = color;
+
+    // draw the first point and then the other points
+    canvasContext.beginPath();
+    canvasContext.moveTo(points[0].x, points[0].y);
+
+    points.slice(1).forEach(point => canvasContext.lineTo(point.x, point.y));
+
+    canvasContext.closePath();
+    canvasContext.stroke();
+
+    canvasContext.restore();
   }
 }
 

@@ -26,7 +26,7 @@ export class StandardDisplayComponent implements OnInit, OnDestroy, AfterViewIni
   private sideCount$: Subscription;
   private imageSwapTime = 500;
   private imageSwapTime$: Subscription;
-  private images: HTMLImageElement[] = [];
+  private images: string[] = [];
   private images$: Subscription;
 
   private readonly centerPoint: Point = { x: 0, y: 0 };
@@ -37,8 +37,8 @@ export class StandardDisplayComponent implements OnInit, OnDestroy, AfterViewIni
     this.imagePosition$ = settingsBroadcast.selectNotificationChannel('ImagePosition').subscribe(newImagePosition => { this.imagePosition = newImagePosition; this.draw(); });
     this.imageSize$ = settingsBroadcast.selectNotificationChannel('ImageSize').subscribe(newImageSize => { this.imageSize = newImageSize; this.draw(); });
     this.innerPolygonSize$ = settingsBroadcast.selectNotificationChannel('InnerPolygonSize').subscribe(newInnerPolygonSize => { this.innerPolygonSize = newInnerPolygonSize; this.draw(); });
-    this.images$ = settingsBroadcast.selectNotificationChannel('NewImages').subscribe(value => console.log(value));
-    this.sideCount$ = settingsBroadcast.selectNotificationChannel('SideCount').subscribe(newSideCount => { this.sideCount = newSideCount; this.draw(); });
+    this.images$ = settingsBroadcast.selectNotificationChannel('NewImages').subscribe((imageData: string[]) => this.images = imageData);
+    this.sideCount$ = settingsBroadcast.selectNotificationChannel('SideCount').subscribe(newSideCount => { this.sideCount = newSideCount; console.log(this.sideCount); this.draw(); });
     this.imageSwapTime$ = settingsBroadcast.selectNotificationChannel('SwapImage').subscribe(value => { this.draw(); });
   }
 
@@ -47,16 +47,18 @@ export class StandardDisplayComponent implements OnInit, OnDestroy, AfterViewIni
   }
 
   ngOnDestroy(): void {
-      this.imagePosition$.unsubscribe();
-      this.imageSize$.unsubscribe();
-      this.innerPolygonSize$.unsubscribe();
-      this.images$.unsubscribe();
-      this.sideCount$.unsubscribe();
-      this.imageSwapTime$.unsubscribe();
+    this.imagePosition$.unsubscribe();
+    this.imageSize$.unsubscribe();
+    this.innerPolygonSize$.unsubscribe();
+    this.images$.unsubscribe();
+    this.sideCount$.unsubscribe();
+    this.imageSwapTime$.unsubscribe();
+
+    console.log('unsubscribed')
   }
 
   ngAfterViewInit(): void {
-    if(!this.canvas) return;
+    if (!this.canvas) return;
 
     const newSize = Math.min(window.innerWidth, window.innerHeight);
 
@@ -65,9 +67,9 @@ export class StandardDisplayComponent implements OnInit, OnDestroy, AfterViewIni
 
     this.canvasContext = this.canvas.nativeElement.getContext('2d');
   }
-  
+
   onResize(event: Event) {
-    if(!event.target || !this.canvas) return;
+    if (!event.target || !this.canvas) return;
 
     const newSize = Math.min((event.target as Window).innerWidth, (event.target as Window).innerHeight);
 
@@ -79,26 +81,45 @@ export class StandardDisplayComponent implements OnInit, OnDestroy, AfterViewIni
 
   draw(): void {
     const canvasSize = this.canvas?.nativeElement.width;
-    if(!this.canvasContext || !canvasSize) return;
+    if (!this.canvasContext || !canvasSize) return;
 
+    // calculate all values that stay the same independently from which image gets drawn
+    const outerEdgePoints = this.helperService.getEvenlySpacedPointsOnCircle(canvasSize / 2, this.centerPoint, this.sideCount),
+      innerEdgePoints = this.helperService.getEvenlySpacedPointsOnCircle(20, this.centerPoint, this.sideCount),
+      angle = 2 * Math.PI / this.sideCount;
+
+    // reset the canvas
+    this.canvasContext.clearRect(0, 0, canvasSize, canvasSize);
     this.canvasContext.save();
 
-    this.canvasContext.translate(canvasSize/2, canvasSize/2)
-
-    const outerEdgePoints = this.helperService.getEvenlySpacedPointsOnCircle(canvasSize/2, this.centerPoint, this.sideCount),
-      innerEdgePoints = this.helperService.getEvenlySpacedPointsOnCircle(canvasSize/2, this.centerPoint, this.sideCount);
-    
-    this.canvasContext.strokeStyle = '#ff0000';
-    
-    this.canvasContext.beginPath();
-    this.canvasContext.moveTo(outerEdgePoints[0].x || this.centerPoint.x, outerEdgePoints[0].y || this.centerPoint.y);
-    for(let i = 1; i < outerEdgePoints.length; i++) {
-      this.canvasContext.lineTo(outerEdgePoints[i].x, outerEdgePoints[i].y);
-    }
-    this.canvasContext.closePath();
-    this.canvasContext.stroke();
+    // draw the polygons representing the inner and the outer square
+    this.canvasContext.translate(canvasSize / 2, canvasSize / 2);
+    this.helperService.connectPointsWithStraightLines(this.canvasContext, outerEdgePoints, '#500');
+    this.helperService.connectPointsWithStraightLines(this.canvasContext, innerEdgePoints, '#225');
 
     this.canvasContext.restore();
+
+    for (let iSide = 0; iSide < this.sideCount; iSide++) {
+      this.canvasContext.save();
+      this.canvasContext.translate(canvasSize / 2, canvasSize / 2);
+      this.canvasContext.rotate(iSide * angle);
+
+      // create the clip mask
+      const clipMask = new Path2D();
+      clipMask.moveTo(innerEdgePoints[0].x, innerEdgePoints[0].y);
+      clipMask.lineTo(outerEdgePoints[0].x, outerEdgePoints[0].y);
+      clipMask.lineTo(outerEdgePoints[1].x, outerEdgePoints[1].y);
+      clipMask.lineTo(innerEdgePoints[1].x, innerEdgePoints[1].y);
+      clipMask.closePath();
+      this.canvasContext.clip(clipMask);
+
+      // create the image and draw it
+      const image = new Image();
+      image.src = this.images[iSide % this.images.length];
+      this.canvasContext.drawImage(image, 0, 0, 200, 200);
+      this.canvasContext.restore();
+    }
+
   }
 
 }

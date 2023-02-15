@@ -26,8 +26,8 @@ export class SettingsComponent {
   readonly controlsAndTargets: {control: FormControl, target: BroadcastTarget}[] = [
     { control: this.innerPolygonSize, target: 'InnerPolygonSize' },
     { control: this.imageSize, target: 'ImageSize' },
-    { control: this.imageSize, target: 'ImagePosition' },
-    { control: this.imageSize, target: 'SideCount' }
+    { control: this.imagePosition, target: 'ImagePosition' },
+    { control: this.sideCount, target: 'SideCount' }
   ]
 
   constructor(private settingsBroadcaster: SettingsBroadcastingService, public router: Router) {
@@ -103,6 +103,8 @@ export class SettingsComponent {
 
         if(++readingIndex < fileList.length)
           fileReader.readAsDataURL(fileList[readingIndex])
+        else
+          this.imagesChanged$.next(this.currentImages.map(imagePair => imagePair.src));
       };
       
       fileReader.readAsDataURL(fileList[readingIndex]);

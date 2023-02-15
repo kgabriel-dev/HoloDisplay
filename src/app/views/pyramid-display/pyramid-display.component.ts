@@ -4,11 +4,12 @@ import { StandardDisplayComponent } from '../displays/standard-display/standard-
 import { debounceTime, fromEvent, map, Observable, Subject, switchMap } from 'rxjs';
 import { Router } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { SettingsComponent } from '../settings/settings.component';
 
 @Component({
   selector: 'app-pyramid-display',
   standalone: true,
-  imports: [CommonModule, StandardDisplayComponent, FormsModule],
+  imports: [CommonModule, SettingsComponent, StandardDisplayComponent, FormsModule],
   templateUrl: './pyramid-display.component.html',
   styleUrls: ['./pyramid-display.component.scss']
 })
