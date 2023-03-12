@@ -1,36 +1,46 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { BroadcastTarget, SettingsBroadcastingService } from 'src/app/services/settings-broadcasting.service';
+import {
+  BroadcastTarget,
+  SettingsBroadcastingService,
+} from 'src/app/services/settings-broadcasting.service';
 import { Subject } from 'rxjs';
 import { Router } from '@angular/router';
+import { environment } from 'src/environments.ts/environment';
 
 @Component({
   selector: 'app-settings',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './settings.component.html',
-  styleUrls: ["./settings.component.scss"]
+  styleUrls: ['./settings.component.scss'],
 })
 export class SettingsComponent {
   innerPolygonSize = new FormControl(50);
   imageSize = new FormControl(400);
   imagePosition = new FormControl(0);
   sideCount = new FormControl(4);
-  imageSwapTime = new FormControl(500);
+  imageSwapTime = new FormControl(Number(environment.defaultValueSwapTime));
 
   currentSettingsFile: File | undefined;
-  currentImages: {name: string, src: string}[] = [];
+  currentImages: { name: string; src: string }[] = [];
   imagesChanged$ = new Subject<string[]>();
 
-  readonly controlsAndTargets: {control: FormControl, target: BroadcastTarget}[] = [
+  readonly controlsAndTargets: {
+    control: FormControl;
+    target: BroadcastTarget;
+  }[] = [
     { control: this.innerPolygonSize, target: 'InnerPolygonSize' },
     { control: this.imageSize, target: 'ImageSize' },
     { control: this.imagePosition, target: 'ImagePosition' },
-    { control: this.sideCount, target: 'SideCount' }
-  ]
+    { control: this.sideCount, target: 'SideCount' },
+  ];
 
-  constructor(private settingsBroadcaster: SettingsBroadcastingService, public router: Router) {
+  constructor(
+    private settingsBroadcaster: SettingsBroadcastingService,
+    public router: Router
+  ) {
     settingsBroadcaster.silentChangeOfSwapTime(this.imageSwapTime.value);
     this.imageSwapTime.valueChanges.subscribe((newValue) => {
       this.settingsBroadcaster.silentChangeOfSwapTime(newValue);
@@ -43,7 +53,7 @@ export class SettingsComponent {
     this.controlsAndTargets.forEach((pair) => {
       pair.control.valueChanges.subscribe((newValue) => {
         this.settingsBroadcaster.broadcastChange(pair.target, newValue);
-      })
+      });
     });
   }
 
@@ -54,8 +64,8 @@ export class SettingsComponent {
       imageSize: this.imageSize.value || 100,
       imagePosition: this.imagePosition.value || 0,
       sideCount: this.sideCount.value || 4,
-      imageSwapTime: this.imageSwapTime.value || 1000
-    }
+      imageSwapTime: this.imageSwapTime.value || 1000,
+    };
 
     const dlink: HTMLAnchorElement = document.createElement('a');
     dlink.download = 'pyramid-display-settings.json'; // the file name
@@ -69,9 +79,9 @@ export class SettingsComponent {
     const element = event.currentTarget as HTMLInputElement,
       fileList = element.files;
 
-    if(fileList) {
+    if (fileList) {
       this.currentSettingsFile = fileList[0];
-      
+
       // read in settings
       const fileReader = new FileReader();
       fileReader.onload = (e) => {
@@ -91,40 +101,54 @@ export class SettingsComponent {
     const element = event.currentTarget as HTMLInputElement,
       fileList = element.files;
 
-    if(fileList) {
+    if (fileList) {
       const fileReader = new FileReader();
       let readingIndex = 0;
 
       fileReader.onload = (e) => {
         this.currentImages.push({
           src: e.target?.result?.toString() || 'FEHLER - ERROR',
-          name: fileList[readingIndex].name
+          name: fileList[readingIndex].name,
         });
 
-        if(++readingIndex < fileList.length)
-          fileReader.readAsDataURL(fileList[readingIndex])
+        if (++readingIndex < fileList.length)
+          fileReader.readAsDataURL(fileList[readingIndex]);
         else
-          this.imagesChanged$.next(this.currentImages.map(imagePair => imagePair.src));
+          this.imagesChanged$.next(
+            this.currentImages.map((imagePair) => imagePair.src)
+          );
       };
-      
+
       fileReader.readAsDataURL(fileList[readingIndex]);
     }
   }
 
   pushImageUp(index: number) {
-    if(index <= 0) return;
+    if (index <= 0) return;
 
-    this.currentImages.splice(index-1, 0, this.currentImages.splice(index, 1)[0]);
+    this.currentImages.splice(
+      index - 1,
+      0,
+      this.currentImages.splice(index, 1)[0]
+    );
 
-    this.imagesChanged$.next(this.currentImages.map(imagePair => imagePair.src));
+    this.imagesChanged$.next(
+      this.currentImages.map((imagePair) => imagePair.src)
+    );
   }
 
   pushImageDown(index: number) {
-    if(index >= this.currentImages.length-1) return;
+    if (index >= this.currentImages.length - 1) return;
 
-    this.currentImages.splice(index+1, 0, this.currentImages.splice(index, 1)[0]);
+    this.currentImages.splice(
+      index + 1,
+      0,
+      this.currentImages.splice(index, 1)[0]
+    );
 
-    this.imagesChanged$.next(this.currentImages.map(imagePair => imagePair.src));
+    this.imagesChanged$.next(
+      this.currentImages.map((imagePair) => imagePair.src)
+    );
   }
 }
 
@@ -134,4 +158,4 @@ export type SettingsData = {
   imagePosition: number;
   sideCount: number;
   imageSwapTime: number;
-}
+};
