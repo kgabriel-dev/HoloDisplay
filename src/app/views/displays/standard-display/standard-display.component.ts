@@ -20,174 +20,112 @@ import { SettingsBroadcastingService } from 'src/app/services/settings-broadcast
   templateUrl: './standard-display.component.html',
   styleUrls: ['./standard-display.component.scss'],
 })
-export class StandardDisplayComponent
-  implements OnInit, OnDestroy, AfterViewInit
-{
+export class StandardDisplayComponent implements OnInit, AfterViewInit {
   @Input() resizeEvent$!: Observable<Event>;
 
-  @ViewChild('displayCanvas') private canvas:
-    | ElementRef<HTMLCanvasElement>
-    | undefined;
-
-  private imagePosition = 0;
-  private imagePosition$: Subscription;
-  private imageSize = 400;
-  private imageSize$: Subscription;
-  private innerPolygonSize = 50;
-  private innerPolygonSize$: Subscription;
-  private sideCount = 4;
-  private sideCount$: Subscription;
-  private imageSwapTime$: Subscription;
-  private images: HTMLImageElement[] = [];
-  private images$: Subscription;
-
+  private readonly imagePosition$ = this.settingsBroadcastingService.selectNotificationChannel('ImagePosition');
+  private readonly imageSize$ = this.settingsBroadcastingService.selectNotificationChannel('ImageSize');
+  private readonly innerPolygonSize$ = this.settingsBroadcastingService.selectNotificationChannel('InnerPolygonSize');
+  private readonly sideCount$ = this.settingsBroadcastingService.selectNotificationChannel('SideCount');
+  private readonly swapTime$ = this.settingsBroadcastingService.selectNotificationChannel('SwapImage');
+  private readonly imageArray$ = this.settingsBroadcastingService.selectNotificationChannel('NewImages');
   private readonly centerPoint: Point = { x: 0, y: 0 };
-  private canvasContext!: CanvasRenderingContext2D | null;
 
-  private outerEdgePoints!: Point[];
-  private innerEdgePoints = this.helperService.getEvenlySpacedPointsOnCircle(
-    20,
-    this.centerPoint,
-    this.sideCount
-  );
-  private angle = ((360 / this.sideCount) * Math.PI) / 180;
+  @ViewChild('displayCanvas') displayCanvas!: ElementRef<HTMLCanvasElement>;
+  @ViewChild('container') container!: ElementRef<HTMLDivElement>;
+
+  private innerEdgePoints: Point[] = [];
+  private outerEdgePoints: Point[] = [];
+  private canvasSize: number = 0;
+  private angle: number = 0;
+  private images: HTMLImageElement[] = [];
+  private imageCanvasSize: number = 0;
 
   constructor(
-    private settingsBroadcast: SettingsBroadcastingService,
+    private settingsBroadcastingService: SettingsBroadcastingService,
     private helperService: HelperService
   ) {
-    this.imagePosition$ = settingsBroadcast
-      .selectNotificationChannel('ImagePosition')
-      .subscribe((newImagePosition) => {
-        this.imagePosition = newImagePosition;
-        this.draw();
-      });
-    this.imageSize$ = settingsBroadcast
-      .selectNotificationChannel('ImageSize')
-      .subscribe((newImageSize) => {
-        this.imageSize = newImageSize;
-        this.draw();
-      });
-    this.innerPolygonSize$ = settingsBroadcast
-      .selectNotificationChannel('InnerPolygonSize')
-      .subscribe((newInnerPolygonSize) => {
-        this.innerPolygonSize = newInnerPolygonSize;
-        this.draw();
-      });
-    this.images$ = settingsBroadcast
-      .selectNotificationChannel('NewImages')
-      .subscribe(
-        (imageData: string[]) =>
-          (this.images = helperService.createImages(imageData))
-      );
-    this.sideCount$ = settingsBroadcast
-      .selectNotificationChannel('SideCount')
-      .subscribe((newSideCount) => {
-        this.sideCount = newSideCount;
-        console.log(this.sideCount);
-        this.draw();
-      });
-    this.imageSwapTime$ = settingsBroadcast
-      .selectNotificationChannel('SwapImage')
-      .subscribe((value) => {
-        this.draw();
-      });
+    // subscribe to all settings broadcast channels
+    this.imagePosition$.subscribe(() => this.recalculateValues());
+    this.imageSize$.subscribe(() => this.recalculateValues());
+    this.innerPolygonSize$.subscribe(() => this.recalculateValues());
+    this.sideCount$.subscribe(() => this.recalculateValues());
+    this.swapTime$.subscribe(() => this.draw());
+    this.imageArray$.subscribe((imageData: string[]) => this.images = helperService.createImages(imageData));
   }
 
   ngOnInit(): void {
-    this.resizeEvent$.subscribe((event) => this.onResize(event));
-
-    this.outerEdgePoints = this.helperService.getEvenlySpacedPointsOnCircle(
-      this.canvas?.nativeElement.width || 400 / 2,
-      this.centerPoint,
-      this.sideCount
-    );
-  }
-
-  ngOnDestroy(): void {
-    this.imagePosition$.unsubscribe();
-    this.imageSize$.unsubscribe();
-    this.innerPolygonSize$.unsubscribe();
-    this.images$.unsubscribe();
-    this.sideCount$.unsubscribe();
-    this.imageSwapTime$.unsubscribe();
+    this.resizeEvent$.subscribe((event) => {
+      this.resizeCanvas((event.target as Window).innerWidth, (event.target as Window).innerHeight);
+      this.recalculateValues();
+    });
   }
 
   ngAfterViewInit(): void {
-    if (!this.canvas) return;
-
-    const newSize = Math.min(window.innerWidth, window.innerHeight);
-    this.canvas.nativeElement.width = newSize;
-    this.canvas.nativeElement.height = newSize;
-    this.canvas.nativeElement.style.width = `${newSize}px`;
-    this.canvas.nativeElement.style.height = `${newSize}px`;
-
-    this.canvasContext = this.canvas.nativeElement.getContext('2d');
+    this.resizeCanvas(this.container.nativeElement.clientWidth, this.container.nativeElement.clientHeight);
+    this.recalculateValues();
   }
 
-  onResize(event: Event) {
-    if (!event.target || !this.canvas) return;
+  private resizeCanvas(width: number, height: number): void {
+    this.canvasSize = Math.min(width, height);
 
-    const newSize = Math.min(
-      (event.target as Window).innerWidth,
-      (event.target as Window).innerHeight
-    );
-
-    this.canvas.nativeElement.width = newSize;
-    this.canvas.nativeElement.height = newSize;
-    this.canvas.nativeElement.style.width = `${newSize}px`;
-    this.canvas.nativeElement.style.height = `${newSize}px`;
+    const canvas = this.displayCanvas?.nativeElement;
+    if(canvas) {
+      canvas.width = this.canvasSize;
+      canvas.height = this.canvasSize;
+      canvas.style.width = `${this.canvasSize}px`;
+      canvas.style.height = `${this.canvasSize}px`;
+    }
   }
 
-  draw(): void {
-    console.log('draw');
-    const canvasSize = this.canvas?.nativeElement.width;
-    if (!this.canvasContext || !canvasSize) return;
+  private recalculateValues(): void {
+    this.angle = (360 / (this.settingsBroadcastingService.getLastValue('SideCount') as number)) * (Math.PI / 180);
+    this.innerEdgePoints = this.helperService.getEvenlySpacedPointsOnCircle(20, this.centerPoint, this.settingsBroadcastingService.getLastValue('SideCount') as number);
+    this.outerEdgePoints = this.helperService.getEvenlySpacedPointsOnCircle(this.canvasSize / 2, this.centerPoint, this.settingsBroadcastingService.getLastValue('SideCount') as number);
+    this.imageCanvasSize = this.helperService.getDistanceBetweenParallelLines(this.innerEdgePoints[0], this.innerEdgePoints[1], this.outerEdgePoints[0], this.outerEdgePoints[1]);
+  }
 
-    // reset the canvas
-    this.canvasContext.clearRect(0, 0, canvasSize, canvasSize);
-    this.canvasContext.strokeStyle = '#000';
-    this.canvasContext.fillRect(0, 0, canvasSize, canvasSize);
-    this.canvasContext.translate(canvasSize / 2, canvasSize / 2);
-    this.canvasContext.save();
+  readonly colorArray = ['red', 'blue', 'green', 'yellow', 'purple', 'orange', 'pink', 'brown', 'black', 'white'];
+  private draw(): void {
+    const canvas = this.displayCanvas?.nativeElement;
+    if(!canvas) return;
 
-    // draw the polygons representing the inner and the outer square
-    this.helperService.connectPointsWithStraightLines(
-      this.canvasContext,
-      this.outerEdgePoints,
-      '#500'
-    );
-    this.canvasContext.restore();
+    const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
+    ctx.save();
+    ctx.restore();
+    ctx.resetTransform();
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    this.helperService.connectPointsWithStraightLines(
-      this.canvasContext,
-      this.innerEdgePoints,
-      '#225'
-    );
-    this.canvasContext.restore();
+    ctx.translate(canvas.width / 2, canvas.height / 2);
+    this.helperService.connectPointsWithStraightLines(ctx, this.innerEdgePoints, 'blue');
+    this.helperService.connectPointsWithStraightLines(ctx, this.outerEdgePoints, 'red');
 
-    for (let iSide = 0; iSide < this.sideCount; iSide++) {
-      this.canvasContext.restore();
-      this.canvasContext.rotate(iSide * this.angle);
+    for(let iSide = 0; iSide < this.settingsBroadcastingService.getLastValue('SideCount'); iSide++) {
+      const image = this.images[iSide % this.images.length],
+        imageSize = this.settingsBroadcastingService.getLastValue('ImageSize') as number;
+
+      if(!image) continue;
+      ctx.restore();
+      ctx.resetTransform();
+      ctx.save();
+
+      ctx.translate(this.canvasSize/2, this.canvasSize/2);
+      ctx.rotate((iSide-1) * this.angle);
 
       // create the clip mask
-      const clipMask = new Path2D();
-      clipMask.moveTo(this.innerEdgePoints[0].x, this.innerEdgePoints[0].y);
-      clipMask.lineTo(this.outerEdgePoints[0].x, this.outerEdgePoints[0].y);
-      clipMask.lineTo(this.outerEdgePoints[1].x, this.outerEdgePoints[1].y);
-      clipMask.lineTo(this.innerEdgePoints[1].x, this.innerEdgePoints[1].y);
-      clipMask.closePath();
-      this.canvasContext.clip(clipMask);
-
-      // create the image and draw it
-      const image = this.images[iSide % this.images.length];
-      if (!image) {
-        console.log('no image');
-        continue;
-      }
-      this.canvasContext.drawImage(image, 0, 0, 200, 200);
+      ctx.fillStyle = this.colorArray[iSide % this.colorArray.length];
+      ctx.strokeStyle = this.colorArray[iSide % this.colorArray.length];
+      ctx.beginPath();
+      ctx.moveTo(this.innerEdgePoints[0].x, this.innerEdgePoints[0].y);
+      ctx.lineTo(this.outerEdgePoints[0].x, this.outerEdgePoints[0].y);
+      ctx.lineTo(this.outerEdgePoints[1].x, this.outerEdgePoints[1].y);
+      ctx.lineTo(this.innerEdgePoints[1].x, this.innerEdgePoints[1].y);
+      ctx.closePath();
+      ctx.clip();
+      
+      ctx.rotate(3 * this.angle / ((this.settingsBroadcastingService.getLastValue('SideCount') as number) /2));
+      ctx.drawImage(image, -imageSize/2,  -(this.imageCanvasSize/2 - imageSize/2), imageSize, imageSize);
     }
 
-    this.canvasContext.restore();
   }
 }

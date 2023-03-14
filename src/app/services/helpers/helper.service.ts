@@ -17,13 +17,14 @@ export class HelperService {
   getEvenlySpacedPointsOnCircle(
     radius: number,
     center: Point,
-    amount: number
+    amount: number,
+    offsetAngle: number = 0
   ): Point[] {
     const points: Point[] = [],
       angle = (2 * Math.PI) / amount;
 
     for (let i = 0; i < amount; i++) {
-      points.push(this.getPointOnCircle(radius, i * angle, center));
+      points.push(this.getPointOnCircle(radius, i * angle + offsetAngle, center));
     }
 
     return points;
@@ -65,6 +66,21 @@ export class HelperService {
     });
 
     return imageArr;
+  }
+
+  getDistanceBetweenParallelLines(point1: Point, point2: Point, point3: Point, point4: Point) {
+    const numerator = Math.abs(
+      (point2.y - point1.y) * point3.x
+      + (point1.x - point2.x) * point3.y
+      + (point2.x * point1.y - point1.x * point2.y)
+    );
+  
+    const denominator = Math.sqrt(
+      (point2.y - point1.y) ** 2
+      + (point1.x - point2.x) ** 2
+    );
+  
+    return numerator / denominator;
   }
 }
 
