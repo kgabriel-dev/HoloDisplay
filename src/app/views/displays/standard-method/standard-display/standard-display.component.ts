@@ -11,7 +11,7 @@ import { HelperService, Point } from 'src/app/services/helpers/helper.service';
 import { SettingsBroadcastingService } from 'src/app/services/settings-broadcasting.service';
 
 @Component({
-  selector: 'display-standard',
+  selector: 'app-display-standard',
   standalone: true,
   imports: [CommonModule],
   templateUrl: './standard-display.component.html',
@@ -33,13 +33,13 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
 
   private innerEdgePoints: Point[] = [];
   private outerEdgePoints: Point[] = [];
-  private canvasSize: number = 0;
-  private angle: number = 0;
+  private canvasSize = 0;
+  private angle = 0;
   private images: HTMLImageElement[] = [];
-  private imageSize: number = 0;
-  private imageCanvasSize: number = 0;
-  private offsetAngle: number = 0;
-  private innerPolygonIncircleRadius: number = 0;
+  private imageSize = 0;
+  private imageCanvasSize = 0;
+  private offsetAngle = 0;
+  private innerPolygonIncircleRadius = 0;
 
   constructor(
     private settingsBroadcastingService: SettingsBroadcastingService,
@@ -85,7 +85,7 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
     this.innerEdgePoints = this.helperService.getEvenlySpacedPointsOnCircle(this.settingsBroadcastingService.getLastValue('InnerPolygonSize') as number, this.centerPoint, sideCount);
     this.outerEdgePoints = this.helperService.getEvenlySpacedPointsOnCircle(this.canvasSize / 2, this.centerPoint, sideCount);
     this.imageSize = this.settingsBroadcastingService.getLastValue('ImageSize') as number;
-    this.imageCanvasSize = this.helperService.getDistanceBetweenParallelLines(this.innerEdgePoints[0], this.innerEdgePoints[1], this.outerEdgePoints[0], this.outerEdgePoints[1]);
+    this.imageCanvasSize = this.helperService.getDistanceBetweenParallelLines(this.innerEdgePoints[0], this.innerEdgePoints[1], this.outerEdgePoints[0]);
     this.offsetAngle = this.angle/2;
     this.innerPolygonIncircleRadius = this.helperService.getRadiusOfIncircleOfRegularPolygon(this.settingsBroadcastingService.getLastValue('InnerPolygonSize') as number, sideCount);
   }

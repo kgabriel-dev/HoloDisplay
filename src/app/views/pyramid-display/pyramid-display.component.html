@@ -21,7 +21,7 @@
         <option *ngFor="let displayMethod of displayMethods" [value]="displayMethod.name">{{displayMethod.name}}</option>
     </select>
 
-<display-standard *ngIf="selectedDisplayMethod === 'Standard Method'" class="block w-full h-full bg-blue" [resizeEvent$]="resizeEvent$.asObservable()" (window:resize)="onResize($event)"></display-standard>
+<app-display-standard *ngIf="selectedDisplayMethod === 'Standard Method'" class="block w-full h-full bg-blue" [resizeEvent$]="resizeEvent$.asObservable()" (window:resize)="onResize($event)"></app-display-standard>
 
 <div class="modal fade fixed top-0 left-0 hidden w-full h-full outline-none overflow-x-hidden overflow-y-auto" id="settingsModal" tabindex="-1" aria-labelledby="Settings Modal" aria-hidden="true">
     <div class="modal-dialog modal-xl relative w-auto pointer-events-none">

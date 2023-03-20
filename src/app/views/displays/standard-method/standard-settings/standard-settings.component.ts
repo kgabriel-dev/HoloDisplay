@@ -84,7 +84,7 @@ export class SettingsComponent {
 
       // read in settings
       const fileReader = new FileReader();
-      fileReader.onload = (e) => {
+      fileReader.onload = () => {
         const loadedSettings = JSON.parse(fileReader.result?.toString() || '');
 
         this.innerPolygonSize.setValue(loadedSettings.innerPolygonSize || 50);

@@ -18,7 +18,7 @@ export class HelperService {
     radius: number,
     center: Point,
     amount: number,
-    offsetAngle: number = 0
+    offsetAngle = 0
   ): Point[] {
     const points: Point[] = [],
       angle = (2 * Math.PI) / amount;
@@ -68,7 +68,7 @@ export class HelperService {
     return imageArr;
   }
 
-  getDistanceBetweenParallelLines(point1: Point, point2: Point, point3: Point, point4: Point) {
+  getDistanceBetweenParallelLines(point1: Point, point2: Point, point3: Point) {
     const numerator = Math.abs(
       (point2.y - point1.y) * point3.x
       + (point1.x - point2.x) * point3.y
