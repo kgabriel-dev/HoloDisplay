@@ -1,10 +1,10 @@
-import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { StandardDisplayComponent } from '../displays/standard-display/standard-display.component';
-import { debounceTime, fromEvent, map, Observable, Subject, switchMap } from 'rxjs';
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { SettingsComponent } from '../settings/settings.component';
+import { debounceTime, fromEvent, map, Subject } from 'rxjs';
+import { SettingsComponent } from '../displays/standard-method/standard-settings/standard-settings.component';
+import { StandardDisplayComponent } from '../displays/standard-method/standard-display/standard-display.component';
 
 @Component({
   selector: 'app-pyramid-display',

@@ -10,11 +10,11 @@ import { Router } from '@angular/router';
 import { environment } from 'src/environments.ts/environment';
 
 @Component({
-  selector: 'app-settings',
+  selector: 'app-standard-settings',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
-  templateUrl: './settings.component.html',
-  styleUrls: ['./settings.component.scss'],
+  templateUrl: './standard-settings.component.html',
+  styleUrls: ['./standard-settings.component.scss'],
 })
 export class SettingsComponent {
   innerPolygonSize = new FormControl(50);

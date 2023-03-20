@@ -27,7 +27,7 @@
     <div class="modal-dialog modal-xl relative w-auto pointer-events-none">
         <div class="modal-content border-none shadow-lg relative flex flex-col w-full pointer-events-auto bg-white bg-clip-padding rounded-md outline-none text-current">
             <div class="modal-body relative p-4">
-                <app-settings></app-settings>
+                <app-standard-settings *ngIf="selectedDisplayMethod === 'Standard Method'"></app-standard-settings>
             </div>
         </div>
     </div>
