@@ -82,11 +82,11 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
     const sideCount = this.settingsBroadcastingService.getLastValue('SideCount') as number;
 
     this.angle = 2 * Math.PI / sideCount;
+    this.offsetAngle = ((sideCount - 2) * this.angle) / 4;
     this.innerEdgePoints = this.helperService.getEvenlySpacedPointsOnCircle(this.settingsBroadcastingService.getLastValue('InnerPolygonSize') as number, this.centerPoint, sideCount);
     this.outerEdgePoints = this.helperService.getEvenlySpacedPointsOnCircle(this.canvasSize / 2, this.centerPoint, sideCount);
     this.imageSize = this.settingsBroadcastingService.getLastValue('ImageSize') as number;
     this.imageCanvasSize = this.helperService.getDistanceBetweenParallelLines(this.innerEdgePoints[0], this.innerEdgePoints[1], this.outerEdgePoints[0]);
-    this.offsetAngle = this.angle/2;
     this.innerPolygonIncircleRadius = this.helperService.getRadiusOfIncircleOfRegularPolygon(this.settingsBroadcastingService.getLastValue('InnerPolygonSize') as number, sideCount);
   }
 
@@ -128,6 +128,5 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
       ctx.rotate(this.offsetAngle);
       ctx.drawImage(image, -this.imageSize/2, -this.innerPolygonIncircleRadius - this.imageCanvasSize/2 - this.imageSize/2, this.imageSize, this.imageSize);
     }
-
   }
 }
