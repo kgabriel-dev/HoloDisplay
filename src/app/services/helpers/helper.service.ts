@@ -9,8 +9,8 @@ export class HelperService {
 
   getPointOnCircle(radius: number, angle: number, center: Point): Point {
     return {
-      x: center.x + radius * Math.cos(angle),
-      y: center.y + radius * Math.sin(angle),
+      x: center.x + radius * Math.cos(-angle),
+      y: center.y + radius * Math.sin(-angle),
     };
   }
 
@@ -81,6 +81,17 @@ export class HelperService {
     );
   
     return numerator / denominator;
+  }
+
+  getCenterPointBetweenTwoPoints(point1: Point, point2: Point): Point {
+    return {
+      x: (point1.x + point2.x) / 2,
+      y: (point1.y + point2.y) / 2,
+    };
+  }
+
+  getRadiusOfIncircleOfRegularPolygon(circumcircleRadius: number, sideCount: number): number {
+    return circumcircleRadius * Math.cos(Math.PI / sideCount);
   }
 }
 

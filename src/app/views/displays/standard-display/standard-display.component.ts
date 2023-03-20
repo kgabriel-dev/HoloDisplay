@@ -1,15 +1,12 @@
+import { CommonModule } from '@angular/common';
 import {
-  AfterContentInit,
   AfterViewInit,
   Component,
   ElementRef,
-  Input,
-  OnDestroy,
-  OnInit,
-  ViewChild,
+  Input, OnInit,
+  ViewChild
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { Observable, Subscription } from 'rxjs';
+import { Observable } from 'rxjs';
 import { HelperService, Point } from 'src/app/services/helpers/helper.service';
 import { SettingsBroadcastingService } from 'src/app/services/settings-broadcasting.service';
 
@@ -39,7 +36,10 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
   private canvasSize: number = 0;
   private angle: number = 0;
   private images: HTMLImageElement[] = [];
+  private imageSize: number = 0;
   private imageCanvasSize: number = 0;
+  private offsetAngle: number = 0;
+  private innerPolygonIncircleRadius: number = 0;
 
   constructor(
     private settingsBroadcastingService: SettingsBroadcastingService,
@@ -79,13 +79,17 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
   }
 
   private recalculateValues(): void {
-    this.angle = (360 / (this.settingsBroadcastingService.getLastValue('SideCount') as number)) * (Math.PI / 180);
-    this.innerEdgePoints = this.helperService.getEvenlySpacedPointsOnCircle(20, this.centerPoint, this.settingsBroadcastingService.getLastValue('SideCount') as number);
-    this.outerEdgePoints = this.helperService.getEvenlySpacedPointsOnCircle(this.canvasSize / 2, this.centerPoint, this.settingsBroadcastingService.getLastValue('SideCount') as number);
+    const sideCount = this.settingsBroadcastingService.getLastValue('SideCount') as number;
+
+    this.angle = 2 * Math.PI / sideCount;
+    this.innerEdgePoints = this.helperService.getEvenlySpacedPointsOnCircle(this.settingsBroadcastingService.getLastValue('InnerPolygonSize') as number, this.centerPoint, sideCount);
+    this.outerEdgePoints = this.helperService.getEvenlySpacedPointsOnCircle(this.canvasSize / 2, this.centerPoint, sideCount);
+    this.imageSize = this.settingsBroadcastingService.getLastValue('ImageSize') as number;
     this.imageCanvasSize = this.helperService.getDistanceBetweenParallelLines(this.innerEdgePoints[0], this.innerEdgePoints[1], this.outerEdgePoints[0], this.outerEdgePoints[1]);
+    this.offsetAngle = this.angle/2;
+    this.innerPolygonIncircleRadius = this.helperService.getRadiusOfIncircleOfRegularPolygon(this.settingsBroadcastingService.getLastValue('InnerPolygonSize') as number, sideCount);
   }
 
-  readonly colorArray = ['red', 'blue', 'green', 'yellow', 'purple', 'orange', 'pink', 'brown', 'black', 'white'];
   private draw(): void {
     const canvas = this.displayCanvas?.nativeElement;
     if(!canvas) return;
@@ -101,8 +105,7 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
     this.helperService.connectPointsWithStraightLines(ctx, this.outerEdgePoints, 'red');
 
     for(let iSide = 0; iSide < this.settingsBroadcastingService.getLastValue('SideCount'); iSide++) {
-      const image = this.images[iSide % this.images.length],
-        imageSize = this.settingsBroadcastingService.getLastValue('ImageSize') as number;
+      const image = this.images[iSide % this.images.length];
 
       if(!image) continue;
       ctx.restore();
@@ -110,11 +113,9 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
       ctx.save();
 
       ctx.translate(this.canvasSize/2, this.canvasSize/2);
-      ctx.rotate((iSide-1) * this.angle);
+      ctx.rotate(iSide * this.angle);
 
       // create the clip mask
-      ctx.fillStyle = this.colorArray[iSide % this.colorArray.length];
-      ctx.strokeStyle = this.colorArray[iSide % this.colorArray.length];
       ctx.beginPath();
       ctx.moveTo(this.innerEdgePoints[0].x, this.innerEdgePoints[0].y);
       ctx.lineTo(this.outerEdgePoints[0].x, this.outerEdgePoints[0].y);
@@ -122,9 +123,10 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
       ctx.lineTo(this.innerEdgePoints[1].x, this.innerEdgePoints[1].y);
       ctx.closePath();
       ctx.clip();
-      
-      ctx.rotate(3 * this.angle / ((this.settingsBroadcastingService.getLastValue('SideCount') as number) /2));
-      ctx.drawImage(image, -imageSize/2,  -(this.imageCanvasSize/2 - imageSize/2), imageSize, imageSize);
+
+      // draw the image
+      ctx.rotate(this.offsetAngle);
+      ctx.drawImage(image, -this.imageSize/2, -this.innerPolygonIncircleRadius - this.imageCanvasSize/2 - this.imageSize/2, this.imageSize, this.imageSize);
     }
 
   }
