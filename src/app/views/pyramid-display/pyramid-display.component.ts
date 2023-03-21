@@ -1,14 +1,15 @@
-import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { StandardDisplayComponent } from '../displays/standard-display/standard-display.component';
-import { debounceTime, fromEvent, map, switchMap } from 'rxjs';
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { debounceTime, fromEvent, map, Subject } from 'rxjs';
+import { SettingsComponent } from '../displays/standard-method/standard-settings/standard-settings.component';
+import { StandardDisplayComponent } from '../displays/standard-method/standard-display/standard-display.component';
 
 @Component({
   selector: 'app-pyramid-display',
   standalone: true,
-  imports: [CommonModule, StandardDisplayComponent, FormsModule],
+  imports: [CommonModule, SettingsComponent, StandardDisplayComponent, FormsModule],
   templateUrl: './pyramid-display.component.html',
   styleUrls: ['./pyramid-display.component.scss']
 })
@@ -18,6 +19,7 @@ export class PyramidDisplayComponent {
   iconsVisible = false;
   forceIconsVisible = false;
   mouseMoving$ = fromEvent(document, 'mousemove');
+  resizeEvent$: Subject<Event>;
 
   readonly displayMethods: {name: string, component: any}[] = [
     { name: 'Standard Method', component: StandardDisplayComponent }
@@ -29,5 +31,11 @@ export class PyramidDisplayComponent {
       debounceTime(2000),
       map(() => this.iconsVisible = this.forceIconsVisible),
     ).subscribe();
+
+    this.resizeEvent$ = new Subject<Event>();
+  }
+
+  onResize(event: Event) {
+    this.resizeEvent$.next(event);
   }
 }
