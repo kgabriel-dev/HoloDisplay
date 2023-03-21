@@ -17,10 +17,10 @@ import { environment } from 'src/environments.ts/environment';
   styleUrls: ['./standard-settings.component.scss'],
 })
 export class SettingsComponent {
-  innerPolygonSize = new FormControl(50);
-  imageSize = new FormControl(400);
-  imagePosition = new FormControl(0);
-  sideCount = new FormControl(4);
+  innerPolygonSize = new FormControl(Number(environment.defaultValueInnerPolygonSize));
+  imageSize = new FormControl(Number(environment.defaultValueImageSize));
+  imagePosition = new FormControl(Number(environment.defaultValueImagePosition));
+  sideCount = new FormControl(Number(environment.defaultValueSideCount));
   imageSwapTime = new FormControl(Number(environment.defaultValueSwapTime));
 
   currentSettingsFile: File | undefined;

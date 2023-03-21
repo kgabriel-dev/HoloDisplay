@@ -79,7 +79,7 @@
             <p class="my-5">Dieser Wert wird durch die Auflagefläche Ihres Spiegels bestimmt.</p>
         </div>
         <div class="p-5 bg-cyan-700 ">
-            <input type="range" min="0" max="2000" [formControl]="innerPolygonSize" [value]="innerPolygonSize.value" class="form-range h-5 w-3/5 rounded-lg cursor-pointer mx-3">
+            <input type="range" min="0" max="400" [formControl]="innerPolygonSize" [value]="innerPolygonSize.value" class="form-range h-5 w-3/5 rounded-lg cursor-pointer mx-3">
             
             <span class="border-2 rounded w-1/5 inline-block mx-3">
                 <input type="number" [formControl]="innerPolygonSize" [value]="innerPolygonSize.value" class="text-white text-left appearance-none bg-inherit w-1/2 shrink h-5">
@@ -97,7 +97,7 @@
             <p class="my-5">Es gibt nur eine Größe und der Wert wird für alle Bilder übernommen.</p>
         </div>
         <div class="p-5 bg-cyan-700 ">
-            <input type="range" min="0" max="2000" [formControl]="imageSize" [value]="imageSize.value" class="form-range h-5 w-3/5 rounded-lg cursor-pointer mx-3">
+            <input type="range" min="0" max="750" [formControl]="imageSize" [value]="imageSize.value" class="form-range h-5 w-3/5 rounded-lg cursor-pointer mx-3">
             
             <span class="border-2 rounded w-1/5 inline-block mx-3">
                 <input type="number" [formControl]="imageSize" [value]="imageSize.value" class="text-white text-left appearance-none w-1/2 bg-inherit shrink h-5">
@@ -158,7 +158,4 @@
             <span class="w-16 inline-block text-left">ms</span>
         </div>
     </div>
-
-    <button type="button" (click)="router.navigate(['display'])" data-mdb-ripple="true" data-mdb-ripple-color="light" class="mt-5 py-3 border-2 rounded-full sm:col-span-1 md:col-span-2 xl:col-span-4 bg-cyan-700 hover:bg-sky-800">BILDER ANZEIGEN</button>
-
 </div>
