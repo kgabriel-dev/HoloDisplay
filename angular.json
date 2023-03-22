@@ -5,11 +5,11 @@
   "projects": {
     "PyramidDisplay": {
       "i18n": {
-        "sourceLocale": "de-DE",
+        "sourceLocale": "en-US",
         "locales": {
-          "en-US": {
-            "translation": "src/locale/messages.en-US.xlf",
-            "baseHref": "/en-US/"
+          "de-DE": {
+            "translation": "src/locale/messages.de-DE.xlf",
+            "baseHref": "/de-DE/"
           }
         }
       },
