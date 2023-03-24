@@ -4,6 +4,15 @@
   "newProjectRoot": "projects",
   "projects": {
     "PyramidDisplay": {
+      "i18n": {
+        "sourceLocale": "en-US",
+        "locales": {
+          "de-DE": {
+            "translation": "src/locale/messages.de-DE.xlf",
+            "baseHref": "/de-DE/"
+          }
+        }
+      },
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -17,6 +26,9 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
+            "localize": [
+              "en-US"
+            ],
             "outputPath": "dist/pyramid-display",
             "index": "src/index.html",
             "main": "src/main.ts",

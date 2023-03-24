@@ -1,9 +1,15 @@
 <!-- <button [hidden]="!iconsVisible" class="z-40 fixed top-5 right-5" (click)="router.navigate(['settings'])" (mouseover)="forceIconsVisible=true" (mouseleave)="forceIconsVisible=false"> -->
-<button [hidden]="!iconsVisible" class="z-40 fixed top-5 right-5" data-bs-toggle="modal" data-bs-target="#settingsModal" (mouseover)="forceIconsVisible=true" (mouseleave)="forceIconsVisible=false">
-    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="white" class="w-10 h-10">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-9.75 0h9.75" />
-    </svg>
-</button>
+<div [hidden]="!iconsVisible" class="z-40 fixed top-5 right-5 flex flex-col">
+    <button data-bs-toggle="modal" data-bs-target="#settingsModal" (mouseover)="forceIconsVisible=true" (mouseleave)="forceIconsVisible=false">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="white" class="w-10 h-10">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-9.75 0h9.75" />
+        </svg>
+    </button>
+    <button (mouseover)="forceIconsVisible=true" (mouseleave)="forceIconsVisible=false" (click)="language.changeToNextLanguage()">
+        <img src="assets/icons/language-enUS.png" alt="US language" *ngIf="language.getCurrentLanguageDetails() === 'en-US'" class="w-9">
+        <img src="assets/icons/language-deDE.png" alt="DE language" *ngIf="language.getCurrentLanguageDetails() === 'de-DE'" class="w-9">
+    </button>
+</div>
 
 <select [hidden]="!iconsVisible" [(ngModel)]="selectedDisplayMethod" class="form-select appearance-none z-40
       fixed top-5 left-5
