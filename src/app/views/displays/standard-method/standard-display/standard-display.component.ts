@@ -7,6 +7,7 @@ import {
   ViewChild
 } from '@angular/core';
 import { Observable } from 'rxjs';
+import { StandardMethodCalculatorService } from 'src/app/services/calculators/standard-method/standard-method-calculator.service';
 import { HelperService, Point } from 'src/app/services/helpers/helper.service';
 import { SettingsBroadcastingService } from 'src/app/services/settings-broadcasting.service';
 
@@ -19,6 +20,7 @@ import { SettingsBroadcastingService } from 'src/app/services/settings-broadcast
 })
 export class StandardDisplayComponent implements OnInit, AfterViewInit {
   @Input() resizeEvent$!: Observable<Event>;
+  @Input() calculate$!: Observable<void>;
 
   private readonly imagePosition$ = this.settingsBroadcastingService.selectNotificationChannel('ImagePosition');
   private readonly imageSize$ = this.settingsBroadcastingService.selectNotificationChannel('ImageSize');
@@ -43,7 +45,8 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
 
   constructor(
     private settingsBroadcastingService: SettingsBroadcastingService,
-    private helperService: HelperService
+    private helperService: HelperService,
+    private calculator: StandardMethodCalculatorService
   ) {
     // subscribe to all settings broadcast channels
     this.imagePosition$.subscribe(() => this.recalculateValues());
@@ -59,6 +62,16 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
       this.resizeCanvas((event.target as Window).innerWidth, (event.target as Window).innerHeight);
       this.recalculateValues();
     });
+
+    // define the calculation function
+    this.calculate$.subscribe(() =>
+      this.calculator.calculateAndDownload(
+        this.settingsBroadcastingService.getLastValue('SideCount') as number,
+        45,
+        this.settingsBroadcastingService.getLastValue('InnerPolygonSize') as number,
+        this.canvasSize
+      )
+    );
   }
 
   ngAfterViewInit(): void {
@@ -83,11 +96,11 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
 
     this.angle = 2 * Math.PI / sideCount;
     this.offsetAngle = ((sideCount - 2) * this.angle) / 4;
-    this.innerEdgePoints = this.helperService.getEvenlySpacedPointsOnCircle(this.settingsBroadcastingService.getLastValue('InnerPolygonSize') as number, this.centerPoint, sideCount);
+    this.innerEdgePoints = this.helperService.getEvenlySpacedPointsOnCircle((this.settingsBroadcastingService.getLastValue('InnerPolygonSize') as number) / 2, this.centerPoint, sideCount);
     this.outerEdgePoints = this.helperService.getEvenlySpacedPointsOnCircle(this.canvasSize / 2, this.centerPoint, sideCount);
     this.imageSize = this.settingsBroadcastingService.getLastValue('ImageSize') as number;
     this.imageCanvasSize = this.helperService.getDistanceBetweenParallelLines(this.innerEdgePoints[0], this.innerEdgePoints[1], this.outerEdgePoints[0]);
-    this.innerPolygonIncircleRadius = this.helperService.getRadiusOfIncircleOfRegularPolygon(this.settingsBroadcastingService.getLastValue('InnerPolygonSize') as number, sideCount);
+    this.innerPolygonIncircleRadius = this.helperService.getRadiusOfIncircleOfRegularPolygon((this.settingsBroadcastingService.getLastValue('InnerPolygonSize') as number) / 2, sideCount);
   }
 
   private draw(): void {
