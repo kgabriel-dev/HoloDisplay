@@ -1,3 +1,79 @@
 <div class="flex justify-center align-center h-full" #container>
     <canvas #displayCanvas class="bg-black block m-auto aspect-square"></canvas>
 </div>
+
+<div class="hidden overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none" id="calculatorExtraSettingsModal">
+  <div class="relative w-auto my-6 mx-auto max-w-3xl">
+    <!--content-->
+    <div class="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
+      <!--header-->
+      <div class="flex items-start justify-between p-5 border-b border-solid border-slate-200 rounded-t">
+        <h3 class="text-3xl font-semibold">
+          Extra values used by the calculator
+        </h3>
+      </div>
+      <!--body-->
+      <div class="relative p-6 flex-auto">
+        <p class="my-4 text-slate-500 text-lg leading-relaxed">
+          This calculator calculates the size of the trapezes you need to build your mirror. Therefore it uses the settings from the Settings Menu as far as possible, but some values are not available there. You can set them here.
+        </p>
+        <div>
+          <h4 class="underline">DPI / PPI</h4>
+          <p>Here you can set the physical DPI (or PPI) of your display. You can either look this value up or calculate is using your screen size and resolution.</p>
+          <input type="number" class="w-full border border-slate-200 rounded p-2" placeholder="DPI / PPI" [(ngModel)]="calculatorDPI" />
+        </div>
+        <br>
+        <div>
+          <h4 class="underline">JS Pixel Ratio</h4>
+          <p>The JavaScript pixel ratio represents the ratio of the size of one CSS pixel to the size of one physical pixel on your device. The default value should be correct, but you can double check it on websites like <a href="http://mydevice.io">mydevice.io</a>.</p>
+          <input type="number" class="w-full border border-slate-200 rounded p-2" placeholder="JS Pixel Ratio" [(ngModel)]="calculatorJsPixelRatio" />
+        </div>
+        <br>
+        <div>
+          <h4 class="underline">Slope</h4>
+          <p>This is the angle by which the mirror is tilted. A greater angle means that you look on the mirror from a higher position. A lower angle means a lower viewing point. The value of 45 degrees means that you look at it in one line with the table.</p>
+          <input type="number" class="w-full border border-slate-200 rounded p-2" placeholder="Slope angle value" [(ngModel)]="calculatorSlope" />
+        </div>
+      </div>
+      <!--footer-->
+      <div class="flex items-center justify-end p-6 border-t border-solid border-slate-200 rounded-b">
+        <button class="text-red-500 background-transparent font-bold uppercase px-6 py-2 text-sm outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150" type="button" (click)="toggleModal('calculatorExtraSettingsModal')">
+          Close
+        </button>
+        <button class="bg-emerald-500 text-white active:bg-emerald-600 font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150" type="button" (click)="toggleModal('calculatorExtraSettingsModal'); onCalculateClick()">
+          Generate image
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="hidden overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none" id="calculatorDownloadModal">
+  <div class="relative w-auto my-6 mx-auto max-w-3xl">
+    <!--content-->
+    <div class="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
+      <!--header-->
+      <div class="flex items-start justify-between p-5 border-b border-solid border-slate-200 rounded-t">
+        <h3 class="text-3xl font-semibold">
+          The calculated image showing the trapeze
+        </h3>
+      </div>
+      <!--body-->
+      <div class="relative p-6 flex-auto">
+        <p class="my-4 text-slate-500 text-lg leading-relaxed">
+          The image you can download here shows the template to build your mirror. You will need {{ settingsBroadcastingService.getLastValue('SideCount') }} of these trapezes. The image is generated using the values you entered in the Settings Menu. If you want to change these values, please go back to the Settings Menu.
+        </p>
+        <p class="my-4 text-slate-500 tx-lg leading-relaxed">
+          Make sure to print the image at the correct size. The image is {{ (calculatorImageWidthPx / calculatorDPI).toFixed(2) }} x {{ (calculatorImageHeightPx / calculatorDPI).toFixed(2) }} inches or {{ ((calculatorImageWidthPx * calculatorJsPixelRatio / calculatorDPI) * 2.54).toFixed(2) }} x {{ ((calculatorImageHeightPx * calculatorJsPixelRatio / calculatorDPI) * 2.54).toFixed(2) }} cm.
+          <br>
+          This often means to scale the image to more than 100% of its original size. If you print the image at 100% of its original size, it can be too small. Make sure to use the correct size.
+        </p>
+      <!--footer-->
+      <div class="flex items-center justify-end p-6 border-t border-solid border-slate-200 rounded-b">
+        <button class="text-red-500 background-transparent font-bold uppercase px-6 py-2 text-sm outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150" type="button" (click)="toggleModal('calculatorDownloadModal')">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

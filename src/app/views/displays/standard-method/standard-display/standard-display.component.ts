@@ -6,6 +6,7 @@ import {
   Input, OnInit,
   ViewChild
 } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { StandardMethodCalculatorService } from 'src/app/services/calculators/standard-method/standard-method-calculator.service';
 import { HelperService, Point } from 'src/app/services/helpers/helper.service';
@@ -14,7 +15,7 @@ import { SettingsBroadcastingService } from 'src/app/services/settings-broadcast
 @Component({
   selector: 'app-display-standard',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './standard-display.component.html',
   styleUrls: ['./standard-display.component.scss'],
 })
@@ -43,8 +44,14 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
   private offsetAngle = 0;
   private innerPolygonIncircleRadius = 0;
 
+  calculatorDPI = 96;
+  calculatorSlope = 45;
+  calculatorImageWidthPx = 0;
+  calculatorImageHeightPx = 0;
+  calculatorJsPixelRatio = window.devicePixelRatio;
+
   constructor(
-    private settingsBroadcastingService: SettingsBroadcastingService,
+    public settingsBroadcastingService: SettingsBroadcastingService,
     private helperService: HelperService,
     private calculator: StandardMethodCalculatorService
   ) {
@@ -64,14 +71,9 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
     });
 
     // define the calculation function
-    this.calculate$.subscribe(() =>
-      this.calculator.calculateAndDownload(
-        this.settingsBroadcastingService.getLastValue('SideCount') as number,
-        45,
-        this.settingsBroadcastingService.getLastValue('InnerPolygonSize') as number,
-        this.canvasSize
-      )
-    );
+    this.calculate$.subscribe(() => {
+      this.toggleModal('calculatorExtraSettingsModal');
+    });
   }
 
   ngAfterViewInit(): void {
@@ -117,7 +119,7 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
     this.helperService.connectPointsWithStraightLines(ctx, this.innerEdgePoints, 'blue');
     this.helperService.connectPointsWithStraightLines(ctx, this.outerEdgePoints, 'red');
 
-    for(let iSide = 0; iSide < this.settingsBroadcastingService.getLastValue('SideCount'); iSide++) {
+    for(let iSide = 0; iSide < (this.settingsBroadcastingService.getLastValue('SideCount') as number); iSide++) {
       const image = this.images[iSide % this.images.length];
 
       if(!image) continue;
@@ -141,5 +143,41 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
       ctx.rotate(this.offsetAngle);
       ctx.drawImage(image, -this.imageSize/2, -this.innerPolygonIncircleRadius - this.imageCanvasSize/2 - this.imageSize/2, this.imageSize, this.imageSize);
     }
+  }
+
+  onCalculateClick(): void {
+    // this.calculator.calculateAndDownload(
+    //   this.settingsBroadcastingService.getLastValue('SideCount') as number,
+    //   this.calculatorSlope,
+    //   this.settingsBroadcastingService.getLastValue('InnerPolygonSize') as number,
+    //   this.canvasSize,
+    //   this.calculatorDPI
+    // );
+
+    const canvas = this.calculator.calculateImage(
+      this.settingsBroadcastingService.getLastValue('SideCount') as number,
+      this.calculatorSlope,
+      this.settingsBroadcastingService.getLastValue('InnerPolygonSize') as number,
+      this.canvasSize,
+    );
+
+    this.calculatorImageWidthPx = canvas?.width || -1;
+    this.calculatorImageHeightPx = canvas?.height || -1;
+
+    // download the image from the canvas
+    if(canvas) {
+      const link = document.createElement('a');
+      link.download = 'mirror cutting template.png';
+      link.href = canvas.toDataURL();
+      link.click();
+    }
+
+    this.toggleModal('calculatorDownloadModal');
+  }
+
+  toggleModal(modalId: string): void {
+    if(!document.getElementById(modalId)) return;
+
+    document.getElementById(modalId)!.classList.toggle("hidden");
   }
 }
