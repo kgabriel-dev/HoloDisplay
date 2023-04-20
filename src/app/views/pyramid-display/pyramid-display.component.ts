@@ -1,12 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
 import { debounceTime, fromEvent, map, Subject } from 'rxjs';
 import { SettingsComponent } from '../displays/standard-method/standard-settings/standard-settings.component';
 import { StandardDisplayComponent } from '../displays/standard-method/standard-display/standard-display.component';
-import { getLocaleId } from '@angular/common';
 import { LanguageService } from 'src/app/services/i18n/language.service';
+import { StandardMethodCalculatorService } from 'src/app/services/calculators/standard-method/standard-method-calculator.service';
 
 @Component({
   selector: 'app-pyramid-display',
@@ -22,12 +21,13 @@ export class PyramidDisplayComponent {
   forceIconsVisible = false;
   mouseMoving$ = fromEvent(document, 'mousemove');
   resizeEvent$: Subject<Event>;
+  doCalculation$ = new Subject<void>();
 
   readonly displayMethods: {name: string, component: any}[] = [
     { name: 'Standard Method', component: StandardDisplayComponent }
   ]
 
-  constructor(public language: LanguageService) {
+  constructor(public language: LanguageService, private calculator: StandardMethodCalculatorService) {
     this.mouseMoving$.pipe(
       map(() => this.iconsVisible = true),
       debounceTime(2000),
