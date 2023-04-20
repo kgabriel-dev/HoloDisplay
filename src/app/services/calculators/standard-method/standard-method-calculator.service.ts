@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HelperService, Point } from '../../helpers/helper.service';
+import { HelperService } from '../../helpers/helper.service';
 
 @Injectable({
   providedIn: 'root'

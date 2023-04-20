@@ -146,14 +146,6 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
   }
 
   onCalculateClick(): void {
-    // this.calculator.calculateAndDownload(
-    //   this.settingsBroadcastingService.getLastValue('SideCount') as number,
-    //   this.calculatorSlope,
-    //   this.settingsBroadcastingService.getLastValue('InnerPolygonSize') as number,
-    //   this.canvasSize,
-    //   this.calculatorDPI
-    // );
-
     const canvas = this.calculator.calculateImage(
       this.settingsBroadcastingService.getLastValue('SideCount') as number,
       this.calculatorSlope,
