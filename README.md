@@ -1,27 +1,35 @@
-# PyramidDisplay
+<h1 align="center" id="title">Pyramid Display</h1>
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 15.0.3.
+<p align="center"><img src="https://socialify.git.ci/kgabriel-dev/PyramidDisplay/image?description=1&amp;font=Raleway&amp;forks=1&amp;issues=1&amp;name=1&amp;owner=1&amp;pattern=Solid&amp;pulls=1&amp;stargazers=1&amp;theme=Auto" alt="project-image"></p>
 
-## Development server
+<p id="description">Pyramid Display is an open-source Angular application that allows you to create the illusion of a hologram on any device using the Pepper's Ghost Effect. With Pyramid Display you can upload your own images and the app will create a structure on your screen that reflects the image to create the illusion of a hologram floating in the air. The app is compatible with any device that has a screen and you can customize the size and shape of the structure to fit your needs.</p>
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+<p align="center"><img src="https://img.shields.io/github/downloads/kgabriel-dev/PyramidDisplay/total" alt="shields"> <img src="https://img.shields.io/github/v/release/kgabriel-dev/PyramidDisplay?include_prereleases" alt="shields"> <img src="https://img.shields.io/github/issues/kgabriel-dev/PyramidDisplay" alt="shields"></p>
 
-## Code scaffolding
+<h2>Project Screenshots:</h2>
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+<img src="https://i.ibb.co/Gp1Mt0S/localhost-4200-i-Pad-Air-1.png" alt="project-screenshot" width="410" height="590/">
 
-## Build
+  
+  
+<h2>🧐 Features</h2>
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+Here're some of the project's best features:
 
-## Running unit tests
+*   Easy to use: Pyramid Display is user-friendly. You can upload your images and the app takes care of the rest.
+*   Responsive Design: The app is designed to be responsive and compatible with any device that has a screen. That means you can create holograms on your smartphone tablet or desktop computer.
+*   Open-Source: Pyramid Display is an open-source project meaning that anyone can contribute to the development of the app. This also means that the app is free to use.
+*   Cross-Browser-Compatibility: You can use the app in every browser.
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+  
+  
+<h2>💻 Built with</h2>
 
-## Running end-to-end tests
+Technologies used in the project:
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+*   Angular 15
+*   TailwindCSS
 
-## Further help
+<h2>🛡️ License:</h2>
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+This project is licensed under the MIT License
