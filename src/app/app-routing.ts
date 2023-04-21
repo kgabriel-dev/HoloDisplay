@@ -3,7 +3,7 @@ import { PyramidDisplayComponent } from "./views/pyramid-display/pyramid-display
 
 export const AppRoutes: Routes = [
     {
-        path: 'display',
+        path: '',
         component: PyramidDisplayComponent
     }
 ]
