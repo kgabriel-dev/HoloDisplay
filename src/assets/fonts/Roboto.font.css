@@ -1,0 +1,48 @@
+@font-face {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 300;
+  src: url("roboto-4f6b7bf7f9db2079eaa7e1a3dab08d70d4e83485.woff2") format("woff2"), 
+    url("roboto-2ee3880991ca939bbaf4a966cc450e75c862ca3a.woff2") format("woff2"), 
+    url("roboto-1d3aa98d063168da231cbfc3216f0eac6516d57f.woff2") format("woff2"), 
+    url("roboto-5a3802f48a3bc58a750a892e96fae00f8456840b.woff2") format("woff2"), 
+    url("roboto-4f6e96866000c9a1d69d795e0396853bd787519a.woff2") format("woff2"), 
+    url("roboto-415e31c6d8473e1f4145173185777f59e9957390.woff2") format("woff2"), 
+    url("roboto-1ed288702dcc1e94f9cb91348ac7b6fb7448a87b.woff2") format("woff2"), 
+    url("roboto-2707c7bd393fa30191d1539310ca35891477c846.woff") format("woff"), 
+    url("roboto-5875167004f265b89fc3388d4fddf4c3d64bb009.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 400;
+  /* IE6-8 compat */
+  src: url("roboto-8356b966b68e4e5a3ff8e4b85eaf47907c91289f.eot");
+  src: url("roboto-143c08c992c30851ff0de4140e64b50f22d264fe.woff2") format("woff2"), 
+    url("roboto-32e18ae407d782adfd54c78c6259c7be52db6bf3.woff2") format("woff2"), 
+    url("roboto-dbf6b0f2e2bade5c8f4f66e4eaab64134efe5ab8.woff2") format("woff2"), 
+    url("roboto-a03060228b60f28bc380a128188c8f4ffda4f02f.woff2") format("woff2"), 
+    url("roboto-c654a76bf4dd81fb918d3e08461c7123e5be1993.woff2") format("woff2"), 
+    url("roboto-fad0a82ab491e6ee403e116475dd6ea9a4cd8733.woff2") format("woff2"), 
+    url("roboto-279f300ca2cbbdf9f5036ef2f438607fbf377daa.woff2") format("woff2"), 
+    url("roboto-323e6800b4b0ee85b338e9a19ce5b28d4cabed36.woff") format("woff"), 
+    url("roboto-8356b966b68e4e5a3ff8e4b85eaf47907c91289f.eot") format("embedded-opentype"), 
+    url("roboto-56607504db21a6a703feaba6ff2bb3532c484293.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 500;
+  src: url("roboto-a86ec3b3428e1bc7779122645125eda91cf7e18c.woff2") format("woff2"), 
+    url("roboto-41f0f056110dd4213c98e7dd529cd726754408fe.woff2") format("woff2"), 
+    url("roboto-d897d15fb006f3c4ca1d12c348a96f44a8125531.woff2") format("woff2"), 
+    url("roboto-7e02b3f9fafee2812cb08cc3ac9292c6b27b324f.woff2") format("woff2"), 
+    url("roboto-b2b509897d53c2bc727b1d669cd8bcc9386f56b3.woff2") format("woff2"), 
+    url("roboto-d21bd154ee1c06a125f08c306c24978db497ca1e.woff2") format("woff2"), 
+    url("roboto-cf5032eea3399a58870e8a05e629b006a8c7c3c7.woff2") format("woff2"), 
+    url("roboto-3e84834a4337dde364d80e50b59a9a304b408998.woff") format("woff"), 
+    url("roboto-caba8535c63d825745070f176523143636767340.ttf") format("truetype");
+}
+
