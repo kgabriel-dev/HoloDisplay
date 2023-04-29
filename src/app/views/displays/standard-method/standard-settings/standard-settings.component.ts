@@ -7,7 +7,7 @@ import {
 } from 'src/app/services/settings-broadcasting.service';
 import { Subject } from 'rxjs';
 import { Router } from '@angular/router';
-import { environment } from 'src/environments.ts/environment';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-standard-settings',

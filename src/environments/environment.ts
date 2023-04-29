@@ -6,5 +6,5 @@ export const environment = {
   defaultValueSideCount: 4,
   defaultValueSwapTime: 500,
   defaultValueImageArray: [],
-  defaultValueImageSwap: false,
+  defaultValueImageSwap: false
 };
