@@ -25,7 +25,7 @@ Here're some of the project's best features:
 
 
 <h2>🛠️ How to use the software</h2>
-You can find a working version of this project on my website <a href="https://hologram.kgabriel.dev">https://hologram.kgabriel.dev</a>
+You can find a working version of this project on my website <a href="https://hologram.kgabriel.dev/en-US/">https://hologram.kgabriel.dev/en-US/</a>
 <br /><br />
 You can also download this source code and build the software yourself. Follow these steps to do so:
 <ol>
@@ -49,7 +49,7 @@ To make use of this project, you need a mirror that reflects the images created 
 <li>Lay the tiles edge to edge, so they start forming a circle. The connect the edges using some tape. Then connect the outer two edges, so your mirror forms.</li>
 </ol>
 
-Here is an image of a mirror with 4 sides:
+Here is an image of a mirror with 4 sides:<br />
 <img src="https://upload.wikimedia.org/wikipedia/commons/e/e2/Pyramid_holographic_3D_holographic_projection_phone_projector_3D_holographic_projection_3D_mobile_phone_naked_eye_3D_pyramid.jpg" alt="image of a mirror" width="300px"><br />&copy; Image licensed by Karthick98 under the <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.en">Creative Commons Attribution-Share Alike 4.0 International license</a>, uploaded on wikipedia.org.
 
   
