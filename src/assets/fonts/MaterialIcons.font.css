@@ -1,0 +1,12 @@
+@font-face {
+  font-family: 'Material Icons';
+  font-style: normal;
+  font-weight: 400;
+  /* IE6-8 compat */
+  src: url("materialicons-d5c6107ef426ab057ad8b1799b22ff80e2cb7651.eot");
+  src: url("materialicons-aaae93b146d97737fabe87a6bc741113e6899ad3.woff2") format("woff2"), 
+    url("materialicons-e4bb7c1e40d3febee58df963db276b2bf68c117b.woff") format("woff"), 
+    url("materialicons-d5c6107ef426ab057ad8b1799b22ff80e2cb7651.eot") format("embedded-opentype"), 
+    url("materialicons-54f4d1ee4ddffb420bd75a61eda92ed545eb96b4.ttf") format("truetype");
+}
+

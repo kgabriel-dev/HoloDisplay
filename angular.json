@@ -4,6 +4,15 @@
   "newProjectRoot": "projects",
   "projects": {
     "PyramidDisplay": {
+      "i18n": {
+        "sourceLocale": "en-US",
+        "locales": {
+          "de-DE": {
+            "translation": "src/locale/messages.de-DE.xlf",
+            "baseHref": "/de-DE/"
+          }
+        }
+      },
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -17,6 +26,9 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
+            "localize": [
+              "en-US"
+            ],
             "outputPath": "dist/pyramid-display",
             "index": "src/index.html",
             "main": "src/main.ts",
@@ -30,10 +42,12 @@
               "src/assets"
             ],
             "styles": [
-              "@angular/material/prebuilt-themes/deeppurple-amber.css",
-              "src/styles.scss"
+              "src/styles.scss",
+              "node_modules/tw-elements/dist/src/scss/index.scss"
             ],
-            "scripts": []
+            "scripts": [
+              "node_modules/tw-elements/dist/js/index.min.js"
+            ]
           },
           "configurations": {
             "production": {
@@ -99,11 +113,23 @@
             ],
             "scripts": []
           }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": [
+              "src/**/*.ts",
+              "src/**/*.html"
+            ]
+          }
         }
       }
     }
   },
   "cli": {
-    "analytics": "54d77e52-5517-4e48-9488-096025e83d3d"
+    "analytics": "54d77e52-5517-4e48-9488-096025e83d3d",
+    "schematicCollections": [
+      "@angular-eslint/schematics"
+    ]
   }
 }
