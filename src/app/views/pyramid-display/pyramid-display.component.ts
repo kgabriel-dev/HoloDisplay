@@ -40,4 +40,10 @@ export class PyramidDisplayComponent {
   onResize(event: Event) {
     this.resizeEvent$.next(event);
   }
+
+  toggleModal(modalId: string): void {
+    if(!document.getElementById(modalId)) return;
+
+    document.getElementById(modalId)!.classList.toggle("hidden");
+  }
 }

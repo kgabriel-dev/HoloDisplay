@@ -1,5 +1,5 @@
 <div *ngIf="iconsVisible" class="z-40 fixed top-5 right-5 flex flex-col">
-    <button data-bs-toggle="modal" data-bs-target="#settingsModal" (mouseover)="forceIconsVisible=true" (mouseleave)="forceIconsVisible=false">
+    <button (click)="toggleModal('settingsModal')" (mouseover)="forceIconsVisible=true" (mouseleave)="forceIconsVisible=false">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="white" class="w-10 h-10">
             <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-9.75 0h9.75" />
         </svg>
@@ -51,12 +51,17 @@
 
 <app-display-standard *ngIf="selectedDisplayMethod === 'Standard Method'" [calculate$]="this.doCalculation$.asObservable()" [resizeEvent$]="resizeEvent$.asObservable()" (window:resize)="onResize($event)" class="block w-full h-full bg-blue"></app-display-standard>
 
-<div class="modal fade fixed top-0 left-0 hidden w-full h-full outline-none overflow-x-hidden overflow-y-auto" id="settingsModal" tabindex="-1" aria-labelledby="Settings Modal" aria-hidden="true">
-    <div class="modal-dialog modal-xl relative w-auto pointer-events-none">
-        <div class="modal-content border-none shadow-lg relative flex flex-col w-full pointer-events-auto bg-white bg-clip-padding rounded-md outline-none text-current">
-            <div class="modal-body relative p-4">
-                <app-standard-settings *ngIf="selectedDisplayMethod === 'Standard Method'"></app-standard-settings>
-            </div>
+<div class="hidden overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none" id="settingsModal">
+    <div class="relative w-auto my-6 mx-auto max-w-3xl">
+      <!--content-->
+      <div class="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
+        <app-standard-settings *ngIf="selectedDisplayMethod === 'Standard Method'"></app-standard-settings>
+        <!--footer-->
+        <div class="flex items-center justify-end p-6 border-t border-solid border-slate-200 rounded-b">
+          <button class="text-red-500 background-transparent font-bold uppercase px-6 py-2 text-sm outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150" type="button" (click)="toggleModal('settingsModal')">
+            Close
+          </button>
         </div>
+      </div>
     </div>
-</div>
+  </div>

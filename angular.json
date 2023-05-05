@@ -42,11 +42,7 @@
               "src/assets"
             ],
             "styles": [
-              "src/styles.scss",
-              "node_modules/tw-elements/dist/src/scss/index.scss"
-            ],
-            "scripts": [
-              "node_modules/tw-elements/dist/js/index.min.js"
+              "src/styles.scss"
             ]
           },
           "configurations": {

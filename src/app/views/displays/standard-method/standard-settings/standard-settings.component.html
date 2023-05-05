@@ -18,21 +18,7 @@
             </div>
         </div>
         <div class="p-5 bg-cyan-700 ">
-            <input class="form-control
-                    h-9
-                    w-10/12
-                    px-3
-                    py-1.5
-                    my-2
-                    text-base
-                    font-normal
-                    text-gray-700
-                    bg-white bg-clip-padding
-                    border border-solid border-gray-300
-                    rounded
-                    transition
-                    ease-in-out
-                    focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none" type="file" accept=".png,.jpg,.jpeg,.webp" multiple id="formFile" (change)="addImages($event)">
+            <input type="file" multiple accept=".png,.jpg,.jpeg,.webp" (change)="addImages($event)" class="block w-full border border-gray-200 shadow-sm rounded-md text-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500 file:border-0 file:mr-4 file:py-3 file:px-4 file:bg-white">
         </div>
     </div>
     
@@ -49,22 +35,8 @@
                 <button type="button" (click)="saveSettings()" data-mdb-ripple="true" data-mdb-ripple-color="light" class="p-3 mx-3 border-2 rounded-lg hover:bg-sky-800" i18n>Save</button>
             </div>
 
-            <div class="border py-3 rounded-b-lg text-center">
-                <input class="form-control
-                    h-9
-                    w-10/12
-                    px-3
-                    py-1.5
-                    my-2
-                    text-base
-                    font-normal
-                    text-gray-700
-                    bg-white bg-clip-padding
-                    border border-solid border-gray-300
-                    rounded
-                    transition
-                    ease-in-out
-                    focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none" type="file" id="formFile" (change)="loadSettings($event)">
+            <div class="border p-5 rounded-b-lg text-center">
+                <input type="file" (change)="loadSettings($event)" accept=".json" class="block w-full border border-gray-200 shadow-sm rounded-md text-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500 file:border-0 file:mr-4 file:py-3 file:px-4 file:bg-white">
             </div>
             
         </div>
