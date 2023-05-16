@@ -39,7 +39,7 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
   private canvasSize = 0;
   private angle = 0;
   private images: HTMLImageElement[] = [];
-  private imageSize = 0;
+  private imageScalingFactor = 1;
   private imageCanvasSize = 0;
   private offsetAngle = 0;
   private innerPolygonIncircleRadius = 0;
@@ -100,7 +100,7 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
     this.offsetAngle = ((sideCount - 2) * this.angle) / 4;
     this.innerEdgePoints = this.helperService.getEvenlySpacedPointsOnCircle((this.settingsBroadcastingService.getLastValue('InnerPolygonSize') as number) / 2, this.centerPoint, sideCount);
     this.outerEdgePoints = this.helperService.getEvenlySpacedPointsOnCircle(this.canvasSize / 2, this.centerPoint, sideCount);
-    this.imageSize = this.settingsBroadcastingService.getLastValue('ImageSize') as number;
+    this.imageScalingFactor = this.settingsBroadcastingService.getLastValue('ImageSize') as number / 100;
     this.imageCanvasSize = this.helperService.getDistanceBetweenParallelLines(this.innerEdgePoints[0], this.innerEdgePoints[1], this.outerEdgePoints[0]);
     this.innerPolygonIncircleRadius = this.helperService.getRadiusOfIncircleOfRegularPolygon((this.settingsBroadcastingService.getLastValue('InnerPolygonSize') as number) / 2, sideCount);
   }
@@ -140,8 +140,11 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
       ctx.clip();
 
       // draw the image
+      const scaledImageWidth = image.width * this.imageScalingFactor;
+      const scaledImageHeight = image.height * this.imageScalingFactor;
+
       ctx.rotate(this.offsetAngle);
-      ctx.drawImage(image, -this.imageSize/2, -this.innerPolygonIncircleRadius - this.imageCanvasSize/2 - this.imageSize/2, this.imageSize, this.imageSize);
+      ctx.drawImage(image, -scaledImageWidth/2, -this.innerPolygonIncircleRadius - this.imageCanvasSize/2 - scaledImageHeight/2, scaledImageWidth, scaledImageHeight);
     }
   }
 
