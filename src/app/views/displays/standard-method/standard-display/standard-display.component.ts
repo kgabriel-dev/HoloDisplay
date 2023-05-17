@@ -111,9 +111,8 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
 
     const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
     ctx.save();
-    ctx.restore();
     ctx.resetTransform();
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    canvas.width = canvas.width;  // clears canvas as a side effect
 
     ctx.translate(canvas.width / 2, canvas.height / 2);
     this.helperService.connectPointsWithStraightLines(ctx, this.innerEdgePoints, 'blue');
