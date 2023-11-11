@@ -26,7 +26,7 @@ export class SettingsBroadcastingService {
   );
 
   private imageSwapTime = environment.defaultValueSwapTime;
-  private imageSwapInterval: NodeJS.Timer | undefined;
+  private imageSwapInterval?: number;
 
   public broadcastChange(
     target: BroadcastTarget,
@@ -67,7 +67,7 @@ export class SettingsBroadcastingService {
 
     if (this.imageSwapInterval) clearInterval(this.imageSwapInterval);
 
-    this.imageSwapInterval = setInterval(() => {
+    this.imageSwapInterval = window.setInterval(() => {
       this.broadcastChange('SwapImage', true);
     }, this.imageSwapTime);
   }

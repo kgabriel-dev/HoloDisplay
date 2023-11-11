@@ -7,7 +7,7 @@ import {
   ViewChild
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Observable } from 'rxjs';
+import { Observable, debounceTime } from 'rxjs';
 import { StandardMethodCalculatorService } from 'src/app/services/calculators/standard-method/standard-method-calculator.service';
 import { HelperService, Point } from 'src/app/services/helpers/helper.service';
 import { SettingsBroadcastingService } from 'src/app/services/settings-broadcasting.service';
@@ -29,7 +29,6 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
   private readonly sideCount$ = this.settingsBroadcastingService.selectNotificationChannel('SideCount');
   private readonly swapTime$ = this.settingsBroadcastingService.selectNotificationChannel('SwapImage');
   private readonly imageArray$ = this.settingsBroadcastingService.selectNotificationChannel('NewImages');
-  private readonly centerPoint: Point = { x: 0, y: 0 };
 
   @ViewChild('displayCanvas') displayCanvas!: ElementRef<HTMLCanvasElement>;
   @ViewChild('container') container!: ElementRef<HTMLDivElement>;
@@ -40,9 +39,8 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
   private angle = 0;
   private images: HTMLImageElement[] = [];
   private imageScalingFactor = 1;
-  private imageCanvasSize = 0;
-  private offsetAngle = 0;
   private innerPolygonIncircleRadius = 0;
+  private polygonInfo: { rotation: number, offset: {dx: number, dy: number}, sides: number } = {} as typeof this.polygonInfo;
 
   calculatorDPI = 96;
   calculatorSlope = 45;
@@ -65,7 +63,7 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
-    this.resizeEvent$.subscribe((event) => {
+    this.resizeEvent$.pipe(debounceTime(20)).subscribe((event) => {
       this.resizeCanvas((event.target as Window).innerWidth, (event.target as Window).innerHeight);
       this.recalculateValues();
     });
@@ -97,11 +95,20 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
     const sideCount = this.settingsBroadcastingService.getLastValue('SideCount') as number;
 
     this.angle = 2 * Math.PI / sideCount;
-    this.offsetAngle = ((sideCount - 2) * this.angle) / 4;
-    this.innerEdgePoints = this.helperService.getEvenlySpacedPointsOnCircle((this.settingsBroadcastingService.getLastValue('InnerPolygonSize') as number) / 2, this.centerPoint, sideCount);
-    this.outerEdgePoints = this.helperService.getEvenlySpacedPointsOnCircle(this.canvasSize / 2, this.centerPoint, sideCount);
+    let outerPolygon = this.helperService.getMaxRegPolygonPointsHeuristic(this.canvasSize, sideCount, false);
+    this.polygonInfo = { rotation: outerPolygon.angle, offset: outerPolygon.offset, sides: sideCount };
+    this.outerEdgePoints = this.helperService.centerPoints(outerPolygon.points, outerPolygon.offset).points;
+
+    this.innerEdgePoints = [];
+    for(let i = 0; i < sideCount; i++) {
+      this.innerEdgePoints.push(this.helperService.getPointOnCircle(this.settingsBroadcastingService.getLastValue('InnerPolygonSize') as number, i * this.angle - this.polygonInfo.rotation, {x: 0, y: 0}));
+    }
+    this.innerEdgePoints = this.helperService.centerPoints(this.innerEdgePoints, outerPolygon.offset).points;
+    this.innerEdgePoints.reverse();
+    const lastPoint = this.innerEdgePoints.pop() as Point;
+    this.innerEdgePoints.unshift(lastPoint);
+
     this.imageScalingFactor = this.settingsBroadcastingService.getLastValue('ImageSize') as number / 100;
-    this.imageCanvasSize = this.helperService.getDistanceBetweenParallelLines(this.innerEdgePoints[0], this.innerEdgePoints[1], this.outerEdgePoints[0]);
     this.innerPolygonIncircleRadius = this.helperService.getRadiusOfIncircleOfRegularPolygon((this.settingsBroadcastingService.getLastValue('InnerPolygonSize') as number) / 2, sideCount);
   }
 
@@ -122,28 +129,40 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
       const image = this.images[iSide % this.images.length];
 
       if(!image) continue;
+
       ctx.restore();
       ctx.resetTransform();
       ctx.save();
 
-      ctx.translate(this.canvasSize/2, this.canvasSize/2);
+      ctx.translate(this.canvasSize/2 - this.polygonInfo.offset.dx, this.canvasSize/2 - this.polygonInfo.offset.dy);
       ctx.rotate(iSide * this.angle);
 
       // create the clip mask
       ctx.beginPath();
-      ctx.moveTo(this.innerEdgePoints[0].x, this.innerEdgePoints[0].y);
-      ctx.lineTo(this.outerEdgePoints[0].x, this.outerEdgePoints[0].y);
-      ctx.lineTo(this.outerEdgePoints[1].x, this.outerEdgePoints[1].y);
-      ctx.lineTo(this.innerEdgePoints[1].x, this.innerEdgePoints[1].y);
+      ctx.moveTo(this.innerEdgePoints[0].x + this.polygonInfo.offset.dx, this.innerEdgePoints[0].y + this.polygonInfo.offset.dy);
+      ctx.lineTo(this.outerEdgePoints[0].x + this.polygonInfo.offset.dx, this.outerEdgePoints[0].y + this.polygonInfo.offset.dy);
+      ctx.lineTo(this.outerEdgePoints[1].x + this.polygonInfo.offset.dx, this.outerEdgePoints[1].y + this.polygonInfo.offset.dy);
+      ctx.lineTo(this.innerEdgePoints[1].x + this.polygonInfo.offset.dx, this.innerEdgePoints[1].y + this.polygonInfo.offset.dy);
       ctx.closePath();
       ctx.clip();
+
+      // undo the rotation
+      ctx.rotate(-iSide * this.angle);
 
       // draw the image
       const scaledImageWidth = image.width * this.imageScalingFactor;
       const scaledImageHeight = image.height * this.imageScalingFactor;
 
-      ctx.rotate(this.offsetAngle);
-      ctx.drawImage(image, -scaledImageWidth/2, -this.innerPolygonIncircleRadius - this.imageCanvasSize/2 - scaledImageHeight/2, scaledImageWidth, scaledImageHeight);
+      ctx.rotate(Math.PI)
+      ctx.rotate((iSide - (0.25 * (this.polygonInfo.sides - 2))) * this.angle + this.polygonInfo.rotation); // Why does this equation work?
+
+      ctx.drawImage(
+        image,
+        -scaledImageWidth/2,
+        -this.innerPolygonIncircleRadius - this.canvasSize/4 - scaledImageHeight/2 - (this.settingsBroadcastingService.getLastValue('ImagePosition') as number),
+        scaledImageWidth,
+        scaledImageHeight
+      );
     }
   }
 

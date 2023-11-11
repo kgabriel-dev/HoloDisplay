@@ -8,9 +8,7 @@ import { Router } from '@angular/router';
 export class LanguageService {
   readonly languages = ['en-US', 'de-DE'];
 
-  constructor(@Inject(LOCALE_ID) private locale: string, private router: Router) {
-    console.log(locale, getLocaleId(locale));
-  }
+  constructor(@Inject(LOCALE_ID) private locale: string, private router: Router) {}
 
   public getCurrentLanguageDetails() {
     return this.locale;
