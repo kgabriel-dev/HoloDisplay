@@ -18,8 +18,8 @@ import { environment } from 'src/environments/environment';
 })
 export class SettingsComponent {
   innerPolygonSize = new FormControl(Number(environment.defaultValueInnerPolygonSize));
-  imageSize = new FormControl(Number(environment.defaultValueImageSize));
-  imagePosition = new FormControl(Number(environment.defaultValueImagePosition));
+  imageSizes: FormControl[] = [];
+  imagePositions: FormControl[] = [];
   sideCount = new FormControl(Number(environment.defaultValueSideCount));
   imageSwapTime = new FormControl(Number(environment.defaultValueSwapTime));
 
@@ -32,8 +32,6 @@ export class SettingsComponent {
     target: BroadcastTarget;
   }[] = [
     { control: this.innerPolygonSize, target: 'InnerPolygonSize' },
-    { control: this.imageSize, target: 'ImageSize' },
-    { control: this.imagePosition, target: 'ImagePosition' },
     { control: this.sideCount, target: 'SideCount' },
   ];
 
@@ -48,6 +46,15 @@ export class SettingsComponent {
 
     this.imagesChanged$.subscribe((imgList) => {
       this.settingsBroadcaster.broadcastChange('NewImages', imgList);
+
+      if(imgList.length > this.imageSizes.length)
+        for(let i = 0; i < (imgList.length - this.imageSizes.length); i++) {
+          this.imageSizes.push(new FormControl(100));
+          this.imagePositions.push(new FormControl(0));
+
+          this.settingsBroadcaster.broadcastChange('ImageSizes', this.imageSizes.map((control) => control.value));
+          this.settingsBroadcaster.broadcastChange('ImagePositions', this.imagePositions.map((control) => control.value));
+        }
     });
 
     this.controlsAndTargets.forEach((pair) => {
@@ -61,8 +68,8 @@ export class SettingsComponent {
     // build the settings string
     const currSettings: SettingsData = {
       innerPolygonSize: this.innerPolygonSize.value || 50,
-      imageSize: this.imageSize.value || 100,
-      imagePosition: this.imagePosition.value || 0,
+      imagePositions: this.imagePositions.map((control) => control.value),
+      imageSizes: this.imageSizes.map((control) => control.value),
       sideCount: this.sideCount.value || 4,
       imageSwapTime: this.imageSwapTime.value || 1000,
     };
@@ -88,8 +95,8 @@ export class SettingsComponent {
         const loadedSettings = JSON.parse(fileReader.result?.toString() || '');
 
         this.innerPolygonSize.setValue(loadedSettings.innerPolygonSize || 50);
-        this.imageSize.setValue(loadedSettings.imageSize || 100);
-        this.imagePosition.setValue(loadedSettings.imagePosition || 0);
+        this.imageSizes = (loadedSettings.imageSizes || '[]').map((size: number) => new FormControl(size));
+        this.imagePositions = (loadedSettings.imagePositions || '[]').map((pos: number) => new FormControl(pos));
         this.sideCount.setValue(loadedSettings.sideCount || 4);
         this.imageSwapTime.setValue(loadedSettings.imageSwapTime || 1000);
       };
@@ -150,12 +157,26 @@ export class SettingsComponent {
       this.currentImages.map((imagePair) => imagePair.src)
     );
   }
+
+  scaleImage(index: number, type: 'plus' | 'minus') {
+    if (type === 'plus') this.imageSizes[index].setValue(this.imageSizes[index].value + 10);
+    else if (type === 'minus') this.imageSizes[index].setValue(this.imageSizes[index].value - 10);
+
+    this.settingsBroadcaster.broadcastChange('ImageSizes', this.imageSizes.map((control) => control.value));
+  }
+
+  moveImage(index: number, type: 'up' | 'down') {
+    if (type === 'up') this.imagePositions[index].setValue(this.imagePositions[index].value + 10);
+    else if (type === 'down') this.imagePositions[index].setValue(this.imagePositions[index].value - 10);
+
+    this.settingsBroadcaster.broadcastChange('ImagePositions', this.imagePositions.map((control) => control.value));
+  }
 }
 
 export type SettingsData = {
   innerPolygonSize: number;
-  imageSize: number;
-  imagePosition: number;
+  imageSizes: number[];
+  imagePositions: number[];
   sideCount: number;
   imageSwapTime: number;
 };

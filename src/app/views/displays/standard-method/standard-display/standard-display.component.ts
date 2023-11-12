@@ -23,8 +23,8 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
   @Input() resizeEvent$!: Observable<Event>;
   @Input() calculate$!: Observable<void>;
 
-  private readonly imagePosition$ = this.settingsBroadcastingService.selectNotificationChannel('ImagePosition');
-  private readonly imageSize$ = this.settingsBroadcastingService.selectNotificationChannel('ImageSize');
+  private readonly imagePositions$ = this.settingsBroadcastingService.selectNotificationChannel('ImagePositions');
+  private readonly imageSizes$ = this.settingsBroadcastingService.selectNotificationChannel('ImageSizes');
   private readonly innerPolygonSize$ = this.settingsBroadcastingService.selectNotificationChannel('InnerPolygonSize');
   private readonly sideCount$ = this.settingsBroadcastingService.selectNotificationChannel('SideCount');
   private readonly swapTime$ = this.settingsBroadcastingService.selectNotificationChannel('SwapImage');
@@ -38,7 +38,8 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
   private canvasSize = 0;
   private angle = 0;
   private images: HTMLImageElement[] = [];
-  private imageScalingFactor = 1;
+  private imageScalingFactors: number[] = [];
+  private imagePositions: number[] = [];
   private innerPolygonIncircleRadius = 0;
   private polygonInfo: { rotation: number, offset: {dx: number, dy: number}, sides: number } = {} as typeof this.polygonInfo;
 
@@ -54,8 +55,9 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
     private calculator: StandardMethodCalculatorService
   ) {
     // subscribe to all settings broadcast channels
-    this.imagePosition$.subscribe(() => this.recalculateValues());
-    this.imageSize$.subscribe(() => this.recalculateValues());
+    this.imagePositions$.subscribe(() => this.recalculateValues());
+    this.imageSizes$.subscribe(() => this.recalculateValues());
+    this.imagePositions$.subscribe(() => this.recalculateValues());
     this.innerPolygonSize$.subscribe(() => this.recalculateValues());
     this.sideCount$.subscribe(() => this.recalculateValues());
     this.swapTime$.subscribe(() => this.draw());
@@ -108,7 +110,8 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
     const lastPoint = this.innerEdgePoints.pop() as Point;
     this.innerEdgePoints.unshift(lastPoint);
 
-    this.imageScalingFactor = this.settingsBroadcastingService.getLastValue('ImageSize') as number / 100;
+    this.imageScalingFactors = (this.settingsBroadcastingService.getLastValue('ImageSizes') as number[]).map((size) => size / 100);
+    this.imagePositions = this.settingsBroadcastingService.getLastValue('ImagePositions') as number[];
     this.innerPolygonIncircleRadius = this.helperService.getRadiusOfIncircleOfRegularPolygon((this.settingsBroadcastingService.getLastValue('InnerPolygonSize') as number) / 2, sideCount);
   }
 
@@ -150,8 +153,8 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
       ctx.rotate(-iSide * this.angle);
 
       // draw the image
-      const scaledImageWidth = image.width * this.imageScalingFactor;
-      const scaledImageHeight = image.height * this.imageScalingFactor;
+      const scaledImageWidth = image.width * this.imageScalingFactors[iSide % this.images.length];
+      const scaledImageHeight = image.height * this.imageScalingFactors[iSide % this.images.length];
 
       ctx.rotate(Math.PI)
       ctx.rotate((iSide - (0.25 * (this.polygonInfo.sides - 2))) * this.angle + this.polygonInfo.rotation); // Why does this equation work?
@@ -159,7 +162,7 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
       ctx.drawImage(
         image,
         -scaledImageWidth/2,
-        -this.innerPolygonIncircleRadius - this.canvasSize/4 - scaledImageHeight/2 - (this.settingsBroadcastingService.getLastValue('ImagePosition') as number),
+        -this.innerPolygonIncircleRadius - this.canvasSize/4 - scaledImageHeight/2 - this.imagePositions[iSide % this.images.length],
         scaledImageWidth,
         scaledImageHeight
       );

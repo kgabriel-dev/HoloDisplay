@@ -1,8 +1,8 @@
 export const environment = {
   // default values for the settings
-  defaultValueImageSize: 100,
+  defaultValueImageSizes: [],
   defaultValueInnerPolygonSize: 50,
-  defaultValueImagePosition: 0,
+  defaultValueImagePositions: [],
   defaultValueSideCount: 4,
   defaultValueSwapTime: 500,
   defaultValueImageArray: [],

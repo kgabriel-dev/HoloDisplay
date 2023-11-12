@@ -9,11 +9,11 @@ export class SettingsBroadcastingService {
   private readonly innerPolygonSize$ = new BehaviorSubject<number>(
     environment.defaultValueInnerPolygonSize
   );
-  private readonly imageSize$ = new BehaviorSubject<number>(
-    environment.defaultValueImageSize
+  private readonly imageSizes$ = new BehaviorSubject<number[]>(
+    environment.defaultValueImageSizes
   );
-  private readonly imagePosition$ = new BehaviorSubject<number>(
-    environment.defaultValueImagePosition
+  private readonly imagePositions$ = new BehaviorSubject<number[]>(
+    environment.defaultValueImagePositions
   );
   private readonly sideCount$ = new BehaviorSubject<number>(
     environment.defaultValueSideCount
@@ -30,19 +30,19 @@ export class SettingsBroadcastingService {
 
   public broadcastChange(
     target: BroadcastTarget,
-    value: number | boolean | string[]
+    value: number | boolean | string[] | number[]
   ): void {
     switch (target) {
       case 'InnerPolygonSize':
         if (typeof value == 'number') this.innerPolygonSize$.next(value);
         break;
 
-      case 'ImageSize':
-        if (typeof value == 'number') this.imageSize$.next(value);
+      case 'ImageSizes':
+        if (Array.isArray(value)) this.imageSizes$.next(value as number[]);
         break;
 
-      case 'ImagePosition':
-        if (typeof value == 'number') this.imagePosition$.next(value);
+      case 'ImagePositions':
+        if (Array.isArray(value)) this.imagePositions$.next(value as number[]);
         break;
 
       case 'SideCount':
@@ -55,10 +55,9 @@ export class SettingsBroadcastingService {
 
       case 'NewImages':
         if (
-          Array.isArray(value) &&
-          value.every((entry) => typeof entry == 'string')
+          Array.isArray(value)
         )
-          this.newImages$.next(value);
+          this.newImages$.next(value as string[]);
     }
   }
 
@@ -74,11 +73,11 @@ export class SettingsBroadcastingService {
 
   public selectNotificationChannel(target: BroadcastTarget): Observable<any> {
     switch (target) {
-      case 'ImagePosition':
-        return this.imagePosition$.asObservable();
+      case 'ImagePositions':
+        return this.imagePositions$.asObservable();
 
-      case 'ImageSize':
-        return this.imageSize$.asObservable();
+      case 'ImageSizes':
+        return this.imageSizes$.asObservable();
 
       case 'InnerPolygonSize':
         return this.innerPolygonSize$.asObservable();
@@ -98,10 +97,10 @@ export class SettingsBroadcastingService {
     switch (channel) {
       case 'NewImages':
         return this.newImages$.getValue();
-      case 'ImagePosition':
-        return this.imagePosition$.getValue();
-      case 'ImageSize':
-        return this.imageSize$.getValue();
+      case 'ImagePositions':
+        return this.imagePositions$.getValue();
+      case 'ImageSizes':
+        return this.imageSizes$.getValue();
       case 'InnerPolygonSize':
         return this.innerPolygonSize$.getValue();
       case 'SideCount':
@@ -114,8 +113,8 @@ export class SettingsBroadcastingService {
 
 export type BroadcastTarget =
   | 'InnerPolygonSize'
-  | 'ImageSize'
-  | 'ImagePosition'
+  | 'ImageSizes'
+  | 'ImagePositions'
   | 'SideCount'
   | 'SwapImage'
   | 'NewImages';
