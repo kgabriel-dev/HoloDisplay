@@ -27,6 +27,8 @@ Here're some of the project's best features:
 <h2>🛠️ How to use the software</h2>
 You can find a working version of this project on my website <a href="https://hologram.kgabriel.dev/en-US/">https://hologram.kgabriel.dev/en-US/</a>
 <br /><br />
+Another option is to use the executable file found in the folder `executables`. This file starts a simple webserver and opens the correct website (<a href="http://localhost:5000/en-US/">localhost:5000/en-US/</a>).
+<br /><br />
 You can also download this source code and build the software yourself. Follow these steps to do so:
 <ol>
 <li>Download the source code / clone the repository.</li>
