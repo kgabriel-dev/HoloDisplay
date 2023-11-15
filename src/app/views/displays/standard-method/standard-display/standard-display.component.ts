@@ -11,6 +11,7 @@ import { Observable, debounceTime } from 'rxjs';
 import { StandardMethodCalculatorService } from 'src/app/services/calculators/standard-method/standard-method-calculator.service';
 import { HelperService, Point } from 'src/app/services/helpers/helper.service';
 import { SettingsBroadcastingService } from 'src/app/services/settings-broadcasting.service';
+import { TutorialService } from 'src/app/services/tutorial/tutorial.service';
 
 @Component({
   selector: 'app-display-standard',
@@ -18,6 +19,7 @@ import { SettingsBroadcastingService } from 'src/app/services/settings-broadcast
   imports: [CommonModule, FormsModule],
   templateUrl: './standard-display.component.html',
   styleUrls: ['./standard-display.component.scss'],
+  providers: [TutorialService]
 })
 export class StandardDisplayComponent implements OnInit, AfterViewInit {
   @Input() resizeEvent$!: Observable<Event>;
@@ -51,7 +53,8 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
   constructor(
     public settingsBroadcastingService: SettingsBroadcastingService,
     private helperService: HelperService,
-    private calculator: StandardMethodCalculatorService
+    private calculator: StandardMethodCalculatorService,
+    private tutorial: TutorialService
   ) {
     // subscribe to all settings broadcast channels
     this.imagePosition$.subscribe(() => this.recalculateValues());
@@ -77,6 +80,9 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
   ngAfterViewInit(): void {
     this.resizeCanvas(this.container.nativeElement.clientWidth, this.container.nativeElement.clientHeight);
     this.recalculateValues();
+
+    this.tutorial.loadStandardDisplayTutorial();
+    this.tutorial.startTutorial();
   }
 
   private resizeCanvas(width: number, height: number): void {
