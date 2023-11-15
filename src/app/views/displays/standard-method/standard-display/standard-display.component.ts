@@ -18,8 +18,7 @@ import { TutorialService } from 'src/app/services/tutorial/tutorial.service';
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './standard-display.component.html',
-  styleUrls: ['./standard-display.component.scss'],
-  providers: [TutorialService]
+  styleUrls: ['./standard-display.component.scss']
 })
 export class StandardDisplayComponent implements OnInit, AfterViewInit {
   @Input() resizeEvent$!: Observable<Event>;

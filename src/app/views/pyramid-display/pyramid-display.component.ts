@@ -5,7 +5,7 @@ import { debounceTime, fromEvent, map, Subject } from 'rxjs';
 import { SettingsComponent } from '../displays/standard-method/standard-settings/standard-settings.component';
 import { StandardDisplayComponent } from '../displays/standard-method/standard-display/standard-display.component';
 import { LanguageService } from 'src/app/services/i18n/language.service';
-import { StandardMethodCalculatorService } from 'src/app/services/calculators/standard-method/standard-method-calculator.service';
+import { TutorialService } from 'src/app/services/tutorial/tutorial.service';
 
 @Component({
   selector: 'app-pyramid-display',
@@ -27,12 +27,27 @@ export class PyramidDisplayComponent {
     { name: 'Standard Method', component: StandardDisplayComponent }
   ]
 
-  constructor(public language: LanguageService, private calculator: StandardMethodCalculatorService) {
+  constructor(public language: LanguageService, private tutorial: TutorialService) {
     this.mouseMoving$.pipe(
       map(() => this.iconsVisible = true),
       debounceTime(2000),
       map(() => this.iconsVisible = this.forceIconsVisible),
     ).subscribe();
+
+    tutorial.tutorialEvents$.subscribe((event) => {
+      console.log(event);
+
+      if(event == 'start') {
+        this.forceIconsVisible = true;
+      } else if(event == 'complete') {
+        this.forceIconsVisible = false;
+      } else if(event == 'showButtons') {
+        this.forceIconsVisible = true;
+        this.iconsVisible = true;
+      } else if(event == 'hideButtons') {
+        this.forceIconsVisible = false;
+      }
+    });
 
     this.resizeEvent$ = new Subject<Event>();
   }

@@ -1,13 +1,24 @@
 import { Injectable } from '@angular/core';
 import { ShepherdService } from 'angular-shepherd';
+import { Subject } from 'rxjs';
 
 @Injectable({
-  providedIn: 'platform'
+  providedIn: 'root'
 })
 export class TutorialService {
 
+  private tutorialEvents = new Subject<'start' | 'complete' | 'hideButtons' | 'showButtons'>();
+
   constructor(private shepherd: ShepherdService) {
     this.basic_initialization();
+  }
+
+  get tutorialEvents$() {
+    return this.tutorialEvents.asObservable();
+  }
+
+  get isTutorialActive() {
+    return this.shepherd.isActive;
   }
 
   private basic_initialization() {
@@ -16,23 +27,7 @@ export class TutorialService {
       cancelIcon: {
         enabled: true
       },
-      buttons: [
-        {
-          text: 'Exit',
-          action: this.doTutorialAction('cancel'),
-          label: 'Exit'
-        },
-        {
-          text: 'Back',
-          action: this.doTutorialAction('back'),
-          label: 'Back'
-        },
-        {
-          text: 'Next',
-          action: this.doTutorialAction('next'),
-          label: 'Next',
-        }
-      ]
+      buttons: this.getButtons(['Exit', 'Back', 'Next'])
     };
 
     this.shepherd.modal = true;
@@ -40,6 +35,7 @@ export class TutorialService {
   }
 
   public startTutorial() {
+    this.tutorialEvents.next('start');
     this.shepherd.start();
   }
 
@@ -51,6 +47,7 @@ export class TutorialService {
           element: '#displayCanvas',
           on: 'top'
         },
+        buttons: this.getButtons(['Exit', 'Next']),
         title: 'Welcome to the tutorial!',
         text: 'This is a tutorial to help you get started with the application.'
       },
@@ -61,7 +58,14 @@ export class TutorialService {
           on: 'bottom'
         },
         title: 'Settings',
-        text: 'Click this button to open the settings menu.'
+        text: 'Click this button to open the settings menu.',
+        beforeShowPromise: () => {
+          // make sure the buttons are shown
+          return new Promise<void>((resolve) => {
+            this.tutorialEvents.next('showButtons');
+            resolve();
+          });
+        }
       },
       {
         id: 'finished',
@@ -69,28 +73,33 @@ export class TutorialService {
           element: '#displayCanvas',
           on: 'top'
         },
-        buttons: [
-          {
-            text: 'Exit',
-            action: this.doTutorialAction('cancel'),
-            label: 'Exit'
-          }
-        ],
+        buttons: this.getButtons(['Back', 'Exit']),
         title: 'Finished!',
         text: 'You have finished the tutorial. I hope you enjoy using the application!'
       }
     ])
   }
 
-  private doTutorialAction(action: 'next' | 'cancel' | 'back') {
+  private doTutorialAction(action: 'next' | 'exit' | 'back') {
     return () => {
       if(action === 'next') {
         this.shepherd.next();
-      } else if(action === 'cancel') {
+      } else if(action === 'exit') {
         this.shepherd.cancel();
+        this.tutorialEvents.next('complete');
       } else if(action === 'back') {
         this.shepherd.back();
       }
     }
+  }
+
+  private getButtons(buttons: ('Next' | 'Exit' | 'Back')[]) {
+    return buttons.map((button) => {
+      return {
+        text: button,
+        action: this.doTutorialAction(button.toLowerCase() as 'next' | 'exit' | 'back'),
+        label: button
+      }
+    });
   }
 }
