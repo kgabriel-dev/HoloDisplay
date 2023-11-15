@@ -13,14 +13,14 @@
                         <div class="w-full">
                             <button type="button" (click)="pushImageUp(i)" data-mdb-ripple="true" data-mdb-ripple-color="light" class="ml-4 my-2 p-2 border rounded hover:bg-sky-800">⤴️</button>
                             <button type="button" (click)="pushImageDown(i)" data-mdb-ripple="true" data-mdb-ripple-color="light" class="ml-4 my-2 p-2 border rounded hover:bg-sky-800">⤵️</button>
-                            <button type="button" (click)="moveImage(i, 'up')" data-mdb-ripple="true" data-mdb-ripple-color="light" class="ml-4 my-2 p-2 border rounded hover:bg-sky-800" i18n>Höher</button>
-                            <button type="button" (click)="moveImage(i, 'down')" data-mdb-ripple="true" data-mdb-ripple-color="light" class="ml-4 my-2 p-2 border rounded hover:bg-sky-800" i18n>Tiefer</button>
-                            <button type="button" (click)="scaleImage(i, 'plus')" data-mdb-ripple="true" data-mdb-ripple-color="light" class="ml-4 my-2 p-2 border rounded hover:bg-sky-800" i18n>Größer</button>
-                            <button type="button" (click)="scaleImage(i, 'minus')" data-mdb-ripple="true" data-mdb-ripple-color="light" class="ml-4 my-2 p-2 border rounded hover:bg-sky-800" i18n>Kleiner</button>
+                            <button type="button" (click)="moveImage(i, 'up')" data-mdb-ripple="true" data-mdb-ripple-color="light" class="ml-4 my-2 p-2 border rounded hover:bg-sky-800" i18n>Move outwards</button>
+                            <button type="button" (click)="moveImage(i, 'down')" data-mdb-ripple="true" data-mdb-ripple-color="light" class="ml-4 my-2 p-2 border rounded hover:bg-sky-800" i18n>Move inwards</button>
+                            <button type="button" (click)="scaleImage(i, 'plus')" data-mdb-ripple="true" data-mdb-ripple-color="light" class="ml-4 my-2 p-2 border rounded hover:bg-sky-800" i18n>Scale up</button>
+                            <button type="button" (click)="scaleImage(i, 'minus')" data-mdb-ripple="true" data-mdb-ripple-color="light" class="ml-4 my-2 p-2 border rounded hover:bg-sky-800" i18n>Scale down</button>
                         </div>
                         <div class="w-full">
-                            <p i18n>Position: {{ this.imagePositions[i].value }}</p>
-                            <p i18n>Größe: {{ this.imageSizes[i].value }}%</p>
+                            <p i18n>Position: {{ this.imagePositions[i].value / 10 }}</p>
+                            <p i18n>Size: {{ this.imageSizes[i].value }}%</p>
                         </div>
                     </li>
                 </ol>
