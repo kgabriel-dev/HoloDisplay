@@ -48,13 +48,13 @@ export class SettingsComponent {
       this.settingsBroadcaster.broadcastChange('NewImages', imgList);
 
       if(imgList.length > this.imageSizes.length)
-        for(let i = 0; i < (imgList.length - this.imageSizes.length); i++) {
+        for(let i = 0; i < imgList.length; i++) {
           this.imageSizes.push(new FormControl(100));
           this.imagePositions.push(new FormControl(0));
-
-          this.settingsBroadcaster.broadcastChange('ImageSizes', this.imageSizes.map((control) => control.value));
-          this.settingsBroadcaster.broadcastChange('ImagePositions', this.imagePositions.map((control) => control.value));
         }
+
+        this.settingsBroadcaster.broadcastChange('ImageSizes', this.imageSizes.map((control) => control.value));
+        this.settingsBroadcaster.broadcastChange('ImagePositions', this.imagePositions.map((control) => control.value));
     });
 
     this.controlsAndTargets.forEach((pair) => {
@@ -133,11 +133,10 @@ export class SettingsComponent {
   pushImageUp(index: number) {
     if (index <= 0) return;
 
-    this.currentImages.splice(
-      index - 1,
-      0,
-      this.currentImages.splice(index, 1)[0]
-    );
+    // swap images, positions and sizes
+    [this.currentImages[index - 1], this.currentImages[index]] = [this.currentImages[index], this.currentImages[index - 1]];
+    [this.imagePositions[index - 1], this.imagePositions[index]] = [this.imagePositions[index], this.imagePositions[index - 1]];
+    [this.imageSizes[index - 1], this.imageSizes[index]] = [this.imageSizes[index], this.imageSizes[index - 1]];
 
     this.imagesChanged$.next(
       this.currentImages.map((imagePair) => imagePair.src)
@@ -147,11 +146,10 @@ export class SettingsComponent {
   pushImageDown(index: number) {
     if (index >= this.currentImages.length - 1) return;
 
-    this.currentImages.splice(
-      index + 1,
-      0,
-      this.currentImages.splice(index, 1)[0]
-    );
+    // swap images, positions and sizes
+    [this.currentImages[index + 1], this.currentImages[index]] = [this.currentImages[index], this.currentImages[index + 1]];
+    [this.imagePositions[index + 1], this.imagePositions[index]] = [this.imagePositions[index], this.imagePositions[index + 1]];
+    [this.imageSizes[index + 1], this.imageSizes[index]] = [this.imageSizes[index], this.imageSizes[index + 1]];
 
     this.imagesChanged$.next(
       this.currentImages.map((imagePair) => imagePair.src)
