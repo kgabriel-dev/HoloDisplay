@@ -67,7 +67,7 @@ export class TutorialService {
         },
         buttons: this.getButtons(['Exit', 'Next']),
         title: 'Welcome to the tutorial!',
-        text: 'This is a tutorial to help you get started with the application.'
+        text: ['This is a tutorial to help you get started with the application.'],
       },
       {
         id: 'settings',
@@ -86,6 +86,42 @@ export class TutorialService {
         }
       },
       {
+        id: 'language',
+        attachTo: {
+          element: '#languageButton',
+          on: 'bottom'
+        },
+        title: 'Language',
+        text: 'This buttons lets you change the language.<br><br>Currently, English and German are supported.',
+      },
+      {
+        id: 'tutorial',
+        attachTo: {
+          element: '#tutorialButton',
+          on: 'bottom'
+        },
+        title: 'Repeating the tutorial',
+        text: 'If you want to see this tutorial again, click this button.',
+      },
+      {
+        id: 'methods',
+        attachTo: {
+          element: '#displayMethodSelection',
+          on: 'bottom'
+        },
+        title: 'Display methods',
+        text: 'Later, you can choose between different display methods here.',
+      },
+      {
+        id: 'calculator',
+        attachTo: {
+          element: '#calculatorButton',
+          on: 'top'
+        },
+        title: 'Calculator',
+        text: 'This button opens the calculator. It helps you to build everything you need to display a hologram.'
+      },
+      {
         id: 'finished',
         attachTo: {
           element: '#displayCanvas',
@@ -93,7 +129,7 @@ export class TutorialService {
         },
         buttons: this.getButtons(['Back', 'Exit']),
         title: 'Finished!',
-        text: 'You have finished the tutorial. I hope you enjoy using the application!'
+        text: 'You have finished the tutorial. I hope you enjoy creating holograms!'
       }
     ])
   }
@@ -107,7 +143,7 @@ export class TutorialService {
 
         if(this.currentTutorialName)
           this.deactivateTutorial(this.currentTutorialName)
-        
+
         this.tutorialEvents.next('complete');
       } else if(action === 'back') {
         this.shepherd.back();

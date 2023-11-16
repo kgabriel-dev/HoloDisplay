@@ -61,4 +61,12 @@ export class PyramidDisplayComponent {
 
     document.getElementById(modalId)!.classList.toggle("hidden");
   }
+
+  startCurrentTutorial() {
+    switch(this.selectedDisplayMethod) {
+      case 'Standard Method':
+        this.tutorial.startTutorial('standardDisplay');
+        break;
+    }
+  }
 }
