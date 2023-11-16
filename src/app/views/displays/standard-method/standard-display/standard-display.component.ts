@@ -80,8 +80,8 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
     this.resizeCanvas(this.container.nativeElement.clientWidth, this.container.nativeElement.clientHeight);
     this.recalculateValues();
 
-    this.tutorial.loadStandardDisplayTutorial();
-    this.tutorial.startTutorial();
+    if(!this.tutorial.isTutorialDeactivated('standardDisplay'))
+      this.tutorial.startTutorial('standardDisplay');
   }
 
   private resizeCanvas(width: number, height: number): void {

@@ -8,6 +8,7 @@ import { Subject } from 'rxjs';
 export class TutorialService {
 
   private tutorialEvents = new Subject<'start' | 'complete' | 'hideButtons' | 'showButtons'>();
+  private currentTutorialName?: TutorialName;
 
   constructor(private shepherd: ShepherdService) {
     this.basic_initialization();
@@ -34,12 +35,29 @@ export class TutorialService {
     this.shepherd.confirmCancel = false;
   }
 
-  public startTutorial() {
+  public startTutorial(tutorialName: TutorialName) {
+    if(this.shepherd.tourObject) this.shepherd.tourObject.steps = [];
+
+    this.currentTutorialName = tutorialName;
+    switch(tutorialName) {
+      case 'standardDisplay':
+        this.loadStandardDisplayTutorial();
+        break;
+    }
+
     this.tutorialEvents.next('start');
     this.shepherd.start();
   }
 
-  public loadStandardDisplayTutorial() {
+  public isTutorialDeactivated(tutorialName: TutorialName) {
+    return localStorage.getItem('tutorialDeactivated_' + tutorialName) === 'true';
+  }
+
+  public deactivateTutorial(tutorialName: TutorialName) {
+    localStorage.setItem('tutorialDeactivated_' + tutorialName, 'true');
+  }
+
+  private loadStandardDisplayTutorial() {
     this.shepherd.addSteps([
       {
         id: 'welcome',
@@ -86,6 +104,10 @@ export class TutorialService {
         this.shepherd.next();
       } else if(action === 'exit') {
         this.shepherd.cancel();
+
+        if(this.currentTutorialName)
+          this.deactivateTutorial(this.currentTutorialName)
+        
         this.tutorialEvents.next('complete');
       } else if(action === 'back') {
         this.shepherd.back();
@@ -103,3 +125,5 @@ export class TutorialService {
     });
   }
 }
+
+type TutorialName = 'standardDisplay';
