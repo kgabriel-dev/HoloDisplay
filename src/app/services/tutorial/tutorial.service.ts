@@ -79,8 +79,19 @@ export class TutorialService {
         text: 'Click this button to open the settings menu.',
         beforeShowPromise: () => {
           // make sure the buttons are shown
-          return new Promise<void>((resolve) => {
+          return new Promise<void>(async (resolve) => {
+            // preperations to later make sure the buttons are shown
+            let buttonsShown = false;
+            this.tutorialEvents.subscribe((event) => {
+              if(event === 'showButtons') buttonsShown = true;
+            });
+
+            // tell the component to show the buttons
             this.tutorialEvents.next('showButtons');
+
+            // now make sure the buttons are shown
+            do await new Promise((resolve) => setTimeout(resolve, 2)); while(!buttonsShown);
+
             resolve();
           });
         }

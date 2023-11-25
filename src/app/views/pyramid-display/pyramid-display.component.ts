@@ -18,6 +18,7 @@ export class PyramidDisplayComponent {
   selectedDisplayMethod = 'Standard Method';
 
   iconsVisible = false;
+  iconsCanBeInvisible = true;
   forceIconsVisible = false;
   mouseMoving$ = fromEvent(document, 'mousemove');
   resizeEvent$: Subject<Event>;
@@ -31,21 +32,19 @@ export class PyramidDisplayComponent {
     this.mouseMoving$.pipe(
       map(() => this.iconsVisible = true),
       debounceTime(2000),
-      map(() => this.iconsVisible = this.forceIconsVisible),
+      map(() => this.iconsVisible = this.forceIconsVisible && !this.iconsCanBeInvisible),
     ).subscribe();
 
     tutorial.tutorialEvents$.subscribe((event) => {
       console.log(event);
 
-      if(event == 'start') {
+      if(event == 'showButtons') {
         this.forceIconsVisible = true;
-      } else if(event == 'complete') {
-        this.forceIconsVisible = false;
-      } else if(event == 'showButtons') {
-        this.forceIconsVisible = true;
+        this.iconsCanBeInvisible = false;
         this.iconsVisible = true;
       } else if(event == 'hideButtons') {
         this.forceIconsVisible = false;
+        this.iconsCanBeInvisible = true;
       }
     });
 
@@ -68,5 +67,10 @@ export class PyramidDisplayComponent {
         this.tutorial.startTutorial('standardDisplay');
         break;
     }
+  }
+
+  hideIcons() {
+    this.forceIconsVisible = false;
+    this.iconsVisible = this.forceIconsVisible && !this.iconsCanBeInvisible;
   }
 }
