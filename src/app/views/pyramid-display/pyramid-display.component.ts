@@ -36,8 +36,6 @@ export class PyramidDisplayComponent {
     ).subscribe();
 
     tutorial.tutorialEvents$.subscribe((event) => {
-      console.log(event);
-
       if(event == 'showButtons') {
         this.forceIconsVisible = true;
         this.iconsCanBeInvisible = false;

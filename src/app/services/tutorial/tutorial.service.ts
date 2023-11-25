@@ -68,6 +68,7 @@ export class TutorialService {
         buttons: this.getButtons(['Exit', 'Next']),
         title: 'Welcome to the tutorial!',
         text: ['This is a tutorial to help you get started with the application.'],
+        canClickTarget: false
       },
       {
         id: 'settings',
@@ -94,7 +95,8 @@ export class TutorialService {
 
             resolve();
           });
-        }
+        },
+        canClickTarget: false
       },
       {
         id: 'language',
@@ -104,6 +106,7 @@ export class TutorialService {
         },
         title: 'Language',
         text: 'This buttons lets you change the language.<br><br>Currently, English and German are supported.',
+        canClickTarget: false
       },
       {
         id: 'tutorial',
@@ -113,6 +116,7 @@ export class TutorialService {
         },
         title: 'Repeating the tutorial',
         text: 'If you want to see this tutorial again, click this button.',
+        canClickTarget: false
       },
       {
         id: 'methods',
@@ -122,6 +126,7 @@ export class TutorialService {
         },
         title: 'Display methods',
         text: 'Later, you can choose between different display methods here.',
+        canClickTarget: false
       },
       {
         id: 'calculator',
@@ -130,7 +135,28 @@ export class TutorialService {
           on: 'top'
         },
         title: 'Calculator',
-        text: 'This button opens the calculator. It helps you to build everything you need to display a hologram.'
+        text: 'This button opens the calculator. It helps you to build everything you need to display a hologram.',
+        canClickTarget: false
+      },
+      {
+        id: 'imprint',
+        attachTo: {
+          element: '#imprintButton',
+          on: 'top'
+        },
+        title: 'Imprint',
+        text: 'This button opens the imprint containing some legal information about this page.',
+        canClickTarget: false
+      },
+      {
+        id: 'github',
+        attachTo: {
+          element: '#githubButton',
+          on: 'top'
+        },
+        title: 'GitHub',
+        text: 'This button opens the GitHub page of this project. Here you can find some help, the source code and more.<br><br>If you want to, you can help me to improve this project by contributing to it there.',
+        canClickTarget: false
       },
       {
         id: 'finished',
@@ -140,7 +166,8 @@ export class TutorialService {
         },
         buttons: this.getButtons(['Back', 'Exit']),
         title: 'Finished!',
-        text: 'You have finished the tutorial. I hope you enjoy creating holograms!'
+        text: 'You have finished the tutorial. I hope you enjoy creating holograms!',
+        canClickTarget: false
       }
     ])
   }
