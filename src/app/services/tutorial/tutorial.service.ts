@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ShepherdService } from 'angular-shepherd';
 import { Subject } from 'rxjs';
+import { LanguageService } from '../i18n/language.service';
 
 @Injectable({
   providedIn: 'root'
@@ -10,7 +11,15 @@ export class TutorialService {
   private tutorialEvents = new Subject<'start' | 'complete' | 'hideButtons' | 'showButtons'>();
   private currentTutorialName?: TutorialName;
 
-  constructor(private shepherd: ShepherdService) {
+  
+  private readonly BUTTONS = {
+    exit: {text: $localize `Exit`, action: 'exit'},
+    back: {text: $localize `Back`, action: 'back'},
+    next: {text: $localize `Next`, action: 'next'},
+    finish: {text: $localize `Finish`, action: 'exit'}
+  };
+
+  constructor(private shepherd: ShepherdService, private languageService: LanguageService) {
     this.basic_initialization();
   }
 
@@ -28,7 +37,7 @@ export class TutorialService {
       cancelIcon: {
         enabled: true
       },
-      buttons: this.getButtons(['Exit', 'Back', 'Next'])
+      buttons: this.getButtons([this.BUTTONS.exit, this.BUTTONS.back, this.BUTTONS.next])
     };
 
     this.shepherd.modal = true;
@@ -65,9 +74,9 @@ export class TutorialService {
           element: '#displayCanvas',
           on: 'top'
         },
-        buttons: this.getButtons(['Exit', 'Next']),
-        title: 'Welcome to the tutorial!',
-        text: ['This is a tutorial to help you get started with the application.'],
+        buttons: this.getButtons([this.BUTTONS.exit, this.BUTTONS.next]),
+        title: $localize`Welcome to the tutorial!`,
+        text: [$localize`This is a tutorial to help you get started with the application.`],
         canClickTarget: false
       },
       {
@@ -76,8 +85,8 @@ export class TutorialService {
           element: '#settingsButton',
           on: 'bottom'
         },
-        title: 'Settings',
-        text: 'Click this button to open the settings menu.',
+        title: $localize`Settings`,
+        text: [$localize`Click this button to open the settings menu.`],
         beforeShowPromise: () => {
           // make sure the buttons are shown
           return new Promise<void>(async (resolve) => {
@@ -104,8 +113,8 @@ export class TutorialService {
           element: '#languageButton',
           on: 'bottom'
         },
-        title: 'Language',
-        text: 'This buttons lets you change the language.<br><br>Currently, English and German are supported.',
+        title: $localize`Language`,
+        text:[$localize`This buttons lets you change the language.<br><br>Currently, English and German are supported.`],
         canClickTarget: false
       },
       {
@@ -114,8 +123,8 @@ export class TutorialService {
           element: '#tutorialButton',
           on: 'bottom'
         },
-        title: 'Repeating the tutorial',
-        text: 'If you want to see this tutorial again, click this button.',
+        title: $localize`Repeating the tutorial`,
+        text: [$localize`If you want to see this tutorial again, click this button.`],
         canClickTarget: false
       },
       {
@@ -124,8 +133,8 @@ export class TutorialService {
           element: '#displayMethodSelection',
           on: 'bottom'
         },
-        title: 'Display methods',
-        text: 'Later, you can choose between different display methods here.',
+        title: $localize`Display methods`,
+        text: [$localize`Later, you can choose between different display methods here.`],
         canClickTarget: false
       },
       {
@@ -134,8 +143,8 @@ export class TutorialService {
           element: '#calculatorButton',
           on: 'top'
         },
-        title: 'Calculator',
-        text: 'This button opens the calculator. It helps you to build everything you need to display a hologram.',
+        title: $localize`Calculator`,
+        text: [$localize`This button opens the calculator. It helps you to build everything you need to display a hologram.`],
         canClickTarget: false
       },
       {
@@ -144,8 +153,8 @@ export class TutorialService {
           element: '#imprintButton',
           on: 'top'
         },
-        title: 'Imprint',
-        text: 'This button opens the imprint containing some legal information about this page.',
+        title: $localize`Imprint`,
+        text: [$localize`This button opens the imprint containing some legal information about this page.`],
         canClickTarget: false
       },
       {
@@ -154,8 +163,8 @@ export class TutorialService {
           element: '#githubButton',
           on: 'top'
         },
-        title: 'GitHub',
-        text: 'This button opens the GitHub page of this project. Here you can find some help, the source code and more.<br><br>If you want to, you can help me to improve this project by contributing to it there.',
+        title: $localize`GitHub`,
+        text: [$localize`This button opens the GitHub page of this project. Here you can find some help, the source code and more.<br><br>If you want to, you can help me to improve this project by contributing to it there.`],
         canClickTarget: false
       },
       {
@@ -164,15 +173,15 @@ export class TutorialService {
           element: '#displayCanvas',
           on: 'top'
         },
-        buttons: this.getButtons(['Back', 'Exit']),
-        title: 'Finished!',
-        text: 'You have finished the tutorial. I hope you enjoy creating holograms!',
+        buttons: this.getButtons([this.BUTTONS.back, this.BUTTONS.finish]),
+        title: $localize`Finished!`,
+        text: [$localize`You have finished the tutorial. I hope you enjoy creating holograms!`],
         canClickTarget: false
       }
     ])
   }
 
-  private doTutorialAction(action: 'next' | 'exit' | 'back') {
+  private doTutorialAction(action: string) {
     return () => {
       if(action === 'next') {
         this.shepherd.next();
@@ -189,15 +198,16 @@ export class TutorialService {
     }
   }
 
-  private getButtons(buttons: ('Next' | 'Exit' | 'Back')[]) {
+  private getButtons(buttons: typeof this.BUTTONS['exit' | 'back' | 'next'][]) {
     return buttons.map((button) => {
-      return {
-        text: button,
-        action: this.doTutorialAction(button.toLowerCase() as 'next' | 'exit' | 'back'),
-        label: button
-      }
+        return {
+          text: button.text,
+          action: this.doTutorialAction(button.action),
+          label: button.text
+        }
     });
   }
 }
 
 type TutorialName = 'standardDisplay';
+type Button = { text: string, action: 'next' | 'exit' | 'back' }

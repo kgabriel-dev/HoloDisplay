@@ -2,6 +2,182 @@
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
   <file source-language="en-US" datatype="plaintext" original="ng2.template">
     <body>
+      <trans-unit id="5045200874122539692" datatype="html">
+        <source>Exit</source>
+        <target>Abbrechen</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/services/tutorial/tutorial.service.ts</context>
+          <context context-type="linenumber">16</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8890553633144307762" datatype="html">
+        <source>Back</source>
+        <target>Zurück</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/services/tutorial/tutorial.service.ts</context>
+          <context context-type="linenumber">17</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3885497195825665706" datatype="html">
+        <source>Next</source>
+        <target>Weiter</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/services/tutorial/tutorial.service.ts</context>
+          <context context-type="linenumber">18</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="65984904390749158" datatype="html">
+        <source>Finish</source>
+        <target>Beenden</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/services/tutorial/tutorial.service.ts</context>
+          <context context-type="linenumber">19</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1260495288875960317" datatype="html">
+        <source>Welcome to the tutorial!</source>
+        <target>Willkommen beim Tutorial!</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/services/tutorial/tutorial.service.ts</context>
+          <context context-type="linenumber">78</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1435018901522735944" datatype="html">
+        <source>This is a tutorial to help you get started with the application.</source>
+        <target>Dieses Tutorial hilft Ihnen im Umgang mit dieser Anwendung.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/services/tutorial/tutorial.service.ts</context>
+          <context context-type="linenumber">79</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4930506384627295710" datatype="html">
+        <source>Settings</source>
+        <target>Einstellungen</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/services/tutorial/tutorial.service.ts</context>
+          <context context-type="linenumber">88</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3720221468678045515" datatype="html">
+        <source>Click this button to open the settings menu.</source>
+        <target>Dieser Button öffnet die Einstellungen.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/services/tutorial/tutorial.service.ts</context>
+          <context context-type="linenumber">89</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2826581353496868063" datatype="html">
+        <source>Language</source>
+        <target>Sprache</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/services/tutorial/tutorial.service.ts</context>
+          <context context-type="linenumber">116</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1483492340000668371" datatype="html">
+        <source>This buttons lets you change the language.&lt;br&gt;&lt;br&gt;Currently, English and German are supported.</source>
+        <target>Mit diesem Button können Sie die Sprache ändern.&lt;br&gt;&lt;br&gt;Zurzeit werden Deutsch und Englisch unterstützt.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/services/tutorial/tutorial.service.ts</context>
+          <context context-type="linenumber">117</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8852150591681243928" datatype="html">
+        <source>Repeating the tutorial</source>
+        <target>Tutorial wiederholen</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/services/tutorial/tutorial.service.ts</context>
+          <context context-type="linenumber">126</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4691350677645820699" datatype="html">
+        <source>If you want to see this tutorial again, click this button.</source>
+        <target>Wenn Sie das Tutorial wiederholen möchten, klicken Sie hier.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/services/tutorial/tutorial.service.ts</context>
+          <context context-type="linenumber">127</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6315608776060848688" datatype="html">
+        <source>Display methods</source>
+        <target>Anzeigemethoden</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/services/tutorial/tutorial.service.ts</context>
+          <context context-type="linenumber">136</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6652128749555741098" datatype="html">
+        <source>Later, you can choose between different display methods here.</source>
+        <target>Später können Sie hier zwischen verschiedenen Anzeigemethoden wählen.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/services/tutorial/tutorial.service.ts</context>
+          <context context-type="linenumber">137</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4939001214826529053" datatype="html">
+        <source>Calculator</source>
+        <target>Rechner</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/services/tutorial/tutorial.service.ts</context>
+          <context context-type="linenumber">146</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6357252501014963046" datatype="html">
+        <source>This button opens the calculator. It helps you to build everything you need to display a hologram.</source>
+        <target>Dieser Knopf öffnet den Rechner. Er hilft, alles zu bauen, was Sie zum Anzeigen von Hologrammen benötigen.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/services/tutorial/tutorial.service.ts</context>
+          <context context-type="linenumber">147</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5891707175321515013" datatype="html">
+        <source>Imprint</source>
+        <target>Impressum</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/services/tutorial/tutorial.service.ts</context>
+          <context context-type="linenumber">156</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8952123720546851302" datatype="html">
+        <source>This button opens the imprint containing some legal information about this page.</source>
+        <target>Dieser Knopf öffnet das Impressum. Es enthält einige rechtliche Informationen über die Seite.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/services/tutorial/tutorial.service.ts</context>
+          <context context-type="linenumber">157</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1534029177398918729" datatype="html">
+        <source>GitHub</source>
+        <target>GitHub</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/services/tutorial/tutorial.service.ts</context>
+          <context context-type="linenumber">166</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1794258288087557500" datatype="html">
+        <source>This button opens the GitHub page of this project. Here you can find some help, the source code and more.&lt;br&gt;&lt;br&gt;If you want to, you can help me to improve this project by contributing to it there.</source>
+        <target>Dieser Knopf öffnet die GitHub-Seite des Projekts. Hier finden Sie Hilfe, den Quellcode und mehr.&lt;br&gt;&lt;br&gt;Wenn Sie möchten, können Sie dort helfen, das Projekt zu verbessern. </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/services/tutorial/tutorial.service.ts</context>
+          <context context-type="linenumber">167</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1052447297680426398" datatype="html">
+        <source>Finished!</source>
+        <target>Fertig!</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/services/tutorial/tutorial.service.ts</context>
+          <context context-type="linenumber">177</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6850517149194345360" datatype="html">
+        <source>You have finished the tutorial. I hope you enjoy creating holograms!</source>
+        <target>Sie haben das Tutorial abgeschlossen. Viel Spaß beim Hologramme erzeugen!</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/services/tutorial/tutorial.service.ts</context>
+          <context context-type="linenumber">178</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="6614699975688228843" datatype="html">
         <source>Images to show</source>
         <target>Bilder zum Anzeigen</target>
