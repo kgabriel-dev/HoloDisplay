@@ -130,42 +130,42 @@ export class SettingsComponent {
     }
   }
 
-  pushImageUp(index: number) {
-    if (index <= 0) return;
+  pushImageUp(imageIndex: number) {
+    if (imageIndex <= 0) return;
 
     // swap images, positions and sizes
-    [this.currentImages[index - 1], this.currentImages[index]] = [this.currentImages[index], this.currentImages[index - 1]];
-    [this.imagePositions[index - 1], this.imagePositions[index]] = [this.imagePositions[index], this.imagePositions[index - 1]];
-    [this.imageSizes[index - 1], this.imageSizes[index]] = [this.imageSizes[index], this.imageSizes[index - 1]];
+    [this.currentImages[imageIndex - 1], this.currentImages[imageIndex]] = [this.currentImages[imageIndex], this.currentImages[imageIndex - 1]];
+    [this.imagePositions[imageIndex - 1], this.imagePositions[imageIndex]] = [this.imagePositions[imageIndex], this.imagePositions[imageIndex - 1]];
+    [this.imageSizes[imageIndex - 1], this.imageSizes[imageIndex]] = [this.imageSizes[imageIndex], this.imageSizes[imageIndex - 1]];
 
     this.imagesChanged$.next(
       this.currentImages.map((imagePair) => imagePair.src)
     );
   }
 
-  pushImageDown(index: number) {
-    if (index >= this.currentImages.length - 1) return;
+  pushImageDown(imageIndex: number) {
+    if (imageIndex >= this.currentImages.length - 1) return;
 
     // swap images, positions and sizes
-    [this.currentImages[index + 1], this.currentImages[index]] = [this.currentImages[index], this.currentImages[index + 1]];
-    [this.imagePositions[index + 1], this.imagePositions[index]] = [this.imagePositions[index], this.imagePositions[index + 1]];
-    [this.imageSizes[index + 1], this.imageSizes[index]] = [this.imageSizes[index], this.imageSizes[index + 1]];
+    [this.currentImages[imageIndex + 1], this.currentImages[imageIndex]] = [this.currentImages[imageIndex], this.currentImages[imageIndex + 1]];
+    [this.imagePositions[imageIndex + 1], this.imagePositions[imageIndex]] = [this.imagePositions[imageIndex], this.imagePositions[imageIndex + 1]];
+    [this.imageSizes[imageIndex + 1], this.imageSizes[imageIndex]] = [this.imageSizes[imageIndex], this.imageSizes[imageIndex + 1]];
 
     this.imagesChanged$.next(
       this.currentImages.map((imagePair) => imagePair.src)
     );
   }
 
-  scaleImage(index: number, type: 'plus' | 'minus') {
-    if (type === 'plus') this.imageSizes[index].setValue(this.imageSizes[index].value + 10);
-    else if (type === 'minus') this.imageSizes[index].setValue(this.imageSizes[index].value - 10);
+  scaleImage(imageIndex: number, action: 'plus' | 'minus') {
+    if (action === 'plus') this.imageSizes[imageIndex].setValue(this.imageSizes[imageIndex].value + 5);
+    else if (action === 'minus') this.imageSizes[imageIndex].setValue(this.imageSizes[imageIndex].value - 5);
 
     this.settingsBroadcaster.broadcastChange('ImageSizes', this.imageSizes.map((control) => control.value));
   }
 
-  moveImage(index: number, type: 'up' | 'down') {
-    if (type === 'up') this.imagePositions[index].setValue(this.imagePositions[index].value + 10);
-    else if (type === 'down') this.imagePositions[index].setValue(this.imagePositions[index].value - 10);
+  moveImage(imageIndex: number, action: 'up' | 'down') {
+    if (action === 'up') this.imagePositions[imageIndex].setValue(this.imagePositions[imageIndex].value + 5);
+    else if (action === 'down') this.imagePositions[imageIndex].setValue(this.imagePositions[imageIndex].value - 5);
 
     this.settingsBroadcaster.broadcastChange('ImagePositions', this.imagePositions.map((control) => control.value));
   }
