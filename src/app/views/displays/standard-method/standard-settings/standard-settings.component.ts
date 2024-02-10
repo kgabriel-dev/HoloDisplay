@@ -17,6 +17,9 @@ import { environment } from 'src/environments/environment';
   styleUrls: ['./standard-settings.component.scss'],
 })
 export class SettingsComponent {
+  readonly SCALING_STEP_SIZE = 5;
+  readonly POSITIONING_STEP_SIZE = 5;
+
   innerPolygonSize = new FormControl(Number(environment.defaultValueInnerPolygonSize));
   imageSizes: FormControl[] = [];
   imagePositions: FormControl[] = [];
@@ -157,15 +160,15 @@ export class SettingsComponent {
   }
 
   scaleImage(imageIndex: number, action: 'plus' | 'minus') {
-    if (action === 'plus') this.imageSizes[imageIndex].setValue(this.imageSizes[imageIndex].value + 5);
-    else if (action === 'minus') this.imageSizes[imageIndex].setValue(this.imageSizes[imageIndex].value - 5);
+    if (action === 'plus') this.imageSizes[imageIndex].setValue(this.imageSizes[imageIndex].value + this.SCALING_STEP_SIZE);
+    else if (action === 'minus' && this.imageSizes[imageIndex].value > this.SCALING_STEP_SIZE) this.imageSizes[imageIndex].setValue(this.imageSizes[imageIndex].value - this.SCALING_STEP_SIZE);
 
     this.settingsBroadcaster.broadcastChange('ImageSizes', this.imageSizes.map((control) => control.value));
   }
 
   moveImage(imageIndex: number, action: 'up' | 'down') {
-    if (action === 'up') this.imagePositions[imageIndex].setValue(this.imagePositions[imageIndex].value + 5);
-    else if (action === 'down') this.imagePositions[imageIndex].setValue(this.imagePositions[imageIndex].value - 5);
+    if (action === 'up') this.imagePositions[imageIndex].setValue(this.imagePositions[imageIndex].value + this.POSITIONING_STEP_SIZE);
+    else if (action === 'down') this.imagePositions[imageIndex].setValue(this.imagePositions[imageIndex].value - this.POSITIONING_STEP_SIZE);
 
     this.settingsBroadcaster.broadcastChange('ImagePositions', this.imagePositions.map((control) => control.value));
   }
