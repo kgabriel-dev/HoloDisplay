@@ -7,24 +7,29 @@
             <p class="my-5" i18n>Upload the images you want to show with this application.</p>
             <div class="flex flex-col justify-center">
                 <span i18n>Your uploaded images:</span>
-                <ol *ngIf="currentImages.length" class="mx-5">
-                    <li *ngFor="let image of currentImages; index as i" class="border rounded-lg my-2">
-                        <p class="w-full">{{image.name}}</p>
-                        <div class="w-full">
-                            <button type="button" (click)="pushImageUp(i)" data-mdb-ripple="true" data-mdb-ripple-color="light" class="ml-4 my-2 p-2 border rounded hover:bg-sky-800">⤴️</button>
-                            <button type="button" (click)="pushImageDown(i)" data-mdb-ripple="true" data-mdb-ripple-color="light" class="ml-4 my-2 p-2 border rounded hover:bg-sky-800">⤵️</button>
-                            <button type="button" (click)="moveImage(i, 'up')" data-mdb-ripple="true" data-mdb-ripple-color="light" class="ml-4 my-2 p-2 border rounded hover:bg-sky-800" i18n>Move outwards</button>
-                            <button type="button" (click)="moveImage(i, 'down')" data-mdb-ripple="true" data-mdb-ripple-color="light" class="ml-4 my-2 p-2 border rounded hover:bg-sky-800" i18n>Move inwards</button>
-                            <button type="button" (click)="scaleImage(i, 'plus')" data-mdb-ripple="true" data-mdb-ripple-color="light" class="ml-4 my-2 p-2 border rounded hover:bg-sky-800" i18n>Scale up</button>
-                            <button type="button" (click)="scaleImage(i, 'minus')" data-mdb-ripple="true" data-mdb-ripple-color="light" class="ml-4 my-2 p-2 border rounded hover:bg-sky-800" i18n>Scale down</button>
+                    <span *ngFor="let image of currentImages; index as i" class="border rounded-lg my-2 overflow-hidden">
+                        <p class="w-full bg-cyan-600">{{image.name}}</p>
+                        <div class="flex flex-row">
+                            <div class="flex justify-center items-center h-fit max-h-32 overflow-hidden m-2 border border-white rounded-lg">
+                                <img [src]="image.src" alt="preview for image #{{i+1}}" class="w-48 h-fit">
+                            </div>
+                            <div class="grow">
+                                <div class="w-full">
+                                    <button type="button" (click)="pushImageUp(i)" data-mdb-ripple="true" data-mdb-ripple-color="light" class="ml-4 my-2 p-2 border rounded hover:bg-sky-800">⤴️</button>
+                                    <button type="button" (click)="pushImageDown(i)" data-mdb-ripple="true" data-mdb-ripple-color="light" class="ml-4 my-2 p-2 border rounded hover:bg-sky-800">⤵️</button>
+                                    <button type="button" (click)="moveImage(i, 'up')" data-mdb-ripple="true" data-mdb-ripple-color="light" class="ml-4 my-2 p-2 border rounded hover:bg-sky-800" i18n>Move outwards</button>
+                                    <button type="button" (click)="moveImage(i, 'down')" data-mdb-ripple="true" data-mdb-ripple-color="light" class="ml-4 my-2 p-2 border rounded hover:bg-sky-800" i18n>Move inwards</button>
+                                    <button type="button" (click)="scaleImage(i, 'plus')" data-mdb-ripple="true" data-mdb-ripple-color="light" class="ml-4 my-2 p-2 border rounded hover:bg-sky-800" i18n>Scale up</button>
+                                    <button type="button" (click)="scaleImage(i, 'minus')" data-mdb-ripple="true" data-mdb-ripple-color="light" class="ml-4 my-2 p-2 border rounded hover:bg-sky-800" i18n>Scale down</button>
+                                </div>
+                                <div class="w-full">
+                                    <p i18n>Position: {{ this.imagePositions[i].value / 10 }}</p>
+                                    <p i18n>Size: {{ this.imageSizes[i].value }}%</p>
+                                </div>
+                            </div>
                         </div>
-                        <div class="w-full">
-                            <p i18n>Position: {{ this.imagePositions[i].value / 10 }}</p>
-                            <p i18n>Size: {{ this.imageSizes[i].value }}%</p>
-                        </div>
-                    </li>
-                </ol>
-                <span *ngIf="!currentImages.length" i18n>(You have not uploaded any images yet.)</span>
+                    </span>
+                <span *ngIf="!currentImages.length" i18n class="italic">--- You have not uploaded any images yet. ---</span>
             </div>
         </div>
         <div class="p-5 bg-cyan-700 ">
