@@ -15,13 +15,13 @@
                             </div>
                             <div class="grow">
                                 <div class="w-full">
-                                    <button type="button" (click)="pushImageUp(i)" class="ml-4 my-2 p-2 border rounded hover:bg-sky-800">⤴️</button>
-                                    <button type="button" (click)="pushImageDown(i)" class="ml-4 my-2 p-2 border rounded hover:bg-sky-800">⤵️</button>
+                                    <button type="button" (click)="pushImageUp(i)" class="ml-4 my-2 p-2 border rounded hover:bg-sky-800" [title]="TEXT_MOVE_IMG_UP">⤴️</button>
+                                    <button type="button" (click)="pushImageDown(i)" class="ml-4 my-2 p-2 border rounded hover:bg-sky-800" [title]="TEXT_MOVE_IMG_DOWN">⤵️</button>
                                     <button type="button" (click)="moveImage(i, 'up')" class="ml-4 my-2 p-2 border rounded hover:bg-sky-800" i18n>Move outwards</button>
                                     <button type="button" (click)="moveImage(i, 'down')" class="ml-4 my-2 p-2 border rounded hover:bg-sky-800" i18n>Move inwards</button>
                                     <button type="button" (click)="scaleImage(i, 'plus')" class="ml-4 my-2 p-2 border rounded hover:bg-sky-800" i18n>Scale up</button>
                                     <button type="button" (click)="scaleImage(i, 'minus')" class="ml-4 my-2 p-2 border rounded hover:bg-sky-800" i18n>Scale down</button>
-                                    <button type="button" (click)="deleteImage(i)" class="ml-4 p-2 border rounded hover:bg-sky-800">🗑️</button>
+                                    <button type="button" (click)="deleteImage(i)" class="ml-4 p-2 border rounded hover:bg-sky-800" [title]="TEXT_DELETE_IMG">🗑️</button>
                                 </div>
                                 <div class="w-full">
                                     <p i18n>Position: {{ this.imagePositions[i].value / 10 }}</p>

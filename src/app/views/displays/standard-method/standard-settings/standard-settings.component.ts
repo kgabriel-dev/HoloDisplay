@@ -19,6 +19,9 @@ import { environment } from 'src/environments/environment';
 export class SettingsComponent {
   readonly SCALING_STEP_SIZE = 5;
   readonly POSITIONING_STEP_SIZE = 5;
+  readonly TEXT_MOVE_IMG_UP = $localize`Move image up`;
+  readonly TEXT_MOVE_IMG_DOWN = $localize`Move image down`;
+  readonly TEXT_DELETE_IMG = $localize`Delete image`;
 
   innerPolygonSize = new FormControl(Number(environment.defaultValueInnerPolygonSize));
   imageSizes: FormControl[] = [];
