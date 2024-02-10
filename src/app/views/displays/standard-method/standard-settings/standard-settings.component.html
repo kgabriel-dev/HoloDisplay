@@ -33,7 +33,8 @@
             </div>
         </div>
         <div class="p-5 bg-cyan-700 ">
-            <input type="file" multiple accept=".png,.jpg,.jpeg,.webp" (change)="addImages($event)" class="block w-full border border-gray-200 shadow-sm rounded-md text-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500 file:border-0 file:mr-4 file:py-3 file:px-4 file:bg-white">
+            <button type="button" (click)="imgInput.click()" class="border border-white rounded-md p-2 hover:bg-cyan-800" i18n>Select Images</button>
+            <input type="file" hidden multiple accept=".png,.jpg,.jpeg,.webp" (change)="addImages($event)" #imgInput>
         </div>
     </div>
     
