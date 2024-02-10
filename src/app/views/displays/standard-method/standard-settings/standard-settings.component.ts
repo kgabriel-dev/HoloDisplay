@@ -172,6 +172,16 @@ export class SettingsComponent {
 
     this.settingsBroadcaster.broadcastChange('ImagePositions', this.imagePositions.map((control) => control.value));
   }
+
+  deleteImage(imageIndex: number): void {
+    this.currentImages.splice(imageIndex, 1);
+    this.imageSizes.splice(imageIndex, 1);
+    this.imagePositions.splice(imageIndex, 1);
+
+    this.imagesChanged$.next(
+      this.currentImages.map((imagePair) => imagePair.src)
+    );
+  }
 }
 
 export type SettingsData = {
