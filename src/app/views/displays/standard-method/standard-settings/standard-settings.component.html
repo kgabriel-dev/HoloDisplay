@@ -24,7 +24,7 @@
                                     <button type="button" (click)="deleteImage(i)" class="ml-4 p-2 border rounded hover:bg-sky-800" [title]="TEXT_DELETE_IMG">🗑️</button>
                                 </div>
                                 <div class="w-full">
-                                    <p i18n>Position: {{ this.imagePositions[i].value / 10 }}</p>
+                                    <p i18n>Position: {{ this.imagePositions[i].value / POSITIONING_STEP_SIZE }}</p>
                                     <p i18n>Size: {{ this.imageSizes[i].value }}%</p>
                                 </div>
                             </div>
