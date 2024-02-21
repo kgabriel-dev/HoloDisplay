@@ -2,3 +2,13 @@ input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
     display: none;
 }
+
+.icon-button {
+    background-repeat: no-repeat !important;
+    background-position: center !important;
+    background-size: 70% !important;
+}
+
+button {
+    vertical-align: middle;
+}

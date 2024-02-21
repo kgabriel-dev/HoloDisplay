@@ -15,15 +15,17 @@
                             </div>
                             <div class="grow">
                                 <div class="w-full">
-                                    <button type="button" (click)="pushImageUp(i)" class="ml-4 my-2 p-2 border rounded hover:bg-sky-800" [title]="TEXT_MOVE_IMG_UP">⤴️</button>
-                                    <button type="button" (click)="pushImageDown(i)" class="ml-4 my-2 p-2 border rounded hover:bg-sky-800" [title]="TEXT_MOVE_IMG_DOWN">⤵️</button>
-                                    <button type="button" (click)="moveImage(i, 'up')" class="ml-4 my-2 p-2 border rounded hover:bg-sky-800" i18n>Move outwards</button>
-                                    <button type="button" (click)="moveImage(i, 'down')" class="ml-4 my-2 p-2 border rounded hover:bg-sky-800" i18n>Move inwards</button>
-                                    <button type="button" (click)="scaleImage(i, 'plus')" class="ml-4 my-2 p-2 border rounded hover:bg-sky-800" i18n>Scale up</button>
-                                    <button type="button" (click)="scaleImage(i, 'minus')" class="ml-4 my-2 p-2 border rounded hover:bg-sky-800" i18n>Scale down</button>
-                                    <button type="button" (click)="deleteImage(i)" class="ml-4 p-2 border rounded hover:bg-sky-800" [title]="TEXT_DELETE_IMG">🗑️</button>
+                                    <button type="button" (click)="pushImageUp(i)" class="mx-2 mt-2 p-2 border rounded hover:bg-sky-800" [title]="TEXT_MOVE_IMG_UP">⤴️</button>
+                                    <button type="button" (click)="pushImageDown(i)" class="mx-2 mt-2 p-2 border rounded hover:bg-sky-800" [title]="TEXT_MOVE_IMG_DOWN">⤵️</button>
+                                    <button type="button" (click)="moveImage(i, 'up')" class="mx-2 mt-2 p-2 border rounded hover:bg-sky-800" i18n>Move outwards</button>
+                                    <button type="button" (click)="moveImage(i, 'down')" class="mx-2 mt-2 p-2 border rounded hover:bg-sky-800" i18n>Move inwards</button>
+                                    <button type="button" (click)="scaleImage(i, 'plus')" class="mx-2 mt-2 p-2 border rounded hover:bg-sky-800" i18n>Scale up</button>
+                                    <button type="button" (click)="scaleImage(i, 'minus')" class="mx-2 mt-2 p-2 border rounded hover:bg-sky-800" i18n>Scale down</button>
+                                    <button type="button" (click)="flipImage(i, 'h')" class="mx-2 mt-2 p-1 border rounded hover:bg-sky-800 icon-button h-10 w-10" [title]="TEXT_FLIP_IMG_HOR" style="background: url('/assets/icons/flip-1.svg');"></button>
+                                    <button type="button" (click)="flipImage(i, 'v')" class="mx-2 mt-2 p-1 border rounded hover:bg-sky-800 icon-button w-10 h-10" [title]="TEXT_FLIP_IMG_VERT" style="background: url('/assets/icons/flip-2.svg');"></button>
+                                    <button type="button" (click)="deleteImage(i)" class="mx-2 mt-2 p-1 border rounded hover:bg-sky-800 h-10 w-10 icon-button" [title]="TEXT_DELETE_IMG" style="background: url('/assets/icons/trash-87.svg');"></button>
                                 </div>
-                                <div class="w-full">
+                                <div class="w-full mt-2">
                                     <p i18n>Position: {{ this.imagePositions[i].value / POSITIONING_STEP_SIZE }}</p>
                                     <p i18n>Size: {{ this.imageSizes[i].value }}%</p>
                                 </div>

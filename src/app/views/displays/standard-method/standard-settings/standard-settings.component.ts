@@ -19,9 +19,12 @@ import { environment } from 'src/environments/environment';
 export class SettingsComponent {
   readonly SCALING_STEP_SIZE = 5;
   readonly POSITIONING_STEP_SIZE = 5;
+
   readonly TEXT_MOVE_IMG_UP = $localize`Move image up`;
   readonly TEXT_MOVE_IMG_DOWN = $localize`Move image down`;
   readonly TEXT_DELETE_IMG = $localize`Delete image`;
+  readonly TEXT_FLIP_IMG_VERT = $localize`Flip image vertically`;
+  readonly TEXT_FLIP_IMG_HOR = $localize`Flip image horizontally`;
 
   innerPolygonSize = new FormControl(Number(environment.defaultValueInnerPolygonSize));
   imageSizes: FormControl[] = [];
@@ -184,6 +187,32 @@ export class SettingsComponent {
     this.imagesChanged$.next(
       this.currentImages.map((imagePair) => imagePair.src)
     );
+  }
+
+  flipImage(imageIndex: number, direction: 'v' | 'h'): void {
+    const img = new Image();
+    img.src = this.currentImages[imageIndex].src;
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = img.width;
+      canvas.height = img.height;
+      const ctx = canvas.getContext('2d');
+      if (ctx) {
+        if (direction === 'v') {
+          ctx.translate(0, img.height);
+          ctx.scale(1, -1);
+        } else if (direction === 'h') {
+          ctx.translate(img.width, 0);
+          ctx.scale(-1, 1);
+        }
+        ctx.drawImage(img, 0, 0);
+        this.currentImages[imageIndex].src = canvas.toDataURL();
+        this.imagesChanged$.next(
+          this.currentImages.map((imagePair) => imagePair.src)
+        );
+      }
+    };
+  
   }
 }
 
