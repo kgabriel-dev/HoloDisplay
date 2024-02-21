@@ -31,6 +31,7 @@ export class SettingsComponent {
   imagePositions: FormControl[] = [];
   sideCount = new FormControl(Number(environment.defaultValueSideCount));
   imageSwapTime = new FormControl(Number(environment.defaultValueSwapTime));
+  imageFlips: {v: boolean, h: boolean}[] = [];
 
   currentSettingsFile: File | undefined;
   currentImages: { name: string; src: string }[] = [];
@@ -56,14 +57,18 @@ export class SettingsComponent {
     this.imagesChanged$.subscribe((imgList) => {
       this.settingsBroadcaster.broadcastChange('NewImages', imgList);
 
-      if(imgList.length > this.imageSizes.length)
+      if(imgList.length > this.imageSizes.length) {
         for(let i = 0; i < imgList.length; i++) {
           this.imageSizes.push(new FormControl(100));
           this.imagePositions.push(new FormControl(0));
         }
 
-        this.settingsBroadcaster.broadcastChange('ImageSizes', this.imageSizes.map((control) => control.value));
-        this.settingsBroadcaster.broadcastChange('ImagePositions', this.imagePositions.map((control) => control.value));
+        this.imageFlips.push({v: false, h: false});
+      }
+
+      this.settingsBroadcaster.broadcastChange('ImageSizes', this.imageSizes.map((control) => control.value));
+      this.settingsBroadcaster.broadcastChange('ImagePositions', this.imagePositions.map((control) => control.value));
+
     });
 
     this.controlsAndTargets.forEach((pair) => {
@@ -81,12 +86,13 @@ export class SettingsComponent {
       imageSizes: this.imageSizes.map((control) => control.value),
       sideCount: this.sideCount.value || 4,
       imageSwapTime: this.imageSwapTime.value || 1000,
+      imageFlips: this.imageFlips
     };
 
     const dlink: HTMLAnchorElement = document.createElement('a');
     dlink.download = 'pyramid-display-settings.json'; // the file name
     const myFileContent: string = JSON.stringify(currSettings, undefined, 2);
-    dlink.href = 'data:text/plain;charset=utf-16,' + myFileContent;
+    dlink.href = 'data:text/plain;charset=utf-8,' + myFileContent;
     dlink.click(); // this will trigger the dialog window
     dlink.remove();
   }
@@ -146,6 +152,7 @@ export class SettingsComponent {
     [this.currentImages[imageIndex - 1], this.currentImages[imageIndex]] = [this.currentImages[imageIndex], this.currentImages[imageIndex - 1]];
     [this.imagePositions[imageIndex - 1], this.imagePositions[imageIndex]] = [this.imagePositions[imageIndex], this.imagePositions[imageIndex - 1]];
     [this.imageSizes[imageIndex - 1], this.imageSizes[imageIndex]] = [this.imageSizes[imageIndex], this.imageSizes[imageIndex - 1]];
+    [this.imageFlips[imageIndex - 1], this.imageFlips[imageIndex]] = [this.imageFlips[imageIndex], this.imageFlips[imageIndex - 1]];
 
     this.imagesChanged$.next(
       this.currentImages.map((imagePair) => imagePair.src)
@@ -159,6 +166,7 @@ export class SettingsComponent {
     [this.currentImages[imageIndex + 1], this.currentImages[imageIndex]] = [this.currentImages[imageIndex], this.currentImages[imageIndex + 1]];
     [this.imagePositions[imageIndex + 1], this.imagePositions[imageIndex]] = [this.imagePositions[imageIndex], this.imagePositions[imageIndex + 1]];
     [this.imageSizes[imageIndex + 1], this.imageSizes[imageIndex]] = [this.imageSizes[imageIndex], this.imageSizes[imageIndex + 1]];
+    [this.imageFlips[imageIndex + 1], this.imageFlips[imageIndex]] = [this.imageFlips[imageIndex], this.imageFlips[imageIndex + 1]];
 
     this.imagesChanged$.next(
       this.currentImages.map((imagePair) => imagePair.src)
@@ -183,6 +191,7 @@ export class SettingsComponent {
     this.currentImages.splice(imageIndex, 1);
     this.imageSizes.splice(imageIndex, 1);
     this.imagePositions.splice(imageIndex, 1);
+    this.imageFlips.splice(imageIndex, 1);
 
     this.imagesChanged$.next(
       this.currentImages.map((imagePair) => imagePair.src)
@@ -199,9 +208,11 @@ export class SettingsComponent {
       const ctx = canvas.getContext('2d');
       if (ctx) {
         if (direction === 'v') {
+          this.imageFlips[imageIndex].v = !this.imageFlips[imageIndex].v;
           ctx.translate(0, img.height);
           ctx.scale(1, -1);
         } else if (direction === 'h') {
+          this.imageFlips[imageIndex].h = !this.imageFlips[imageIndex].h;
           ctx.translate(img.width, 0);
           ctx.scale(-1, 1);
         }
@@ -222,4 +233,5 @@ export type SettingsData = {
   imagePositions: number[];
   sideCount: number;
   imageSwapTime: number;
+  imageFlips: {v: boolean, h: boolean}[];
 };
