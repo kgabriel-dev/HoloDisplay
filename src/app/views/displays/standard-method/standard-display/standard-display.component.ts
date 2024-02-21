@@ -30,6 +30,7 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
   private readonly sideCount$ = this.settingsBroadcastingService.selectNotificationChannel('SideCount');
   private readonly swapTime$ = this.settingsBroadcastingService.selectNotificationChannel('SwapImage');
   private readonly imageArray$ = this.settingsBroadcastingService.selectNotificationChannel('NewImages');
+  private readonly imageRotations$ = this.settingsBroadcastingService.selectNotificationChannel('ImageRotations');
 
   @ViewChild('displayCanvas') displayCanvas!: ElementRef<HTMLCanvasElement>;
   @ViewChild('container') container!: ElementRef<HTMLDivElement>;
@@ -64,6 +65,7 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
     this.sideCount$.subscribe(() => this.recalculateValues());
     this.swapTime$.subscribe(() => this.draw());
     this.imageArray$.subscribe((imageData: string[]) => this.images = helperService.createImages(imageData));
+    this.imageRotations$.subscribe(() => this.draw());
   }
 
   ngOnInit(): void {
@@ -163,11 +165,13 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
 
       ctx.rotate(Math.PI)
       ctx.rotate((iSide - (0.25 * (this.polygonInfo.sides - 2))) * this.angle + this.polygonInfo.rotation); // Why does this equation work?
+      ctx.translate(0, -this.innerPolygonIncircleRadius - this.canvasSize/4 - this.imagePositions[iSide % this.images.length]);
+      ctx.rotate((this.settingsBroadcastingService.getLastValue('ImageRotations') as number[])[iSide % this.images.length] * Math.PI / 180);
 
       ctx.drawImage(
         image,
         -scaledImageWidth/2,
-        -this.innerPolygonIncircleRadius - this.canvasSize/4 - scaledImageHeight/2 - this.imagePositions[iSide % this.images.length],
+        -scaledImageHeight/2,
         scaledImageWidth,
         scaledImageHeight
       );

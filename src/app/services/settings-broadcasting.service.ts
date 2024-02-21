@@ -24,6 +24,7 @@ export class SettingsBroadcastingService {
   private readonly newImages$ = new BehaviorSubject<string[]>(
     environment.defaultValueImageArray
   );
+  private readonly imageRotations$ = new BehaviorSubject<number[]>([]);
 
   private imageSwapTime = environment.defaultValueSwapTime;
   private imageSwapInterval?: number;
@@ -58,6 +59,11 @@ export class SettingsBroadcastingService {
           Array.isArray(value)
         )
           this.newImages$.next(value as string[]);
+        break;
+      
+      case 'ImageRotations':
+        if (Array.isArray(value)) this.imageRotations$.next(value as number[]);
+        break;
     }
   }
 
@@ -90,6 +96,9 @@ export class SettingsBroadcastingService {
 
       case 'NewImages':
         return this.newImages$.asObservable();
+
+      case 'ImageRotations':
+        return this.imageRotations$.asObservable();
     }
   }
 
@@ -107,6 +116,8 @@ export class SettingsBroadcastingService {
         return this.sideCount$.getValue();
       case 'SwapImage':
         return this.sideCount$.getValue();
+      case 'ImageRotations':
+        return this.imageRotations$.getValue();
     }
   }
 }
@@ -117,4 +128,5 @@ export type BroadcastTarget =
   | 'ImagePositions'
   | 'SideCount'
   | 'SwapImage'
-  | 'NewImages';
+  | 'NewImages'
+  | 'ImageRotations';

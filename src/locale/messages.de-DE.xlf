@@ -239,7 +239,7 @@
         <target>Position: </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/views/displays/standard-method/standard-settings/standard-settings.component.html</context>
-          <context context-type="linenumber">29</context>
+          <context context-type="linenumber">31</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1444907508350169332" datatype="html">
@@ -247,7 +247,15 @@
         <target>Größe: </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/views/displays/standard-method/standard-settings/standard-settings.component.html</context>
-          <context context-type="linenumber">30</context>
+          <context context-type="linenumber">32</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1438663350786900285" datatype="html">
+        <source>Rotation: <x id="INTERPOLATION" equiv-text="{{ this.imageRotations[i].value }}"/>°</source>
+        <target>Drehung:</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/views/displays/standard-method/standard-settings/standard-settings.component.html</context>
+          <context context-type="linenumber">33</context>
         </context-group>
       </trans-unit>
       <trans-unit id="554511630329886641" datatype="html">
@@ -255,7 +263,7 @@
         <target>--- Sie haben noch keine Bilder hochgeladen ---</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/views/displays/standard-method/standard-settings/standard-settings.component.html</context>
-          <context context-type="linenumber">35</context>
+          <context context-type="linenumber">38</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6059669835870904232" datatype="html">
@@ -263,7 +271,7 @@
         <target>Bilder hochladen</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/views/displays/standard-method/standard-settings/standard-settings.component.html</context>
-          <context context-type="linenumber">39</context>
+          <context context-type="linenumber">42</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3359631240272527848" datatype="html">
@@ -271,7 +279,7 @@
         <target>Einstellungen speichern &amp; laden</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/views/displays/standard-method/standard-settings/standard-settings.component.html</context>
-          <context context-type="linenumber">46</context>
+          <context context-type="linenumber">49</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7132230797799327014" datatype="html">
@@ -279,7 +287,7 @@
         <target>Speichern Sie die aktuellen Einstellungen in einer Datei auf Ihrem PC.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/views/displays/standard-method/standard-settings/standard-settings.component.html</context>
-          <context context-type="linenumber">49</context>
+          <context context-type="linenumber">52</context>
         </context-group>
       </trans-unit>
       <trans-unit id="894845733777227658" datatype="html">
@@ -287,7 +295,7 @@
         <target>Sie können auch zuvor gespeicherte Einstellungen von Ihrem PC laden.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/views/displays/standard-method/standard-settings/standard-settings.component.html</context>
-          <context context-type="linenumber">50</context>
+          <context context-type="linenumber">53</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3768927257183755959" datatype="html">
@@ -295,7 +303,7 @@
         <target>Speichern</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/views/displays/standard-method/standard-settings/standard-settings.component.html</context>
-          <context context-type="linenumber">54</context>
+          <context context-type="linenumber">57</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7754035096622924583" datatype="html">
@@ -303,7 +311,7 @@
         <target>Größe des Polygons in der Mitte</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/views/displays/standard-method/standard-settings/standard-settings.component.html</context>
-          <context context-type="linenumber">66</context>
+          <context context-type="linenumber">69</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4517949070954488335" datatype="html">
@@ -311,7 +319,7 @@
         <target>Legen Sie hier die Größe des Polygons in der Mitte fest.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/views/displays/standard-method/standard-settings/standard-settings.component.html</context>
-          <context context-type="linenumber">69</context>
+          <context context-type="linenumber">72</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7709174949865335943" datatype="html">
@@ -319,7 +327,7 @@
         <target>Dieser Wert wird durch die Grundfläche Ihres Spiegels bestimmt.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/views/displays/standard-method/standard-settings/standard-settings.component.html</context>
-          <context context-type="linenumber">70</context>
+          <context context-type="linenumber">73</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5248907804377488378" datatype="html">
@@ -327,7 +335,7 @@
         <target>px</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/views/displays/standard-method/standard-settings/standard-settings.component.html</context>
-          <context context-type="linenumber">77</context>
+          <context context-type="linenumber">80</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6768385300720605008" datatype="html">
@@ -335,7 +343,7 @@
         <target>Anzahl der Seiten / Bilder</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/views/displays/standard-method/standard-settings/standard-settings.component.html</context>
-          <context context-type="linenumber">84</context>
+          <context context-type="linenumber">87</context>
         </context-group>
       </trans-unit>
       <trans-unit id="338470959412289336" datatype="html">
@@ -343,7 +351,7 @@
         <target>Mit dieser Einstellung können Sie die Anzahl der Seiten des Polygons anpassen.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/views/displays/standard-method/standard-settings/standard-settings.component.html</context>
-          <context context-type="linenumber">87</context>
+          <context context-type="linenumber">90</context>
         </context-group>
       </trans-unit>
       <trans-unit id="9023794801916517176" datatype="html">
@@ -351,7 +359,7 @@
         <target>An jeder Seite wird ein Bild dargestellt. Die Anzahl der Seiten sollte zwischen 3 und 10 liegen.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/views/displays/standard-method/standard-settings/standard-settings.component.html</context>
-          <context context-type="linenumber">88</context>
+          <context context-type="linenumber">91</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2296786869594482156" datatype="html">
@@ -359,7 +367,7 @@
         <target>Sie können so viele Bilder verwenden, wie das Polygon Seiten hat. Wenn Sie weniger Bilder verwenden, werden die Bilder wiederholt.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/views/displays/standard-method/standard-settings/standard-settings.component.html</context>
-          <context context-type="linenumber">89</context>
+          <context context-type="linenumber">92</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2937149724220940440" datatype="html">
@@ -367,7 +375,7 @@
         <target>Seiten</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/views/displays/standard-method/standard-settings/standard-settings.component.html</context>
-          <context context-type="linenumber">96</context>
+          <context context-type="linenumber">99</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5716119798687938784" datatype="html">
@@ -410,12 +418,28 @@
           <context context-type="linenumber">27</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="4729065619147451090" datatype="html">
+        <source>Rotate image clockwise</source>
+        <target>Bild im Uhrzeigersinn drehen</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/views/displays/standard-method/standard-settings/standard-settings.component.ts</context>
+          <context context-type="linenumber">28</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="988438558122038170" datatype="html">
+        <source>Rotate image counter-clockwise</source>
+        <target>Bild gegen den Uhrzeigersinn drehen</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/views/displays/standard-method/standard-settings/standard-settings.component.ts</context>
+          <context context-type="linenumber">29</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="3012906865384504293" datatype="html">
         <source>Image</source>
         <target>Bild</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/views/displays/standard-method/standard-settings/standard-settings.component.ts</context>
-          <context context-type="linenumber">114</context>
+          <context context-type="linenumber">119</context>
         </context-group>
       </trans-unit>
     </body>

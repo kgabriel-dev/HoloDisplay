@@ -24,10 +24,13 @@
                                     <button type="button" (click)="flipImage(i, 'h')" class="mx-2 mt-2 p-1 border rounded hover:bg-sky-800 icon-button h-10 w-10" [title]="TEXT_FLIP_IMG_HOR" style="background: url('/assets/icons/flip-1.svg');"></button>
                                     <button type="button" (click)="flipImage(i, 'v')" class="mx-2 mt-2 p-1 border rounded hover:bg-sky-800 icon-button w-10 h-10" [title]="TEXT_FLIP_IMG_VERT" style="background: url('/assets/icons/flip-2.svg');"></button>
                                     <button type="button" (click)="deleteImage(i)" class="mx-2 mt-2 p-1 border rounded hover:bg-sky-800 h-10 w-10 icon-button" [title]="TEXT_DELETE_IMG" style="background: url('/assets/icons/trash-87.svg');"></button>
+                                    <button type="button" (click)="rotateImage(i, 15)" class="mx-2 mt-2 p-1 border rounded hover:bg-sky-800 h-10 w-10 icon-button" [title]="TEXT_ROTATE_IMG_PLUS" style="background: url('/assets/icons/rotate-right.svg');"></button>
+                                    <button type="button" (click)="rotateImage(i, -15)" class="mx-2 mt-2 p-1 border rounded hover:bg-sky-800 h-10 w-10 icon-button" [title]="TEXT_ROTATE_IMG_MINUS" style="background: url('/assets/icons/rotate-left.svg');"></button>
                                 </div>
                                 <div class="w-full mt-2">
                                     <p i18n>Position: {{ this.imagePositions[i].value / POSITIONING_STEP_SIZE }}</p>
                                     <p i18n>Size: {{ this.imageSizes[i].value }}%</p>
+                                    <p i18n>Rotation: {{ this.imageRotations[i].value }}°</p>
                                 </div>
                             </div>
                         </div>

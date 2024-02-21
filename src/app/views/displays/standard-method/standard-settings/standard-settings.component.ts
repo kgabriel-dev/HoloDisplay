@@ -25,12 +25,15 @@ export class SettingsComponent {
   readonly TEXT_DELETE_IMG = $localize`Delete image`;
   readonly TEXT_FLIP_IMG_VERT = $localize`Flip image vertically`;
   readonly TEXT_FLIP_IMG_HOR = $localize`Flip image horizontally`;
+  readonly TEXT_ROTATE_IMG_PLUS = $localize`Rotate image clockwise`;
+  readonly TEXT_ROTATE_IMG_MINUS = $localize`Rotate image counter-clockwise`;
 
   innerPolygonSize = new FormControl(Number(environment.defaultValueInnerPolygonSize));
   imageSizes: FormControl[] = [];
   imagePositions: FormControl[] = [];
   sideCount = new FormControl(Number(environment.defaultValueSideCount));
   imageSwapTime = new FormControl(Number(environment.defaultValueSwapTime));
+  imageRotations: FormControl[] = [];
 
   currentSettingsFile: File | undefined;
   currentImages: { name: string; src: string }[] = [];
@@ -56,16 +59,16 @@ export class SettingsComponent {
     this.imagesChanged$.subscribe((imgList) => {
       this.settingsBroadcaster.broadcastChange('NewImages', imgList);
 
-      if(imgList.length > this.imageSizes.length) 
-        for(let i = 0; i < imgList.length; i++) {
+      if(imgList.length > this.imageSizes.length)
+        for(let i = 0; i < (imgList.length - this.imageSizes.length); i++) {
           this.imageSizes.push(new FormControl(100));
           this.imagePositions.push(new FormControl(0));
+          this.imageRotations.push(new FormControl(0));
         }
-      
 
       this.settingsBroadcaster.broadcastChange('ImageSizes', this.imageSizes.map((control) => control.value));
       this.settingsBroadcaster.broadcastChange('ImagePositions', this.imagePositions.map((control) => control.value));
-
+      this.settingsBroadcaster.broadcastChange('ImageRotations', this.imageRotations.map((control) => control.value));
     });
 
     this.controlsAndTargets.forEach((pair) => {
@@ -83,6 +86,7 @@ export class SettingsComponent {
       imageSizes: this.imageSizes.map((control) => control.value),
       sideCount: this.sideCount.value || 4,
       imageSwapTime: this.imageSwapTime.value || 1000,
+      imageRotations: this.imageRotations.map((control) => control.value),
       images: this.currentImages.map((imagePair) => imagePair.src)
     };
 
@@ -111,6 +115,7 @@ export class SettingsComponent {
         this.imagePositions = (loadedSettings.imagePositions || '[]').map((pos: number) => new FormControl(pos));
         this.sideCount.setValue(loadedSettings.sideCount || 4);
         this.imageSwapTime.setValue(loadedSettings.imageSwapTime || 1000);
+        this.imageRotations = (loadedSettings.imageRotations || '[]').map((rot: number) => new FormControl(rot));
         this.currentImages = (loadedSettings.images || '[]').map((src: string, index: number) => ({ name: $localize`Image` + ' #' + (index + 1), src }));
 
         this.imagesChanged$.next(
@@ -154,6 +159,7 @@ export class SettingsComponent {
     [this.currentImages[imageIndex - 1], this.currentImages[imageIndex]] = [this.currentImages[imageIndex], this.currentImages[imageIndex - 1]];
     [this.imagePositions[imageIndex - 1], this.imagePositions[imageIndex]] = [this.imagePositions[imageIndex], this.imagePositions[imageIndex - 1]];
     [this.imageSizes[imageIndex - 1], this.imageSizes[imageIndex]] = [this.imageSizes[imageIndex], this.imageSizes[imageIndex - 1]];
+    [this.imageRotations[imageIndex - 1], this.imageRotations[imageIndex]] = [this.imageRotations[imageIndex], this.imageRotations[imageIndex - 1]]
 
     this.imagesChanged$.next(
       this.currentImages.map((imagePair) => imagePair.src)
@@ -167,6 +173,7 @@ export class SettingsComponent {
     [this.currentImages[imageIndex + 1], this.currentImages[imageIndex]] = [this.currentImages[imageIndex], this.currentImages[imageIndex + 1]];
     [this.imagePositions[imageIndex + 1], this.imagePositions[imageIndex]] = [this.imagePositions[imageIndex], this.imagePositions[imageIndex + 1]];
     [this.imageSizes[imageIndex + 1], this.imageSizes[imageIndex]] = [this.imageSizes[imageIndex], this.imageSizes[imageIndex + 1]];
+    [this.imageRotations[imageIndex + 1], this.imageRotations[imageIndex]] = [this.imageRotations[imageIndex], this.imageRotations[imageIndex + 1]]
 
     this.imagesChanged$.next(
       this.currentImages.map((imagePair) => imagePair.src)
@@ -191,6 +198,7 @@ export class SettingsComponent {
     this.currentImages.splice(imageIndex, 1);
     this.imageSizes.splice(imageIndex, 1);
     this.imagePositions.splice(imageIndex, 1);
+    this.imageRotations.splice(imageIndex, 1);
 
     this.imagesChanged$.next(
       this.currentImages.map((imagePair) => imagePair.src)
@@ -222,6 +230,12 @@ export class SettingsComponent {
     };
   
   }
+
+  rotateImage(imageIndex: number, angle: number): void {
+    this.imageRotations[imageIndex].setValue((this.imageRotations[imageIndex].value + angle) % 360);
+
+    this.settingsBroadcaster.broadcastChange('ImageRotations', this.imageRotations.map((control) => control.value));
+  }
 }
 
 export type SettingsData = {
@@ -230,5 +244,6 @@ export type SettingsData = {
   imagePositions: number[];
   sideCount: number;
   imageSwapTime: number;
+  imageRotations: number[];
   images: string[];
 };
