@@ -25,13 +25,14 @@ export class SettingsBroadcastingService {
     environment.defaultValueImageArray
   );
   private readonly imageRotations$ = new BehaviorSubject<number[]>([]);
+  private readonly imageFlips$ = new BehaviorSubject<{ v: boolean; h: boolean }[]>([]);
 
   private imageSwapTime = environment.defaultValueSwapTime;
   private imageSwapInterval?: number;
 
   public broadcastChange(
     target: BroadcastTarget,
-    value: number | boolean | string[] | number[]
+    value: number | boolean | string[] | number[] | { v: boolean; h: boolean }[]
   ): void {
     switch (target) {
       case 'InnerPolygonSize':
@@ -63,6 +64,10 @@ export class SettingsBroadcastingService {
       
       case 'ImageRotations':
         if (Array.isArray(value)) this.imageRotations$.next(value as number[]);
+        break;
+      
+      case 'ImageFlips':
+        if (Array.isArray(value)) this.imageFlips$.next(value as { v: boolean; h: boolean }[]);
         break;
     }
   }
@@ -99,6 +104,9 @@ export class SettingsBroadcastingService {
 
       case 'ImageRotations':
         return this.imageRotations$.asObservable();
+      
+      case 'ImageFlips':
+        return this.imageFlips$.asObservable();
     }
   }
 
@@ -118,6 +126,8 @@ export class SettingsBroadcastingService {
         return this.sideCount$.getValue();
       case 'ImageRotations':
         return this.imageRotations$.getValue();
+      case 'ImageFlips':
+        return this.imageFlips$.getValue();
     }
   }
 }
@@ -129,4 +139,5 @@ export type BroadcastTarget =
   | 'SideCount'
   | 'SwapImage'
   | 'NewImages'
-  | 'ImageRotations';
+  | 'ImageRotations'
+  | 'ImageFlips';

@@ -31,6 +31,7 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
   private readonly swapTime$ = this.settingsBroadcastingService.selectNotificationChannel('SwapImage');
   private readonly imageArray$ = this.settingsBroadcastingService.selectNotificationChannel('NewImages');
   private readonly imageRotations$ = this.settingsBroadcastingService.selectNotificationChannel('ImageRotations');
+  private readonly imageFlips$ = this.settingsBroadcastingService.selectNotificationChannel('ImageFlips');
 
   @ViewChild('displayCanvas') displayCanvas!: ElementRef<HTMLCanvasElement>;
   @ViewChild('container') container!: ElementRef<HTMLDivElement>;
@@ -41,6 +42,7 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
   private angle = 0;
   private images: HTMLImageElement[] = [];
   private imageScalingFactors: number[] = [];
+  private imageFlips: { v: boolean, h: boolean }[] = [];
   private imagePositions: number[] = [];
   private innerPolygonIncircleRadius = 0;
   private polygonInfo: { rotation: number, offset: {dx: number, dy: number}, sides: number } = {} as typeof this.polygonInfo;
@@ -66,6 +68,7 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
     this.swapTime$.subscribe(() => this.draw());
     this.imageArray$.subscribe((imageData: string[]) => this.images = helperService.createImages(imageData));
     this.imageRotations$.subscribe(() => this.draw());
+    this.imageFlips$.subscribe(() => this.recalculateValues());
   }
 
   ngOnInit(): void {
@@ -119,6 +122,7 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
 
     this.imageScalingFactors = (this.settingsBroadcastingService.getLastValue('ImageSizes') as number[]).map((size) => size / 100);
     this.imagePositions = this.settingsBroadcastingService.getLastValue('ImagePositions') as number[];
+    this.imageFlips = this.settingsBroadcastingService.getLastValue('ImageFlips') as { v: boolean, h: boolean }[];
     this.innerPolygonIncircleRadius = this.helperService.getRadiusOfIncircleOfRegularPolygon((this.settingsBroadcastingService.getLastValue('InnerPolygonSize') as number) / 2, sideCount);
   }
 
@@ -136,7 +140,8 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
     this.helperService.connectPointsWithStraightLines(ctx, this.outerEdgePoints, 'red');
 
     for(let iSide = 0; iSide < (this.settingsBroadcastingService.getLastValue('SideCount') as number); iSide++) {
-      const image = this.images[iSide % this.images.length];
+      const iImage = iSide % this.images.length;
+      const image = this.images[iImage];
 
       if(!image) continue;
 
@@ -144,7 +149,8 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
       ctx.resetTransform();
       ctx.save();
 
-      ctx.translate(this.canvasSize/2 - this.polygonInfo.offset.dx, this.canvasSize/2 - this.polygonInfo.offset.dy);
+      // apply the translation and rotation
+      ctx.translate((this.canvasSize/2 - this.polygonInfo.offset.dx), (this.canvasSize/2 - this.polygonInfo.offset.dy));
       ctx.rotate(iSide * this.angle);
 
       // create the clip mask
@@ -167,6 +173,8 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
       ctx.rotate((iSide - (0.25 * (this.polygonInfo.sides - 2))) * this.angle + this.polygonInfo.rotation); // Why does this equation work?
       ctx.translate(0, -this.innerPolygonIncircleRadius - this.canvasSize/4 - this.imagePositions[iSide % this.images.length]);
       ctx.rotate((this.settingsBroadcastingService.getLastValue('ImageRotations') as number[])[iSide % this.images.length] * Math.PI / 180);
+
+      ctx.scale(this.imageFlips[iImage].h ? -1 : 1, this.imageFlips[iImage].v ? -1 : 1);
 
       ctx.drawImage(
         image,

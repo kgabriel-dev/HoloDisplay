@@ -34,6 +34,7 @@ export class SettingsComponent {
   sideCount = new FormControl(Number(environment.defaultValueSideCount));
   imageSwapTime = new FormControl(Number(environment.defaultValueSwapTime));
   imageRotations: FormControl[] = [];
+  imageFlips: { v: FormControl; h: FormControl }[] = [];
 
   currentSettingsFile: File | undefined;
   currentImages: { name: string; src: string }[] = [];
@@ -64,11 +65,13 @@ export class SettingsComponent {
           this.imageSizes.push(new FormControl(100));
           this.imagePositions.push(new FormControl(0));
           this.imageRotations.push(new FormControl(0));
+          this.imageFlips.push({ v: new FormControl(false), h: new FormControl(false) });
         }
 
       this.settingsBroadcaster.broadcastChange('ImageSizes', this.imageSizes.map((control) => control.value));
       this.settingsBroadcaster.broadcastChange('ImagePositions', this.imagePositions.map((control) => control.value));
       this.settingsBroadcaster.broadcastChange('ImageRotations', this.imageRotations.map((control) => control.value));
+      this.settingsBroadcaster.broadcastChange('ImageFlips', this.imageFlips.map((pair) => ({ v: pair.v.value, h: pair.h.value })));
     });
 
     this.controlsAndTargets.forEach((pair) => {
@@ -87,6 +90,7 @@ export class SettingsComponent {
       sideCount: this.sideCount.value || 4,
       imageSwapTime: this.imageSwapTime.value || 1000,
       imageRotations: this.imageRotations.map((control) => control.value),
+      imageFlips: this.imageFlips.map((pair) => ({ v: pair.v.value, h: pair.h.value })),
       images: this.currentImages.map((imagePair) => imagePair.src)
     };
 
@@ -116,6 +120,7 @@ export class SettingsComponent {
         this.sideCount.setValue(loadedSettings.sideCount || 4);
         this.imageSwapTime.setValue(loadedSettings.imageSwapTime || 1000);
         this.imageRotations = (loadedSettings.imageRotations || '[]').map((rot: number) => new FormControl(rot));
+        this.imageFlips = (loadedSettings.imageFlips || '[]').map((pair: { v: boolean, h: boolean }) => ({ v: new FormControl(pair.v), h: new FormControl(pair.h) }));
         this.currentImages = (loadedSettings.images || '[]').map((src: string, index: number) => ({ name: $localize`Image` + ' #' + (index + 1), src }));
 
         this.imagesChanged$.next(
@@ -206,35 +211,31 @@ export class SettingsComponent {
   }
 
   flipImage(imageIndex: number, direction: 'v' | 'h'): void {
-    const img = new Image();
-    img.src = this.currentImages[imageIndex].src;
-    img.onload = () => {
-      const canvas = document.createElement('canvas');
-      canvas.width = img.width;
-      canvas.height = img.height;
-      const ctx = canvas.getContext('2d');
-      if (ctx) {
-        if (direction === 'v') {
-          ctx.translate(0, img.height);
-          ctx.scale(1, -1);
-        } else if (direction === 'h') {
-          ctx.translate(img.width, 0);
-          ctx.scale(-1, 1);
-        }
-        ctx.drawImage(img, 0, 0);
-        this.currentImages[imageIndex].src = canvas.toDataURL();
-        this.imagesChanged$.next(
-          this.currentImages.map((imagePair) => imagePair.src)
-        );
-      }
-    };
-  
+    this.imageFlips[imageIndex][direction].setValue(!this.imageFlips[imageIndex][direction].value);
+
+    this.settingsBroadcaster.broadcastChange('ImageFlips', this.imageFlips.map((pair) => ({ v: pair.v.value, h: pair.h.value })));
   }
 
   rotateImage(imageIndex: number, angle: number): void {
     this.imageRotations[imageIndex].setValue((this.imageRotations[imageIndex].value + angle) % 360);
 
     this.settingsBroadcaster.broadcastChange('ImageRotations', this.imageRotations.map((control) => control.value));
+  }
+
+  getFlippingText(imageIndex: number) {
+    const textFlipV = $localize`vertical`,
+          textFlipH = $localize`horizontal`;
+    
+    const flips = this.imageFlips[imageIndex];
+    
+    const texts = [
+      ...flips.h.value ? [textFlipH] : [],
+      ...flips.v.value ? [textFlipV] : []
+    ];
+
+    if(texts.length === 0) return $localize`None`;
+
+    return texts.join(', ');
   }
 }
 
@@ -245,5 +246,6 @@ export type SettingsData = {
   sideCount: number;
   imageSwapTime: number;
   imageRotations: number[];
+  imageFlips: { v: boolean; h: boolean }[];
   images: string[];
 };
