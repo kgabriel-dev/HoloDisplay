@@ -225,8 +225,8 @@ export class SettingsComponent {
   }
 
   getFlippingText(imageIndex: number) {
-    const textFlipV = $localize`vertical`,
-          textFlipH = $localize`horizontal`;
+    const textFlipV = $localize`v`,
+          textFlipH = $localize`h`;
     
     const flips = this.imageFlips[imageIndex];
     
