@@ -3,10 +3,9 @@ input::-webkit-inner-spin-button {
     display: none;
 }
 
-.icon-button {
-    background-repeat: no-repeat !important;
-    background-position: center !important;
-    background-size: 70% !important;
+.icon-button svg {
+    --svg-color: #fff !important;
+    fill: var(--svg-color) !important;
 }
 
 button {

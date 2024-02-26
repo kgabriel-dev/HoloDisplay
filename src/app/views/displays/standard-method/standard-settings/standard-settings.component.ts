@@ -27,6 +27,8 @@ export class SettingsComponent {
   readonly TEXT_FLIP_IMG_HOR = $localize`Flip image horizontally`;
   readonly TEXT_ROTATE_IMG_PLUS = $localize`Rotate image clockwise`;
   readonly TEXT_ROTATE_IMG_MINUS = $localize`Rotate image counter-clockwise`;
+  readonly TEXT_SCALE_IMG_UP = $localize`Scale image up`;
+  readonly TEXT_SCALE_IMG_DOWN = $localize`Scale image down`;
 
   innerPolygonSize = new FormControl(Number(environment.defaultValueInnerPolygonSize));
   imageSizes: FormControl[] = [];
