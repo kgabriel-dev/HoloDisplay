@@ -61,15 +61,6 @@ export class SettingsComponent {
 
     this.imagesChanged$.subscribe((imgList) => {
       this.settingsBroadcaster.broadcastChange('NewImages', imgList);
-
-      if(imgList.length > this.imageSizes.length)
-        for(let i = 0; i < (imgList.length - this.imageSizes.length); i++) {
-          this.imageSizes.push(new FormControl(100));
-          this.imagePositions.push(new FormControl(0));
-          this.imageRotations.push(new FormControl(0));
-          this.imageFlips.push({ v: new FormControl(false), h: new FormControl(false) });
-        }
-
       this.settingsBroadcaster.broadcastChange('ImageSizes', this.imageSizes.map((control) => control.value));
       this.settingsBroadcaster.broadcastChange('ImagePositions', this.imagePositions.map((control) => control.value));
       this.settingsBroadcaster.broadcastChange('ImageRotations', this.imageRotations.map((control) => control.value));
@@ -142,14 +133,20 @@ export class SettingsComponent {
       let readingIndex = 0;
 
       fileReader.onload = (e) => {
+        this.imageSizes.push(new FormControl(100));
+        this.imagePositions.push(new FormControl(0));
+        this.imageRotations.push(new FormControl(0));
+        this.imageFlips.push({ v: new FormControl(false), h: new FormControl(false) });
+
         this.currentImages.push({
           src: e.target?.result?.toString() || 'FEHLER - ERROR',
           name: fileList[readingIndex].name,
         });
 
+        // add image to the list
         if (++readingIndex < fileList.length)
           fileReader.readAsDataURL(fileList[readingIndex]);
-        else
+        else    // all images have been read
           this.imagesChanged$.next(
             this.currentImages.map((imagePair) => imagePair.src)
           );
