@@ -7,7 +7,7 @@ import {
   ViewChild
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Observable, debounceTime } from 'rxjs';
+import { Observable, debounceTime, merge } from 'rxjs';
 import { StandardMethodCalculatorService } from 'src/app/services/calculators/standard-method/standard-method-calculator.service';
 import { HelperService, Point } from 'src/app/services/helpers/helper.service';
 import { SettingsBroadcastingService } from 'src/app/services/settings-broadcasting.service';
@@ -60,17 +60,25 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
     private calculator: StandardMethodCalculatorService,
     private tutorial: TutorialService
   ) {
-    // subscribe to all settings broadcast channels
-    this.imagePositions$.subscribe(() => this.recalculateValues());
-    this.imageSizes$.subscribe(() => this.recalculateValues());
-    this.imagePositions$.subscribe(() => this.recalculateValues());
-    this.innerPolygonSize$.subscribe(() => this.recalculateValues());
-    this.sideCount$.subscribe(() => this.recalculateValues());
-    this.swapTime$.subscribe(() => this.draw());
+    // subscribe to changes in the images to display
     this.imageArray$.subscribe((imageData: string[]) => this.images = helperService.createImages(imageData));
-    this.imageRotations$.subscribe(() => this.draw());
-    this.imageFlips$.subscribe(() => this.recalculateValues());
-    this.imageBrightness$.subscribe(() => this.draw());
+
+    // subscribe to all other settings broadcast channels
+    merge(
+      this.imagePositions$,
+      this.imageSizes$,
+      this.innerPolygonSize$,
+      this.sideCount$,
+      this.swapTime$,
+      this.imageRotations$,
+      this.imageFlips$,
+      this.imageBrightness$
+    )
+    .pipe(debounceTime(100))
+    .subscribe(() => {
+      this.recalculateValues();
+      this.draw();
+    });
   }
 
   ngOnInit(): void {
@@ -168,18 +176,18 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
       ctx.rotate(-iSide * this.angle);
 
       // draw the image
-      const scaledImageWidth = image.width * this.imageScalingFactors[iSide % this.images.length];
-      const scaledImageHeight = image.height * this.imageScalingFactors[iSide % this.images.length];
+      const scaledImageWidth = image.width * this.imageScalingFactors[iImage];
+      const scaledImageHeight = image.height * this.imageScalingFactors[iImage];
 
       ctx.rotate(Math.PI)
       ctx.rotate((iSide - (0.25 * (this.polygonInfo.sides - 2))) * this.angle + this.polygonInfo.rotation); // Why does this equation work?
-      ctx.translate(0, -this.innerPolygonIncircleRadius - this.canvasSize/4 - this.imagePositions[iSide % this.images.length]);
-      ctx.rotate((this.settingsBroadcastingService.getLastValue('ImageRotations') as number[])[iSide % this.images.length] * Math.PI / 180);
+      ctx.translate(0, -this.innerPolygonIncircleRadius - this.canvasSize/4 - this.imagePositions[iImage]);
+      ctx.rotate((this.settingsBroadcastingService.getLastValue('ImageRotations') as number[])[iImage] * Math.PI / 180);
 
       // apply the flip
       ctx.scale(this.imageFlips[iImage].h ? -1 : 1, this.imageFlips[iImage].v ? -1 : 1);
       // apply the brightness change
-      ctx.filter = `brightness(${(this.settingsBroadcastingService.getLastValue('ImageBrightness') as number[])[iSide % this.images.length]}%)`;
+      ctx.filter = `brightness(${(this.settingsBroadcastingService.getLastValue('ImageBrightness') as number[])[iImage]}%)`;
 
       ctx.drawImage(
         image,
