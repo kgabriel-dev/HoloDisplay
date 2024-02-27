@@ -83,10 +83,11 @@
         <div class="p-5 bg-cyan-700">
             <div class="border border-b-0 py-3 rounded-t-lg">
                 <button type="button" (click)="saveSettings()" data-mdb-ripple="true" data-mdb-ripple-color="light" class="p-3 mx-3 border-2 rounded-lg hover:bg-sky-800" i18n>Save</button>
+                <button type="button" (click)="resetSettings()" data-mdb-ripple="true" data-mdb-ripple-color="light" class="p-3 mx-3 border-2 rounded-lg hover:bg-sky-800" i18n>Load Initial Settings</button>
             </div>
 
             <div class="border p-5 rounded-b-lg text-center">
-                <input type="file" (change)="loadSettings($event)" accept=".json" class="block w-full border border-gray-200 shadow-sm rounded-md text-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500 file:border-0 file:mr-4 file:py-3 file:px-4 file:bg-white">
+                <input type="file" (change)="onLoadSettingsClick($event)" accept=".json" class="block w-full border border-gray-200 shadow-sm rounded-md text-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500 file:border-0 file:mr-4 file:py-3 file:px-4 file:bg-white">
             </div>
             
         </div>

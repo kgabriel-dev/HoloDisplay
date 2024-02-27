@@ -8,6 +8,7 @@ import {
 import { Subject } from 'rxjs';
 import { Router } from '@angular/router';
 import { environment } from 'src/environments/environment';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-standard-settings',
@@ -42,10 +43,10 @@ export class SettingsComponent {
   imageRotations: FormControl[] = [];
   imageFlips: { v: FormControl; h: FormControl }[] = [];
   imageBrightness: FormControl[] = [];
-
-  currentSettingsFile: File | undefined;
+  
   currentImages: { name: string; src: string }[] = [];
   imagesChanged$ = new Subject<string[]>();
+  settingsResetRequested$ = this.settingsBroadcaster.selectNotificationChannel('SettingsReset');
 
   readonly controlsAndTargets: {
     control: FormControl;
@@ -57,7 +58,8 @@ export class SettingsComponent {
 
   constructor(
     private settingsBroadcaster: SettingsBroadcastingService,
-    public router: Router
+    public router: Router,
+    private http: HttpClient
   ) {
     settingsBroadcaster.silentChangeOfSwapTime(this.imageSwapTime.value);
     this.imageSwapTime.valueChanges.subscribe((newValue) => {
@@ -77,6 +79,10 @@ export class SettingsComponent {
       pair.control.valueChanges.subscribe((newValue) => {
         this.settingsBroadcaster.broadcastChange(pair.target, newValue);
       });
+    });
+
+    this.settingsResetRequested$.subscribe(() => {
+      this.resetSettings();
     });
   }
 
@@ -102,33 +108,35 @@ export class SettingsComponent {
     dlink.remove();
   }
 
-  loadSettings(event: Event): void {
+  loadSettings(settings: SettingsData): void {
+    this.innerPolygonSize.setValue(settings.innerPolygonSize || 50);
+    this.imageSizes = (settings.imageSizes || '[]').map((size: number) => new FormControl(size));
+    this.imagePositions = (settings.imagePositions || '[]').map((pos: number) => new FormControl(pos));
+    this.sideCount.setValue(settings.sideCount || 4);
+    this.imageSwapTime.setValue(settings.imageSwapTime || 1000);
+    this.imageRotations = (settings.imageRotations || '[]').map((rot: number) => new FormControl(rot));
+    this.imageFlips = (settings.imageFlips || '[]').map((pair: { v: boolean, h: boolean }) => ({ v: new FormControl(pair.v), h: new FormControl(pair.h) }));
+    this.imageBrightness = (settings.imageBrightness || '[]').map((brightness: number) => new FormControl(brightness));
+    this.currentImages = (settings.images || '[]').map((src: string, index: number) => ({ name: $localize`Image` + ' #' + (index + 1), src }));
+
+    this.imagesChanged$.next(
+      this.currentImages.map((imagePair) => imagePair.src)
+    );
+  }
+
+  onLoadSettingsClick(event: Event): void {
     const element = event.currentTarget as HTMLInputElement,
       fileList = element.files;
 
-    if (fileList) {
-      this.currentSettingsFile = fileList[0];
-
-      // read in settings
+    if (fileList && fileList.length > 0) {
       const fileReader = new FileReader();
+
       fileReader.onload = () => {
         const loadedSettings = JSON.parse(fileReader.result?.toString() || '');
-
-        this.innerPolygonSize.setValue(loadedSettings.innerPolygonSize || 50);
-        this.imageSizes = (loadedSettings.imageSizes || '[]').map((size: number) => new FormControl(size));
-        this.imagePositions = (loadedSettings.imagePositions || '[]').map((pos: number) => new FormControl(pos));
-        this.sideCount.setValue(loadedSettings.sideCount || 4);
-        this.imageSwapTime.setValue(loadedSettings.imageSwapTime || 1000);
-        this.imageRotations = (loadedSettings.imageRotations || '[]').map((rot: number) => new FormControl(rot));
-        this.imageFlips = (loadedSettings.imageFlips || '[]').map((pair: { v: boolean, h: boolean }) => ({ v: new FormControl(pair.v), h: new FormControl(pair.h) }));
-        this.imageBrightness = (loadedSettings.imageBrightness || '[]').map((brightness: number) => new FormControl(brightness));
-        this.currentImages = (loadedSettings.images || '[]').map((src: string, index: number) => ({ name: $localize`Image` + ' #' + (index + 1), src }));
-
-        this.imagesChanged$.next(
-          this.currentImages.map((imagePair) => imagePair.src)
-        );
+        this.loadSettings(loadedSettings);
       };
-      fileReader.readAsText(this.currentSettingsFile);
+
+      fileReader.readAsText(fileList[0]);
     }
   }
 
@@ -261,6 +269,12 @@ export class SettingsComponent {
     this.imageBrightness[imageIndex].setValue(newValue);
 
     this.settingsBroadcaster.broadcastChange('ImageBrightness', this.imageBrightness.map((control) => control.value));
+  }
+
+  resetSettings(): void {
+    this.http
+        .get<SettingsData>('assets/settings/pyramid-display-settings.json')
+        .subscribe((data: SettingsData) => this.loadSettings(data));
   }
 }
 

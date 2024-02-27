@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
@@ -27,6 +27,8 @@ export class SettingsBroadcastingService {
   private readonly imageRotations$ = new BehaviorSubject<number[]>([]);
   private readonly imageFlips$ = new BehaviorSubject<{ v: boolean; h: boolean }[]>([]);
   private readonly imageBrightness$ = new BehaviorSubject<number[]>([]);
+
+  private readonly settingsReset$ = new Subject<void>();
 
   private imageSwapTime = environment.defaultValueSwapTime;
   private imageSwapInterval?: number;
@@ -91,30 +93,24 @@ export class SettingsBroadcastingService {
     switch (target) {
       case 'ImagePositions':
         return this.imagePositions$.asObservable();
-
       case 'ImageSizes':
         return this.imageSizes$.asObservable();
-
       case 'InnerPolygonSize':
         return this.innerPolygonSize$.asObservable();
-
       case 'SideCount':
         return this.sideCount$.asObservable();
-
       case 'SwapImage':
         return this.imageSwap$.asObservable();
-
       case 'NewImages':
         return this.newImages$.asObservable();
-
       case 'ImageRotations':
         return this.imageRotations$.asObservable();
-      
       case 'ImageFlips':
         return this.imageFlips$.asObservable();
-
       case 'ImageBrightness':
         return this.imageBrightness$.asObservable();
+      case 'SettingsReset':
+        return this.settingsReset$.asObservable();
     }
   }
 
@@ -138,7 +134,13 @@ export class SettingsBroadcastingService {
         return this.imageFlips$.getValue();
       case 'ImageBrightness':
         return this.imageBrightness$.getValue();
+      case 'SettingsReset':
+        return;
     }
+  }
+
+  public requestSettingsReset(): void {
+    this.settingsReset$.next();
   }
 }
 
@@ -151,4 +153,5 @@ export type BroadcastTarget =
   | 'NewImages'
   | 'ImageRotations'
   | 'ImageFlips'
-  | 'ImageBrightness';
+  | 'ImageBrightness'
+  | 'SettingsReset';

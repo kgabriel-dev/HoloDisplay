@@ -91,6 +91,9 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
     this.calculate$.subscribe(() => {
       this.toggleModal('calculatorExtraSettingsModal');
     });
+
+    // load initial settings to show something
+    this.settingsBroadcastingService.requestSettingsReset();
   }
 
   ngAfterViewInit(): void {
