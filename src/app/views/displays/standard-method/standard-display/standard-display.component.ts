@@ -32,6 +32,7 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
   private readonly imageArray$ = this.settingsBroadcastingService.selectNotificationChannel('NewImages');
   private readonly imageRotations$ = this.settingsBroadcastingService.selectNotificationChannel('ImageRotations');
   private readonly imageFlips$ = this.settingsBroadcastingService.selectNotificationChannel('ImageFlips');
+  private readonly imageBrightness$ = this.settingsBroadcastingService.selectNotificationChannel('ImageBrightness');
 
   @ViewChild('displayCanvas') displayCanvas!: ElementRef<HTMLCanvasElement>;
   @ViewChild('container') container!: ElementRef<HTMLDivElement>;
@@ -69,6 +70,7 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
     this.imageArray$.subscribe((imageData: string[]) => this.images = helperService.createImages(imageData));
     this.imageRotations$.subscribe(() => this.draw());
     this.imageFlips$.subscribe(() => this.recalculateValues());
+    this.imageBrightness$.subscribe(() => this.draw());
   }
 
   ngOnInit(): void {
@@ -174,7 +176,10 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
       ctx.translate(0, -this.innerPolygonIncircleRadius - this.canvasSize/4 - this.imagePositions[iSide % this.images.length]);
       ctx.rotate((this.settingsBroadcastingService.getLastValue('ImageRotations') as number[])[iSide % this.images.length] * Math.PI / 180);
 
+      // apply the flip
       ctx.scale(this.imageFlips[iImage].h ? -1 : 1, this.imageFlips[iImage].v ? -1 : 1);
+      // apply the brightness change
+      ctx.filter = `brightness(${(this.settingsBroadcastingService.getLastValue('ImageBrightness') as number[])[iSide % this.images.length]}%)`;
 
       ctx.drawImage(
         image,

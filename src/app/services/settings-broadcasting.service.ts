@@ -26,6 +26,7 @@ export class SettingsBroadcastingService {
   );
   private readonly imageRotations$ = new BehaviorSubject<number[]>([]);
   private readonly imageFlips$ = new BehaviorSubject<{ v: boolean; h: boolean }[]>([]);
+  private readonly imageBrightness$ = new BehaviorSubject<number[]>([]);
 
   private imageSwapTime = environment.defaultValueSwapTime;
   private imageSwapInterval?: number;
@@ -69,6 +70,10 @@ export class SettingsBroadcastingService {
       case 'ImageFlips':
         if (Array.isArray(value)) this.imageFlips$.next(value as { v: boolean; h: boolean }[]);
         break;
+
+      case 'ImageBrightness':
+        if (Array.isArray(value)) this.imageBrightness$.next(value as number[]);
+        break;
     }
   }
 
@@ -107,6 +112,9 @@ export class SettingsBroadcastingService {
       
       case 'ImageFlips':
         return this.imageFlips$.asObservable();
+
+      case 'ImageBrightness':
+        return this.imageBrightness$.asObservable();
     }
   }
 
@@ -128,6 +136,8 @@ export class SettingsBroadcastingService {
         return this.imageRotations$.getValue();
       case 'ImageFlips':
         return this.imageFlips$.getValue();
+      case 'ImageBrightness':
+        return this.imageBrightness$.getValue();
     }
   }
 }
@@ -140,4 +150,5 @@ export type BroadcastTarget =
   | 'SwapImage'
   | 'NewImages'
   | 'ImageRotations'
-  | 'ImageFlips';
+  | 'ImageFlips'
+  | 'ImageBrightness';

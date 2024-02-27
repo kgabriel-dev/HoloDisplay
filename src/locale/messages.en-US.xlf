@@ -205,109 +205,116 @@
           <context context-type="linenumber">21</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="7530123765660572758" datatype="html">
+        <source>Brightness: <x id="INTERPOLATION" equiv-text="{{ this.imageBrightness[i].value }}"/>%</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/views/displays/standard-method/standard-settings/standard-settings.component.html</context>
+          <context context-type="linenumber">22</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="554511630329886641" datatype="html">
         <source>--- You have not uploaded any images yet. ---</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/views/displays/standard-method/standard-settings/standard-settings.component.html</context>
-          <context context-type="linenumber">59</context>
+          <context context-type="linenumber">66</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6059669835870904232" datatype="html">
         <source>Upload Images</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/views/displays/standard-method/standard-settings/standard-settings.component.html</context>
-          <context context-type="linenumber">63</context>
+          <context context-type="linenumber">70</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3359631240272527848" datatype="html">
         <source>Save &amp; load settings</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/views/displays/standard-method/standard-settings/standard-settings.component.html</context>
-          <context context-type="linenumber">70</context>
+          <context context-type="linenumber">77</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7132230797799327014" datatype="html">
         <source>Save the current settings in a file on your PC.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/views/displays/standard-method/standard-settings/standard-settings.component.html</context>
-          <context context-type="linenumber">73</context>
+          <context context-type="linenumber">80</context>
         </context-group>
       </trans-unit>
       <trans-unit id="894845733777227658" datatype="html">
         <source>You can also load previously save settings from your PC.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/views/displays/standard-method/standard-settings/standard-settings.component.html</context>
-          <context context-type="linenumber">74</context>
+          <context context-type="linenumber">81</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3768927257183755959" datatype="html">
         <source>Save</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/views/displays/standard-method/standard-settings/standard-settings.component.html</context>
-          <context context-type="linenumber">78</context>
+          <context context-type="linenumber">85</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7754035096622924583" datatype="html">
         <source>Size of the polygon in the middle</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/views/displays/standard-method/standard-settings/standard-settings.component.html</context>
-          <context context-type="linenumber">90</context>
+          <context context-type="linenumber">97</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4517949070954488335" datatype="html">
         <source>Set the size of the polygon in the middle here.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/views/displays/standard-method/standard-settings/standard-settings.component.html</context>
-          <context context-type="linenumber">93</context>
+          <context context-type="linenumber">100</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7709174949865335943" datatype="html">
         <source>This value is determined by the surface area of your mirror.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/views/displays/standard-method/standard-settings/standard-settings.component.html</context>
-          <context context-type="linenumber">94</context>
+          <context context-type="linenumber">101</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5248907804377488378" datatype="html">
         <source>px</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/views/displays/standard-method/standard-settings/standard-settings.component.html</context>
-          <context context-type="linenumber">101</context>
+          <context context-type="linenumber">108</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6768385300720605008" datatype="html">
         <source>Number of sides / images</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/views/displays/standard-method/standard-settings/standard-settings.component.html</context>
-          <context context-type="linenumber">108</context>
+          <context context-type="linenumber">115</context>
         </context-group>
       </trans-unit>
       <trans-unit id="338470959412289336" datatype="html">
         <source>With this setting you can adjust the number of sides the polygon has.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/views/displays/standard-method/standard-settings/standard-settings.component.html</context>
-          <context context-type="linenumber">111</context>
+          <context context-type="linenumber">118</context>
         </context-group>
       </trans-unit>
       <trans-unit id="9023794801916517176" datatype="html">
         <source>Each side displays an image. The number should be between 3 and 10.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/views/displays/standard-method/standard-settings/standard-settings.component.html</context>
-          <context context-type="linenumber">112</context>
+          <context context-type="linenumber">119</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2296786869594482156" datatype="html">
         <source>You can use as many images as the polygon has sides. If you use fewer images, the images will be repeated.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/views/displays/standard-method/standard-settings/standard-settings.component.html</context>
-          <context context-type="linenumber">113</context>
+          <context context-type="linenumber">120</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2937149724220940440" datatype="html">
         <source>Sides</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/views/displays/standard-method/standard-settings/standard-settings.component.html</context>
-          <context context-type="linenumber">120</context>
+          <context context-type="linenumber">127</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5716119798687938784" datatype="html">
@@ -387,32 +394,46 @@
           <context context-type="linenumber">33</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="2263856694456758083" datatype="html">
+        <source>Make image brighter</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/views/displays/standard-method/standard-settings/standard-settings.component.ts</context>
+          <context context-type="linenumber">34</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1034094426042846284" datatype="html">
+        <source>Make image darker</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/views/displays/standard-method/standard-settings/standard-settings.component.ts</context>
+          <context context-type="linenumber">35</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="3012906865384504293" datatype="html">
         <source>Image</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/views/displays/standard-method/standard-settings/standard-settings.component.ts</context>
-          <context context-type="linenumber">119</context>
+          <context context-type="linenumber">125</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8433377163064110848" datatype="html">
         <source>v</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/views/displays/standard-method/standard-settings/standard-settings.component.ts</context>
-          <context context-type="linenumber">227</context>
+          <context context-type="linenumber">236</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8398233202919865612" datatype="html">
         <source>h</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/views/displays/standard-method/standard-settings/standard-settings.component.ts</context>
-          <context context-type="linenumber">228</context>
+          <context context-type="linenumber">237</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6252070156626006029" datatype="html">
         <source>None</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/views/displays/standard-method/standard-settings/standard-settings.component.ts</context>
-          <context context-type="linenumber">237</context>
+          <context context-type="linenumber">246</context>
         </context-group>
       </trans-unit>
     </body>

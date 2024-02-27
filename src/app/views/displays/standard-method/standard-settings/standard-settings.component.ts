@@ -31,6 +31,8 @@ export class SettingsComponent {
   readonly TEXT_SCALE_IMG_DOWN = $localize`Scale image down`;
   readonly TEXT_MOVE_IMG_OUT = $localize`Move image outwards`;
   readonly TEXT_MOVE_IMG_IN = $localize`Move image inwards`;
+  readonly TEXT_IMG_BRIGHTER = $localize`Make image brighter`;
+  readonly TEXT_IMG_DARKER = $localize`Make image darker`;
 
   innerPolygonSize = new FormControl(Number(environment.defaultValueInnerPolygonSize));
   imageSizes: FormControl[] = [];
@@ -39,6 +41,7 @@ export class SettingsComponent {
   imageSwapTime = new FormControl(Number(environment.defaultValueSwapTime));
   imageRotations: FormControl[] = [];
   imageFlips: { v: FormControl; h: FormControl }[] = [];
+  imageBrightness: FormControl[] = [];
 
   currentSettingsFile: File | undefined;
   currentImages: { name: string; src: string }[] = [];
@@ -67,6 +70,7 @@ export class SettingsComponent {
       this.settingsBroadcaster.broadcastChange('ImagePositions', this.imagePositions.map((control) => control.value));
       this.settingsBroadcaster.broadcastChange('ImageRotations', this.imageRotations.map((control) => control.value));
       this.settingsBroadcaster.broadcastChange('ImageFlips', this.imageFlips.map((pair) => ({ v: pair.v.value, h: pair.h.value })));
+      this.settingsBroadcaster.broadcastChange('ImageBrightness', this.imageBrightness.map((control) => control.value));
     });
 
     this.controlsAndTargets.forEach((pair) => {
@@ -86,6 +90,7 @@ export class SettingsComponent {
       imageSwapTime: this.imageSwapTime.value || 1000,
       imageRotations: this.imageRotations.map((control) => control.value),
       imageFlips: this.imageFlips.map((pair) => ({ v: pair.v.value, h: pair.h.value })),
+      imageBrightness: this.imageBrightness.map((control) => control.value),
       images: this.currentImages.map((imagePair) => imagePair.src)
     };
 
@@ -116,6 +121,7 @@ export class SettingsComponent {
         this.imageSwapTime.setValue(loadedSettings.imageSwapTime || 1000);
         this.imageRotations = (loadedSettings.imageRotations || '[]').map((rot: number) => new FormControl(rot));
         this.imageFlips = (loadedSettings.imageFlips || '[]').map((pair: { v: boolean, h: boolean }) => ({ v: new FormControl(pair.v), h: new FormControl(pair.h) }));
+        this.imageBrightness = (loadedSettings.imageBrightness || '[]').map((brightness: number) => new FormControl(brightness));
         this.currentImages = (loadedSettings.images || '[]').map((src: string, index: number) => ({ name: $localize`Image` + ' #' + (index + 1), src }));
 
         this.imagesChanged$.next(
@@ -139,6 +145,7 @@ export class SettingsComponent {
         this.imagePositions.push(new FormControl(0));
         this.imageRotations.push(new FormControl(0));
         this.imageFlips.push({ v: new FormControl(false), h: new FormControl(false) });
+        this.imageBrightness.push(new FormControl(100));
 
         this.currentImages.push({
           src: e.target?.result?.toString() || 'FEHLER - ERROR',
@@ -165,7 +172,9 @@ export class SettingsComponent {
     [this.currentImages[imageIndex - 1], this.currentImages[imageIndex]] = [this.currentImages[imageIndex], this.currentImages[imageIndex - 1]];
     [this.imagePositions[imageIndex - 1], this.imagePositions[imageIndex]] = [this.imagePositions[imageIndex], this.imagePositions[imageIndex - 1]];
     [this.imageSizes[imageIndex - 1], this.imageSizes[imageIndex]] = [this.imageSizes[imageIndex], this.imageSizes[imageIndex - 1]];
-    [this.imageRotations[imageIndex - 1], this.imageRotations[imageIndex]] = [this.imageRotations[imageIndex], this.imageRotations[imageIndex - 1]]
+    [this.imageRotations[imageIndex - 1], this.imageRotations[imageIndex]] = [this.imageRotations[imageIndex], this.imageRotations[imageIndex - 1]];
+    [this.imageFlips[imageIndex - 1], this.imageFlips[imageIndex]] = [this.imageFlips[imageIndex], this.imageFlips[imageIndex - 1]];
+    [this.imageBrightness[imageIndex - 1], this.imageBrightness[imageIndex]] = [this.imageBrightness[imageIndex], this.imageBrightness[imageIndex - 1]];
 
     this.imagesChanged$.next(
       this.currentImages.map((imagePair) => imagePair.src)
@@ -179,7 +188,9 @@ export class SettingsComponent {
     [this.currentImages[imageIndex + 1], this.currentImages[imageIndex]] = [this.currentImages[imageIndex], this.currentImages[imageIndex + 1]];
     [this.imagePositions[imageIndex + 1], this.imagePositions[imageIndex]] = [this.imagePositions[imageIndex], this.imagePositions[imageIndex + 1]];
     [this.imageSizes[imageIndex + 1], this.imageSizes[imageIndex]] = [this.imageSizes[imageIndex], this.imageSizes[imageIndex + 1]];
-    [this.imageRotations[imageIndex + 1], this.imageRotations[imageIndex]] = [this.imageRotations[imageIndex], this.imageRotations[imageIndex + 1]]
+    [this.imageRotations[imageIndex + 1], this.imageRotations[imageIndex]] = [this.imageRotations[imageIndex], this.imageRotations[imageIndex + 1]];
+    [this.imageFlips[imageIndex + 1], this.imageFlips[imageIndex]] = [this.imageFlips[imageIndex], this.imageFlips[imageIndex + 1]];
+    [this.imageBrightness[imageIndex + 1], this.imageBrightness[imageIndex]] = [this.imageBrightness[imageIndex], this.imageBrightness[imageIndex + 1]];
 
     this.imagesChanged$.next(
       this.currentImages.map((imagePair) => imagePair.src)
@@ -205,6 +216,8 @@ export class SettingsComponent {
     this.imageSizes.splice(imageIndex, 1);
     this.imagePositions.splice(imageIndex, 1);
     this.imageRotations.splice(imageIndex, 1);
+    this.imageFlips.splice(imageIndex, 1);
+    this.imageBrightness.splice(imageIndex, 1);
 
     this.imagesChanged$.next(
       this.currentImages.map((imagePair) => imagePair.src)
@@ -238,6 +251,17 @@ export class SettingsComponent {
 
     return texts.join(', ');
   }
+
+  changeImageBrightness(imageIndex: number, amount: number) {
+    const oldValue = this.imageBrightness[imageIndex].value;
+    let newValue = oldValue + amount;
+
+    if(newValue < 0) newValue = 0;
+
+    this.imageBrightness[imageIndex].setValue(newValue);
+
+    this.settingsBroadcaster.broadcastChange('ImageBrightness', this.imageBrightness.map((control) => control.value));
+  }
 }
 
 export type SettingsData = {
@@ -248,5 +272,6 @@ export type SettingsData = {
   imageSwapTime: number;
   imageRotations: number[];
   imageFlips: { v: boolean; h: boolean }[];
+  imageBrightness: number[];
   images: string[];
 };
