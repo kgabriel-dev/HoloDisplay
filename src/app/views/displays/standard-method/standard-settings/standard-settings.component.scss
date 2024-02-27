@@ -3,9 +3,15 @@ input::-webkit-inner-spin-button {
     display: none;
 }
 
-.icon-button svg {
+.icon-button-fill svg {
     --svg-color: #fff !important;
     fill: var(--svg-color) !important;
+}
+
+.icon-button-stroke svg {
+    --svg-color: #ffff !important;
+    stroke: var(--svg-color) !important;
+    fill: none !important;
 }
 
 button {
