@@ -1,0 +1,26 @@
+{
+  "innerPolygonSize": 50,
+  "imagePositions": [
+    5
+  ],
+  "imageSizes": [
+    15
+  ],
+  "sideCount": 4,
+  "imageSwapTime": 500,
+  "imageRotations": [
+    0
+  ],
+  "imageFlips": [
+    {
+      "v": false,
+      "h": false
+    }
+  ],
+  "imageBrightness": [
+    100
+  ],
+  "images": [
+    "assets/images/default-image.png"
+  ]
+}

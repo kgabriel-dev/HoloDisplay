@@ -314,8 +314,16 @@ export class SettingsComponent {
   }
 
   resetSettings(): void {
+    let settingsUrl: string;
+
+    // decide if the settings for desktop or mobile should be loaded
+    if (window.innerWidth < 768)
+      settingsUrl = 'assets/settings/pyramid-display-settings-mobile.json';
+    else
+      settingsUrl = 'assets/settings/pyramid-display-settings.json';
+
     this.http
-        .get<SettingsData>('assets/settings/pyramid-display-settings.json')
+        .get<SettingsData>(settingsUrl)
         .subscribe((data: SettingsData) => this.loadSettings(data));
   }
 }
