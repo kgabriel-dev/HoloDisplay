@@ -426,32 +426,32 @@
         <source>Image</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/views/displays/standard-method/standard-settings/standard-settings.component.ts</context>
-          <context context-type="linenumber">121</context>
+          <context context-type="linenumber">148</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/views/displays/standard-method/standard-settings/standard-settings.component.ts</context>
-          <context context-type="linenumber">153</context>
+          <context context-type="linenumber">182</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8433377163064110848" datatype="html">
         <source>v</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/views/displays/standard-method/standard-settings/standard-settings.component.ts</context>
-          <context context-type="linenumber">261</context>
+          <context context-type="linenumber">290</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8398233202919865612" datatype="html">
         <source>h</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/views/displays/standard-method/standard-settings/standard-settings.component.ts</context>
-          <context context-type="linenumber">262</context>
+          <context context-type="linenumber">291</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6252070156626006029" datatype="html">
         <source>None</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/views/displays/standard-method/standard-settings/standard-settings.component.ts</context>
-          <context context-type="linenumber">271</context>
+          <context context-type="linenumber">300</context>
         </context-group>
       </trans-unit>
     </body>
