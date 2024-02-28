@@ -110,16 +110,45 @@ export class SettingsComponent {
   }
 
   loadSettings(settings: SettingsData): void {
-    this.innerPolygonSize.setValue(settings.innerPolygonSize || 50);
-    this.imageSizes = (settings.imageSizes || '[]').map((size: number) => new FormControl(size));
-    this.imagePositions = (settings.imagePositions || '[]').map((pos: number) => new FormControl(pos));
-    this.sideCount.setValue(settings.sideCount || 4);
-    this.imageSwapTime.setValue(settings.imageSwapTime || 1000);
-    this.imageRotations = (settings.imageRotations || '[]').map((rot: number) => new FormControl(rot));
-    this.imageFlips = (settings.imageFlips || '[]').map((pair: { v: boolean, h: boolean }) => ({ v: new FormControl(pair.v), h: new FormControl(pair.h) }));
-    this.imageBrightness = (settings.imageBrightness || '[]').map((brightness: number) => new FormControl(brightness));
-    this.currentImages = (settings.images || '[]').map((src: string, index: number) => ({ name: $localize`Image` + ' #' + (index + 1), src }));
+    // if there are no images, there is nothing to do here
+    if(!settings.images || settings.images.length === 0) return;
 
+    const numberOfImages = settings.images.length;
+
+    // create standard values if necessary
+    let standardImageSizes = Array(numberOfImages).fill(100),
+        standardImagePositions = Array(numberOfImages).fill(0),
+        standardImageRotations = Array(numberOfImages).fill(0),
+        standardImageFlips = Array(numberOfImages).fill({ v: false, h: false }),
+        standardImageBrightness = Array(numberOfImages).fill(100);
+
+    // load settings or standard values into the form controls
+    this.innerPolygonSize.setValue(settings.innerPolygonSize || 50);
+
+    this.imageSizes = (settings.imageSizes || standardImageSizes)
+      .map((size: number) => new FormControl(size));
+
+    this.imagePositions = (settings.imagePositions || standardImagePositions)
+      .map((pos: number) => new FormControl(pos));
+
+    this.sideCount.setValue(settings.sideCount || 4);
+
+    this.imageSwapTime.setValue(settings.imageSwapTime || 1000);
+
+    this.imageRotations = (settings.imageRotations || standardImageRotations)
+      .map((rot: number) => new FormControl(rot));
+
+    this.imageFlips = (settings.imageFlips || standardImageFlips)
+      .map((pair: { v: boolean, h: boolean }) => ({ v: new FormControl(pair.v), h: new FormControl(pair.h) }));
+
+    this.imageBrightness = (settings.imageBrightness || standardImageBrightness)
+      .map((brightness: number) => new FormControl(brightness));
+
+    this.currentImages = (settings.images)
+      .map((src: string, index: number) => ({ name: $localize`Image` + ' #' + (index + 1), src }));
+
+
+    // broadcast the changes
     this.imagesChanged$.next(
       this.currentImages.map((imagePair) => imagePair.src)
     );
@@ -292,13 +321,13 @@ export class SettingsComponent {
 }
 
 export type SettingsData = {
-  innerPolygonSize: number;
-  imageSizes: number[];
-  imagePositions: number[];
-  sideCount: number;
-  imageSwapTime: number;
-  imageRotations: number[];
-  imageFlips: { v: boolean; h: boolean }[];
-  imageBrightness: number[];
-  images: string[];
+  innerPolygonSize?: number;
+  imageSizes?: number[];
+  imagePositions?: number[];
+  sideCount?: number;
+  imageSwapTime?: number;
+  imageRotations?: number[];
+  imageFlips?: { v: boolean; h: boolean }[];
+  imageBrightness?: number[];
+  images?: string[];
 };
