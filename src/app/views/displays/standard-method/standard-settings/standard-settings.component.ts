@@ -34,6 +34,7 @@ export class SettingsComponent {
   readonly TEXT_MOVE_IMG_IN = $localize`Move image inwards`;
   readonly TEXT_IMG_BRIGHTER = $localize`Make image brighter`;
   readonly TEXT_IMG_DARKER = $localize`Make image darker`;
+  readonly TEXT_IMG_URL_PLACEH = $localize`URL of the image`;
 
   innerPolygonSize = new FormControl(Number(environment.defaultValueInnerPolygonSize));
   imageSizes: FormControl[] = [];
@@ -140,7 +141,20 @@ export class SettingsComponent {
     }
   }
 
-  addImages(event: Event) {
+  addImage(src: string, name: string = ''): void {
+    this.imageSizes.push(new FormControl(100));
+    this.imagePositions.push(new FormControl(0));
+    this.imageRotations.push(new FormControl(0));
+    this.imageFlips.push({ v: new FormControl(false), h: new FormControl(false) });
+    this.imageBrightness.push(new FormControl(100));
+
+    this.currentImages.push({
+      src: src || '',
+      name: name || $localize`Image` + ' #' + (this.currentImages.length + 1),
+    });
+  }
+
+  onUploadImagesClick(event: Event) {
     const element = event.currentTarget as HTMLInputElement,
       fileList = element.files;
 
@@ -149,16 +163,7 @@ export class SettingsComponent {
       let readingIndex = 0;
 
       fileReader.onload = (e) => {
-        this.imageSizes.push(new FormControl(100));
-        this.imagePositions.push(new FormControl(0));
-        this.imageRotations.push(new FormControl(0));
-        this.imageFlips.push({ v: new FormControl(false), h: new FormControl(false) });
-        this.imageBrightness.push(new FormControl(100));
-
-        this.currentImages.push({
-          src: e.target?.result?.toString() || 'FEHLER - ERROR',
-          name: fileList[readingIndex].name,
-        });
+        this.addImage(e.target?.result?.toString() || '', fileList[readingIndex].name);
 
         // add image to the list
         if (++readingIndex < fileList.length)
@@ -171,6 +176,14 @@ export class SettingsComponent {
 
       fileReader.readAsDataURL(fileList[readingIndex]);
     }
+  }
+
+  addImageByUrl(url: string): void {
+    this.addImage(url);
+    
+    this.imagesChanged$.next(
+      this.currentImages.map((imagePair) => imagePair.src)
+    );
   }
 
   pushImageUp(imageIndex: number) {
