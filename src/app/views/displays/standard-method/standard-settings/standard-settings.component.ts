@@ -102,7 +102,7 @@ export class SettingsComponent {
     };
 
     const dlink: HTMLAnchorElement = document.createElement('a');
-    dlink.download = 'pyramid-display-settings.json'; // the file name
+    dlink.download = 'holodisplay-settings.json'; // the file name
     const myFileContent: string = JSON.stringify(currSettings, undefined, 2);
     dlink.href = 'data:text/plain;charset=utf-8,' + myFileContent;
     dlink.click(); // this will trigger the dialog window
@@ -318,9 +318,9 @@ export class SettingsComponent {
 
     // decide if the settings for desktop or mobile should be loaded
     if (window.innerWidth < 768)
-      settingsUrl = 'assets/settings/pyramid-display-settings-mobile.json';
+      settingsUrl = 'assets/settings/holodisplay-settings-mobile.json';
     else
-      settingsUrl = 'assets/settings/pyramid-display-settings.json';
+      settingsUrl = 'assets/settings/holodisplay-settings.json';
 
     this.http
         .get<SettingsData>(settingsUrl)

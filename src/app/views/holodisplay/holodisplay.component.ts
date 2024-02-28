@@ -8,13 +8,13 @@ import { LanguageService } from 'src/app/services/i18n/language.service';
 import { TutorialService } from 'src/app/services/tutorial/tutorial.service';
 
 @Component({
-  selector: 'app-pyramid-display',
+  selector: 'app-holodisplay',
   standalone: true,
   imports: [CommonModule, SettingsComponent, StandardDisplayComponent, FormsModule],
-  templateUrl: './pyramid-display.component.html',
-  styleUrls: ['./pyramid-display.component.scss']
+  templateUrl: './holodisplay.component.html',
+  styleUrls: ['./holodisplay.component.scss']
 })
-export class PyramidDisplayComponent {
+export class HoloDisplayComponent {
   selectedDisplayMethod = 'Standard Method';
 
   iconsVisible = false;

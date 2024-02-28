@@ -1,8 +1,8 @@
-<h1 align="center" id="title">Pyramid Display</h1>
+<h1 align="center" id="title">HoloDisplay</h1>
 
-<p align="center"><img src="https://socialify.git.ci/kgabriel-dev/PyramidDisplay/image?description=1&amp;font=Raleway&amp;forks=1&amp;issues=1&amp;name=1&amp;owner=1&amp;pattern=Solid&amp;pulls=1&amp;stargazers=1&amp;theme=Auto" alt="project-image"></p>
+<p align="center"><img src="https://socialify.git.ci/kgabriel-dev/HoloDisplay/image?description=1&amp;font=Raleway&amp;forks=1&amp;issues=1&amp;name=1&amp;owner=1&amp;pattern=Solid&amp;pulls=1&amp;stargazers=1&amp;theme=Auto" alt="project-image"></p>
 
-<p id="description">Pyramid Display is an open-source application that allows you to create the illusion of a hologram on any device using the Pepper's Ghost Effect. With Pyramid Display you can upload your own images and the app will create a structure on your screen that reflects the image to create the illusion of a hologram floating in the air. The app runs in the browser and is compatible with any device that has a screen and you can customize the size and shape of the structure to fit your needs.</p>
+<p id="description">HoloDisplay is an open-source application that allows you to create the illusion of a hologram on any device using the Pepper's Ghost Effect. With HoloDisplay you can upload your own images and the app will create a structure on your screen that reflects the image to create the illusion of a hologram floating in the air. The app runs in the browser and is compatible with any device that has a screen and you can customize the size and shape of the structure to fit your needs.</p>
 
 <strong>This projects creates images on your display that need to be reflected, preferrably on a translucent material. How you can build this mirror is described in the section: 🧰 Building the mirror</strong>
 
@@ -16,9 +16,9 @@
 
 Here're some of the project's best features:
 
-*   Easy to use: Pyramid Display is user-friendly. You can upload your images and the app takes care of the rest.
+*   Easy to use: HoloDisplay is user-friendly. You can upload your images and the app takes care of the rest.
 *   Responsive Design: The app is designed to be responsive and compatible with any device that has a screen. That means you can create holograms on your smartphone tablet or desktop computer.
-*   Open-Source: Pyramid Display is an open-source project meaning that anyone can contribute to the development of the app. This also means that the app is free to use.
+*   Open-Source: Holo Display is an open-source project meaning that anyone can contribute to the development of the app. This also means that the app is free to use.
 *   Cross-Browser-Compatibility: You can use the app in every browser.
 
 
@@ -33,7 +33,7 @@ You can also download this source code and build the software yourself. Follow t
 <li>Download and install NodeJS to use its package manager NPM. You can find the latest version on <a href="https://nodejs.org/en/download">nodejs.org/en/download</a></li>
 <li>Navigate into the root folder of this project and open a terminal there.</li>
 <li>Run the command "npm install" to install all required packages.</li>
-<li>In the angular.json file in the root folder, change the option "localize" under "projects -> PyramidDisplay -> architect -> build -> options" to your desired language. Currently available are English (enter this: ["en-US"]) and German (enter this: ["de-DE"]).</li>
+<li>In the angular.json file in the root folder, change the option "localize" under "projects -> HoloDisplay -> architect -> build -> options" to your desired language. Currently available are English (enter this: ["en-US"]) and German (enter this: ["de-DE"]).</li>
 <li>In your terminal, run the command "ng serve". After the command finishes, the project is available as a website under <a href="http://localhost:4200">localhost:4200</a>.</li>
 </ol>
   
@@ -62,4 +62,4 @@ Technologies used in the project:
 
 <h2>🛡️ License:</h2>
 
-This project is licensed under the MIT License, you can find the full license text in the file <a href="https://github.com/kgabriel-dev/PyramidDisplay/blob/master/LICENSE">LICENSE</a>.
+This project is licensed under the MIT License, you can find the full license text in the file <a href="https://github.com/kgabriel-dev/HoloDisplay/blob/master/LICENSE">LICENSE</a>.

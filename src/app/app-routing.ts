@@ -1,9 +1,9 @@
 import { Routes } from "@angular/router";
-import { PyramidDisplayComponent } from "./views/pyramid-display/pyramid-display.component";
+import { HoloDisplayComponent } from "./views/holodisplay/holodisplay.component";
 
 export const AppRoutes: Routes = [
     {
         path: '',
-        component: PyramidDisplayComponent
+        component: HoloDisplayComponent
     }
 ]

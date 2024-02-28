@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { PyramidDisplayComponent } from './pyramid-display.component';
+import { HoloDisplayComponent } from './holodisplay.component';
 
 describe('PyramidDisplayComponent', () => {
-  let component: PyramidDisplayComponent;
-  let fixture: ComponentFixture<PyramidDisplayComponent>;
+  let component: HoloDisplayComponent;
+  let fixture: ComponentFixture<HoloDisplayComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ PyramidDisplayComponent ]
+      imports: [ HoloDisplayComponent ]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(PyramidDisplayComponent);
+    fixture = TestBed.createComponent(HoloDisplayComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

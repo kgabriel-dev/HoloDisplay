@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "PyramidDisplay": {
+    "HoloDisplay": {
       "i18n": {
         "sourceLocale": "en-US",
         "locales": {
@@ -29,7 +29,7 @@
             "localize": [
               "en-US"
             ],
-            "outputPath": "dist/pyramid-display",
+            "outputPath": "dist/holodisplay",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": [
@@ -77,10 +77,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "PyramidDisplay:build:production"
+              "browserTarget": "HoloDisplay:build:production"
             },
             "development": {
-              "browserTarget": "PyramidDisplay:build:development"
+              "browserTarget": "HoloDisplay:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -88,7 +88,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "PyramidDisplay:build"
+            "browserTarget": "HoloDisplay:build"
           }
         },
         "test": {
