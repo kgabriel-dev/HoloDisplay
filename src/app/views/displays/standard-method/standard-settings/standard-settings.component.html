@@ -23,7 +23,7 @@
                             </div>
 
                             <div class="grow">
-                                <div class="w-full">
+                                <div class="w-full pb-2">
                                     <button type="button" (click)="pushImageUp(i)" class="mx-2 mt-2 p-2 border rounded hover:bg-sky-800" [title]="TEXT_MOVE_IMG_UP">⤴️</button>
                                     <button type="button" (click)="pushImageDown(i)" class="mx-2 mt-2 p-2 border rounded hover:bg-sky-800" [title]="TEXT_MOVE_IMG_DOWN">⤵️</button>
                                     <button type="button" (click)="moveImage(i, 'up')" class="mx-2 mt-2 p-2 border rounded hover:bg-sky-800 w-10 h-10 icon-button-stroke" [title]="TEXT_MOVE_IMG_OUT">
@@ -87,9 +87,9 @@
             <p class="my-5" i18n>You can also load previously save settings from your PC.</p>
         </div>
         <div class="p-5 bg-cyan-700">
-            <div class="border border-b-0 py-3 rounded-t-lg">
-                <button type="button" (click)="saveSettings()" data-mdb-ripple="true" data-mdb-ripple-color="light" class="p-3 mx-3 border-2 rounded-lg hover:bg-sky-800" i18n>Save</button>
-                <button type="button" (click)="resetSettings()" data-mdb-ripple="true" data-mdb-ripple-color="light" class="p-3 mx-3 border-2 rounded-lg hover:bg-sky-800" i18n>Load Initial Settings</button>
+            <div class="border border-b-0 py-3 rounded-t-lg flex flex-wrap gap-4 justify-center">
+                <button type="button" (click)="saveSettings()" data-mdb-ripple="true" data-mdb-ripple-color="light" class="p-3 border-2 rounded-lg hover:bg-sky-800" i18n>Save</button>
+                <button type="button" (click)="resetSettings()" data-mdb-ripple="true" data-mdb-ripple-color="light" class="p-3 border-2 rounded-lg hover:bg-sky-800" i18n>Load Initial Settings</button>
             </div>
 
             <div class="border p-5 rounded-b-lg text-center">

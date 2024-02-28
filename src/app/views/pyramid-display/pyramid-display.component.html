@@ -57,7 +57,7 @@
 <app-display-standard *ngIf="selectedDisplayMethod === 'Standard Method'" [calculate$]="this.doCalculation$.asObservable()" [resizeEvent$]="resizeEvent$.asObservable()" (window:resize)="onResize($event)" class="block w-full h-full bg-blue"></app-display-standard>
 
 <div class="hidden overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none" id="settingsModal">
-    <div class="relative w-2/3 my-6 mx-auto">
+    <div class="relative w-full md:w-2/3 my-6 mx-auto">
       <!--content-->
       <div class="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
         <app-standard-settings *ngIf="selectedDisplayMethod === 'Standard Method'"></app-standard-settings>
