@@ -4,13 +4,11 @@
 
 <p id="description">Pyramid Display is an open-source application that allows you to create the illusion of a hologram on any device using the Pepper's Ghost Effect. With Pyramid Display you can upload your own images and the app will create a structure on your screen that reflects the image to create the illusion of a hologram floating in the air. The app runs in the browser and is compatible with any device that has a screen and you can customize the size and shape of the structure to fit your needs.</p>
 
-<p align="center"><img src="https://img.shields.io/github/downloads/kgabriel-dev/PyramidDisplay/total" alt="shields"> <img src="https://img.shields.io/github/v/release/kgabriel-dev/PyramidDisplay?include_prereleases" alt="shields"> <img src="https://img.shields.io/github/issues/kgabriel-dev/PyramidDisplay" alt="shields"></p>
-
 <strong>This projects creates images on your display that need to be reflected, preferrably on a translucent material. How you can build this mirror is described in the section: 🧰 Building the mirror</strong>
 
 <h2>Project Screenshots:</h2>
 
-<img src="https://i.ibb.co/Gp1Mt0S/localhost-4200-i-Pad-Air-1.png" alt="project-screenshot" width="410" height="590/">
+<img src="https://i.ibb.co/dQJnFbP/displayed-images.png" alt="project-screenshot" width="590">
 
   
   
