@@ -7,6 +7,7 @@ import {
   ViewChild
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import * as decodeGif from 'decode-gif';
 import { Observable, debounceTime, merge } from 'rxjs';
 import { StandardMethodCalculatorService } from 'src/app/services/calculators/standard-method/standard-method-calculator.service';
 import { HelperService, Point } from 'src/app/services/helpers/helper.service';
@@ -48,7 +49,7 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
   private innerPolygonIncircleRadius = 0;
   private polygonInfo: { rotation: number, offset: {dx: number, dy: number}, sides: number } = {} as typeof this.polygonInfo;
 
-  private displayedFiles: { type: 'image' | 'video' | 'gif', domId: string, element: HTMLImageElement | HTMLVideoElement, index: number }[] = [];
+  private displayedFiles: { type: 'image' | 'video' | 'gif', domId: string, element?: HTMLImageElement | HTMLVideoElement, index: number, subImages: number, currImage: number }[] = [];
 
   calculatorDPI = 96;
   calculatorSlope = 45;
@@ -79,13 +80,38 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
         const type = data.split(';')[0].split('/')[1];
 
         if(data.includes('image/gif')) {
-          hiddenDisplayContainer.innerHTML += `<img src="${data}" id="gif${index}" />`;
-          this.displayedFiles.push({ type: 'gif', domId: `gif${index}`, element: document.getElementById(`gif${index}`) as HTMLImageElement, index });
+          // hiddenDisplayContainer.innerHTML += `<img src="${data}" id="gif${index}" />`;
+          // this.displayedFiles.push({ type: 'gif', domId: `gif${index}`, element: document.getElementById(`gif${index}`) as HTMLImageElement, index });
+
+          let gif = decodeGif(new Uint8Array(atob(data.split(',')[1]).split('').map((c) => c.charCodeAt(0))));
+          let gifImages: HTMLImageElement[] = [];
+
+          gif.frames.forEach((frame, index) => {
+            let imageData = new ImageData(frame.data, gif.width, gif.height);
+            let canvas = document.createElement('canvas');
+            canvas.width = gif.width;
+            canvas.height = gif.height;
+            let ctx = canvas.getContext('2d');
+            ctx?.putImageData(imageData, 0, 0);
+
+            let image = new Image();
+            image.src = canvas.toDataURL();
+            image.width = gif.width;
+            image.height = gif.height;
+
+            gifImages.push(image);
+          });
+
+          gifImages.forEach((image, subindex) => {
+            hiddenDisplayContainer.innerHTML += `<img src="${image.src}" id="gif${index}_${subindex}" />`;
+          });
+
+          this.displayedFiles.push({type: 'gif', domId: `gif${index}`, index, subImages: gifImages.length, currImage: 0});
         }
         
         else if(data.includes('image/')) {
           hiddenDisplayContainer.innerHTML += `<img src="${data}" id="image${index}" />`;
-          this.displayedFiles.push({ type: 'image', domId: `image${index}`, element: document.getElementById(`image${index}`) as HTMLImageElement, index });
+          this.displayedFiles.push({ type: 'image', domId: `image${index}`, element: document.getElementById(`image${index}`) as HTMLImageElement, index, subImages: 1, currImage: 0});
         }
 
         else if(data.includes('video/')) {
@@ -94,7 +120,7 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
           const video = document.getElementById(`video${index}`) as HTMLVideoElement;
           video.ontimeupdate = () => {this.settingsBroadcastingService.broadcastChange('SwapImage', true);};
 
-          this.displayedFiles.push({ type: 'video', domId: `video${index}`, element: document.getElementById(`video${index}`) as HTMLVideoElement, index });
+          this.displayedFiles.push({ type: 'video', domId: `video${index}`, element: document.getElementById(`video${index}`) as HTMLVideoElement, index, subImages: 1, currImage: 0});
         };
       });
     });
@@ -176,8 +202,6 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
   }
 
   private draw(): void {
-    console.log(this.displayedFiles)
-
     const canvas = this.displayCanvas?.nativeElement;
     if(!canvas) return;
 
@@ -205,9 +229,18 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
         width = image.videoWidth;
         height = image.videoHeight;
       } else if(imageData.type === 'gif') {
-        image = imageData.element as HTMLImageElement;
-        width = image.width;
-        height = image.height;
+        if(imageData.subImages > 1) {
+          const currImageIndex = imageData.currImage;
+          image = document.getElementById(`gif${imageData.index}_${currImageIndex}`) as HTMLImageElement;
+          width = image.width;
+          height = image.height;
+
+          // imageData.currImage = (imageData.currImage + 1) % imageData.subImages;
+        } else {
+          image = imageData.element as HTMLImageElement;
+          width = image.width;
+          height = image.height;
+        }
       } else {
         image = imageData.element as HTMLImageElement;
         width = image.width;
@@ -256,6 +289,15 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
         scaledImageWidth,
         scaledImageHeight
       );
+    }
+
+    // increment all subimage counters
+    for(let i = 0; i < this.displayedFiles.length; i++) {
+      const entry = this.displayedFiles[i];
+
+      if(entry.subImages > 1) {
+        entry.currImage = (entry.currImage + 1) % entry.subImages;
+      }
     }
   }
 
