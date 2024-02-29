@@ -4,7 +4,7 @@ export const environment = {
   defaultValueInnerPolygonSize: 50,
   defaultValueImagePositions: [],
   defaultValueSideCount: 4,
-  defaultValueSwapTime: 500,
+  defaultValueSwapTime: 50,
   defaultValueImageArray: [],
   defaultValueImageSwap: false
 };

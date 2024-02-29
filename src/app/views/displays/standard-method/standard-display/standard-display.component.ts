@@ -8,7 +8,7 @@ import {
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import * as decodeGif from 'decode-gif';
-import { Observable, debounceTime, merge } from 'rxjs';
+import { Observable, Subject, debounceTime, merge } from 'rxjs';
 import { StandardMethodCalculatorService } from 'src/app/services/calculators/standard-method/standard-method-calculator.service';
 import { HelperService, Point } from 'src/app/services/helpers/helper.service';
 import { SettingsBroadcastingService } from 'src/app/services/settings-broadcasting.service';
@@ -34,6 +34,7 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
   private readonly imageRotations$ = this.settingsBroadcastingService.selectNotificationChannel('ImageRotations');
   private readonly imageFlips$ = this.settingsBroadcastingService.selectNotificationChannel('ImageFlips');
   private readonly imageBrightness$ = this.settingsBroadcastingService.selectNotificationChannel('ImageBrightness');
+  private readonly requestDraw$ = new Subject<void>();
 
   @ViewChild('displayCanvas') displayCanvas!: ElementRef<HTMLCanvasElement>;
   @ViewChild('container') container!: ElementRef<HTMLDivElement>;
@@ -42,14 +43,13 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
   private outerEdgePoints: Point[] = [];
   private canvasSize = 0;
   private angle = 0;
-  private images: (HTMLImageElement | string)[] = [];
+  private displayedFiles: DisplayedFile[] = [];
   private imageScalingFactors: number[] = [];
   private imageFlips: { v: boolean, h: boolean }[] = [];
   private imagePositions: number[] = [];
   private innerPolygonIncircleRadius = 0;
   private polygonInfo: { rotation: number, offset: {dx: number, dy: number}, sides: number } = {} as typeof this.polygonInfo;
-
-  private displayedFiles: { type: 'image' | 'video' | 'gif', file?: HTMLImageElement | HTMLVideoElement, index: number, subImages?: HTMLImageElement[], currImage?: number }[] = [];
+  private transformationMatrices: DOMMatrix[][] = [];
 
   calculatorDPI = 96;
   calculatorSlope = 45;
@@ -87,7 +87,7 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
             let canvas = document.createElement('canvas');
             canvas.width = gif.width;
             canvas.height = gif.height;
-            let ctx = canvas.getContext('2d');
+            let ctx = canvas.getContext('2d', { alpha: false });
             ctx?.putImageData(imageData, 0, 0);
 
             let image = new Image();
@@ -98,16 +98,14 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
             gifImages.push(image);
           });
 
-          this.displayedFiles.push({type: 'gif', index, subImages: gifImages, currImage: 0});
+          this.displayedFiles.push({type: 'gif', displayIndex: index, subFiles: { original: gifImages, scaled: gifImages, subIndex: 0 }});
         }
         
         else if(data.includes('image/')) {
           let image = new Image();
           image.src = data;
-          image.width = 100;
-          image.height = 100;
 
-          this.displayedFiles.push({ type: 'image', file: image, index});
+          this.displayedFiles.push({ type: 'image', displayIndex: index, singleFile: { original: image, scaled: image }});
         }
 
         else if(data.includes('video/')) {
@@ -116,7 +114,7 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
           const video = document.getElementById(`video${index}`) as HTMLVideoElement;
           video.ontimeupdate = () => {this.settingsBroadcastingService.broadcastChange('SwapImage', true);};
 
-          this.displayedFiles.push({ type: 'video', file: video, index});
+          this.displayedFiles.push({ type: 'video', displayIndex: index, singleFile: { original: video, scaled: video }});
         };
       });
     });
@@ -127,16 +125,29 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
       this.imageSizes$,
       this.innerPolygonSize$,
       this.sideCount$,
-      this.swapTime$,
       this.imageRotations$,
+    )
+    .pipe(debounceTime(100))
+    .subscribe(() => {
+      this.recalculateValues();
+      this.requestDraw$.next();
+    });
+
+    merge(
+      this.swapTime$,
       this.imageFlips$,
       this.imageBrightness$
     )
     .pipe(debounceTime(100))
     .subscribe(() => {
-      this.recalculateValues();
-      this.draw();
+      this.imageFlips = (this.settingsBroadcastingService.getLastValue('ImageFlips') as { v: boolean, h: boolean }[]);
+
+      this.requestDraw$.next();
     });
+
+    this.requestDraw$
+      .pipe(debounceTime(100))
+      .subscribe(() => this.draw());
   }
 
   ngOnInit(): void {
@@ -193,15 +204,46 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
 
     this.imageScalingFactors = (this.settingsBroadcastingService.getLastValue('ImageSizes') as number[]).map((size) => size / 100);
     this.imagePositions = this.settingsBroadcastingService.getLastValue('ImagePositions') as number[];
-    this.imageFlips = this.settingsBroadcastingService.getLastValue('ImageFlips') as { v: boolean, h: boolean }[];
     this.innerPolygonIncircleRadius = this.helperService.getRadiusOfIncircleOfRegularPolygon((this.settingsBroadcastingService.getLastValue('InnerPolygonSize') as number) / 2, sideCount);
+  
+    // scale everything here and not in draw()
+    this.displayedFiles.forEach((entry) => {
+      if(entry.type === 'video' && entry.singleFile) {
+        entry.singleFile.scaled = (entry.singleFile.original as HTMLVideoElement).cloneNode(true) as HTMLVideoElement;
+        entry.singleFile.scaled.setAttribute('width', `${(entry.singleFile.original as HTMLVideoElement).videoWidth * this.imageScalingFactors[entry.displayIndex]}`);
+        entry.singleFile.scaled.setAttribute('height', `${(entry.singleFile.original as HTMLVideoElement).videoHeight * this.imageScalingFactors[entry.displayIndex]}`);
+      }
+
+      else if(entry.type === 'gif' && entry.subFiles) {
+        entry.subFiles.scaled = [];
+
+        entry.subFiles.original?.forEach((image) => {
+          if(!entry.subFiles) return;
+
+          entry.subFiles.scaled?.push(image.cloneNode(true) as HTMLImageElement);
+
+          entry.subFiles.scaled[entry.subFiles.scaled.length - 1].setAttribute('width', `${image.width * this.imageScalingFactors[entry.displayIndex]}`);
+          entry.subFiles.scaled[entry.subFiles.scaled.length - 1].setAttribute('height', `${image.height * this.imageScalingFactors[entry.displayIndex]}`);
+        });
+      }
+
+      else if(entry.type === 'image' && entry.singleFile) {
+        entry.singleFile.scaled = (entry.singleFile.original as HTMLImageElement).cloneNode(true) as HTMLImageElement;
+        (entry.singleFile.scaled as HTMLImageElement).width = entry.singleFile.original.width * this.imageScalingFactors[entry.displayIndex];
+        (entry.singleFile.scaled as HTMLImageElement).height = entry.singleFile.original.height * this.imageScalingFactors[entry.displayIndex];
+        console.log(entry.singleFile.scaled.width, entry.singleFile.scaled.height)
+      }
+    });
+
+    // reset transformation matrices because they are not valid anymore
+    this.transformationMatrices = [];
   }
 
   private draw(): void {
     const canvas = this.displayCanvas?.nativeElement;
     if(!canvas) return;
 
-    const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
+    const ctx = canvas.getContext('2d', { alpha: false }) as CanvasRenderingContext2D;
     ctx.save();
     ctx.resetTransform();
     canvas.width = canvas.width;  // clears canvas as a side effect
@@ -211,34 +253,29 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
     this.helperService.connectPointsWithStraightLines(ctx, this.outerEdgePoints, 'red');
 
     for(let iSide = 0; iSide < (this.settingsBroadcastingService.getLastValue('SideCount') as number); iSide++) {
+      const timeStart = performance.now();
+
       const iImage = iSide % this.displayedFiles.length;
       const imageData = this.displayedFiles[iImage];
 
       if(!imageData) continue;
 
-      // load the image as what is currently displayed hidden in the DOM
+      // load the image
       let image: HTMLImageElement | HTMLVideoElement;
-      let width: number, height: number;
 
-      if(imageData.type === 'video') {
-        image = imageData.file as HTMLVideoElement;
-        width = image.videoWidth;
-        height = image.videoHeight;
-      } else if(imageData.type === 'gif') {
-        if(imageData.subImages && imageData.subImages.length > 0 && imageData.currImage !== undefined) {
-          const currImageIndex = imageData.currImage;
-          image = imageData.subImages[currImageIndex] as HTMLImageElement;
-          width = image.width;
-          height = image.height;
-        } else {
-          image = imageData.file as HTMLImageElement;
-          width = image.width;
-          height = image.height;
-        }
+      if(imageData.type === 'video' || imageData.type === 'image') {
+        image = imageData.singleFile?.scaled as HTMLImageElement | HTMLVideoElement;
       } else {
-        image = imageData.file as HTMLImageElement;
-        width = image.width;
-        height = image.height;
+        if(imageData.subFiles?.scaled && imageData.subFiles.scaled.length > 0 && imageData.subFiles.subIndex !== undefined) {
+          const currImageIndex = imageData.subFiles.subIndex;
+          image = imageData.subFiles.scaled[currImageIndex] as HTMLImageElement;
+        } else {
+          image = new Image();
+        }
+      }
+
+      if(image instanceof HTMLVideoElement) {
+        (image as HTMLVideoElement).currentTime = (imageData.singleFile?.original as HTMLVideoElement).currentTime;
       }
 
       // reset the clip mask
@@ -246,9 +283,19 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
       ctx.resetTransform();
       ctx.save();
 
-      // apply the translation and rotation
-      ctx.translate((this.canvasSize/2 - this.polygonInfo.offset.dx), (this.canvasSize/2 - this.polygonInfo.offset.dy));
-      ctx.rotate(iSide * this.angle);
+      
+
+      // store or apply transformation matrix instead of rotating and translating manually
+      if(this.transformationMatrices[iSide] && this.transformationMatrices[iSide][0]) {
+        ctx.setTransform(this.transformationMatrices[iSide][0]);
+      } else {
+        // apply the translation and rotation
+        ctx.translate((this.canvasSize/2 - this.polygonInfo.offset.dx), (this.canvasSize/2 - this.polygonInfo.offset.dy));
+        ctx.rotate(iSide * this.angle);
+
+        // store the transformation matrix
+        this.transformationMatrices[iSide] = [ctx.getTransform()];
+      }
 
       // create the clip mask
       ctx.beginPath();
@@ -263,13 +310,19 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
       ctx.rotate(-iSide * this.angle);
 
       // draw the image
-      const scaledImageWidth = width * this.imageScalingFactors[iImage];
-      const scaledImageHeight = height * this.imageScalingFactors[iImage];
+      
+      // store or apply transformation matrix instead of rotating and translating manually
+      if(this.transformationMatrices[iSide] && this.transformationMatrices[iSide][1]) {
+        ctx.setTransform(this.transformationMatrices[iSide][1]);
+      } else {
+        ctx.rotate(Math.PI)
+        ctx.rotate((iSide - (0.25 * (this.polygonInfo.sides - 2))) * this.angle + this.polygonInfo.rotation); // Why does this equation work?
+        ctx.translate(0, -this.innerPolygonIncircleRadius - this.canvasSize/4 - this.imagePositions[iImage]);
+        ctx.rotate((this.settingsBroadcastingService.getLastValue('ImageRotations') as number[])[iImage] * Math.PI / 180);
 
-      ctx.rotate(Math.PI)
-      ctx.rotate((iSide - (0.25 * (this.polygonInfo.sides - 2))) * this.angle + this.polygonInfo.rotation); // Why does this equation work?
-      ctx.translate(0, -this.innerPolygonIncircleRadius - this.canvasSize/4 - this.imagePositions[iImage]);
-      ctx.rotate((this.settingsBroadcastingService.getLastValue('ImageRotations') as number[])[iImage] * Math.PI / 180);
+        // store the transformation matrix
+        this.transformationMatrices[iSide].push(ctx.getTransform());
+      }
 
       // apply the flip
       ctx.scale(this.imageFlips[iImage].h ? -1 : 1, this.imageFlips[iImage].v ? -1 : 1);
@@ -278,21 +331,22 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
 
       ctx.drawImage(
         image,
-        -scaledImageWidth/2,
-        -scaledImageHeight/2,
-        scaledImageWidth,
-        scaledImageHeight
+        -image.width/2,
+        -image.height/2,
+        image.width,
+        image.height
       );
+
+      const timeEnd = performance.now();
+      console.log(`Drawing image ${iImage} took ${timeEnd - timeStart} ms`);
     }
 
     // increment all subimage counters
-    for(let i = 0; i < this.displayedFiles.length; i++) {
-      const entry = this.displayedFiles[i];
-
-      if(entry.subImages && entry.subImages.length > 0 && entry.currImage !== undefined) {
-        entry.currImage = (entry.currImage + 1) % entry.subImages.length;
+    this.displayedFiles.forEach((entry) => {
+      if(entry.subFiles?.original && entry.subFiles.original.length > 0 && entry.subFiles.subIndex !== undefined) {
+        entry.subFiles.subIndex = (entry.subFiles.subIndex + 1) % entry.subFiles.original.length;
       }
-    }
+    });
   }
 
   onCalculateClick(): void {
@@ -321,5 +375,19 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
     if(!document.getElementById(modalId)) return;
 
     document.getElementById(modalId)!.classList.toggle("hidden");
+  }
+}
+
+type DisplayedFile = {
+  type: 'image' | 'video' | 'gif',
+  displayIndex: number,
+  singleFile?: {
+    original: HTMLImageElement | HTMLVideoElement,
+    scaled: HTMLImageElement | HTMLVideoElement
+  },
+  subFiles?: {
+    original: HTMLImageElement[],
+    scaled: HTMLImageElement[]
+    subIndex: number
   }
 }
