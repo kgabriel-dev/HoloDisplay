@@ -41,12 +41,14 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
   private outerEdgePoints: Point[] = [];
   private canvasSize = 0;
   private angle = 0;
-  private images: HTMLImageElement[] = [];
+  private images: (HTMLImageElement | string)[] = [];
   private imageScalingFactors: number[] = [];
   private imageFlips: { v: boolean, h: boolean }[] = [];
   private imagePositions: number[] = [];
   private innerPolygonIncircleRadius = 0;
   private polygonInfo: { rotation: number, offset: {dx: number, dy: number}, sides: number } = {} as typeof this.polygonInfo;
+
+  private displayedFiles: { type: 'image' | 'video' | 'gif', domId: string, element: HTMLImageElement | HTMLVideoElement, index: number }[] = [];
 
   calculatorDPI = 96;
   calculatorSlope = 45;
@@ -61,7 +63,41 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
     private tutorial: TutorialService
   ) {
     // subscribe to changes in the images to display
-    this.imageArray$.subscribe((imageData: string[]) => this.images = helperService.createImages(imageData));
+    this.imageArray$.subscribe((imageData: string[]) => {
+      const hiddenDisplayContainer: HTMLDivElement = document.getElementById('hiddenDisplayContainer') as HTMLDivElement;
+
+      if(!hiddenDisplayContainer) {
+        console.log("Couldn't find the hidden dipsplay container!");
+        return;
+      }
+
+      hiddenDisplayContainer.innerHTML = "";
+      
+      this.displayedFiles = [];
+
+      imageData.forEach((data, index) => {
+        const type = data.split(';')[0].split('/')[1];
+
+        if(data.includes('image/gif')) {
+          hiddenDisplayContainer.innerHTML += `<img src="${data}" id="gif${index}" />`;
+          this.displayedFiles.push({ type: 'gif', domId: `gif${index}`, element: document.getElementById(`gif${index}`) as HTMLImageElement, index });
+        }
+        
+        else if(data.includes('image/')) {
+          hiddenDisplayContainer.innerHTML += `<img src="${data}" id="image${index}" />`;
+          this.displayedFiles.push({ type: 'image', domId: `image${index}`, element: document.getElementById(`image${index}`) as HTMLImageElement, index });
+        }
+
+        else if(data.includes('video/')) {
+          hiddenDisplayContainer.innerHTML += `<video id="video${index}" autoplay muted loop="true"><source src="${data}" type="video/${type}"></video>`;
+
+          const video = document.getElementById(`video${index}`) as HTMLVideoElement;
+          video.ontimeupdate = () => {this.settingsBroadcastingService.broadcastChange('SwapImage', true);};
+
+          this.displayedFiles.push({ type: 'video', domId: `video${index}`, element: document.getElementById(`video${index}`) as HTMLVideoElement, index });
+        };
+      });
+    });
 
     // subscribe to all other settings broadcast channels
     merge(
@@ -140,6 +176,8 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
   }
 
   private draw(): void {
+    console.log(this.displayedFiles)
+
     const canvas = this.displayCanvas?.nativeElement;
     if(!canvas) return;
 
@@ -153,11 +191,30 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
     this.helperService.connectPointsWithStraightLines(ctx, this.outerEdgePoints, 'red');
 
     for(let iSide = 0; iSide < (this.settingsBroadcastingService.getLastValue('SideCount') as number); iSide++) {
-      const iImage = iSide % this.images.length;
-      const image = this.images[iImage];
+      const iImage = iSide % this.displayedFiles.length;
+      const imageData = this.displayedFiles[iImage];
 
-      if(!image) continue;
+      if(!imageData) continue;
 
+      // load the image as what is currently displayed hidden in the DOM
+      let image: HTMLImageElement | HTMLVideoElement;
+      let width: number, height: number;
+
+      if(imageData.type === 'video') {
+        image = imageData.element as HTMLVideoElement;
+        width = image.videoWidth;
+        height = image.videoHeight;
+      } else if(imageData.type === 'gif') {
+        image = imageData.element as HTMLImageElement;
+        width = image.width;
+        height = image.height;
+      } else {
+        image = imageData.element as HTMLImageElement;
+        width = image.width;
+        height = image.height;
+      }
+
+      // reset the clip mask
       ctx.restore();
       ctx.resetTransform();
       ctx.save();
@@ -179,8 +236,8 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
       ctx.rotate(-iSide * this.angle);
 
       // draw the image
-      const scaledImageWidth = image.width * this.imageScalingFactors[iImage];
-      const scaledImageHeight = image.height * this.imageScalingFactors[iImage];
+      const scaledImageWidth = width * this.imageScalingFactors[iImage];
+      const scaledImageHeight = height * this.imageScalingFactors[iImage];
 
       ctx.rotate(Math.PI)
       ctx.rotate((iSide - (0.25 * (this.polygonInfo.sides - 2))) * this.angle + this.polygonInfo.rotation); // Why does this equation work?

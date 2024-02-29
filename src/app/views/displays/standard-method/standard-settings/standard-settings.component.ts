@@ -62,7 +62,6 @@ export class SettingsComponent {
     public router: Router,
     private http: HttpClient
   ) {
-    settingsBroadcaster.silentChangeOfSwapTime(this.imageSwapTime.value);
     this.imageSwapTime.valueChanges.subscribe((newValue) => {
       this.settingsBroadcaster.silentChangeOfSwapTime(newValue);
     });
