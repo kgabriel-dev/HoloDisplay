@@ -71,8 +71,16 @@
             <input type="file" hidden multiple accept=".png,.jpg,.jpeg,.webp,.mp4,.gif" (change)="onUploadImagesClick($event)" #imgInput>
 
             <div class="border border-white rounded-md overflow-hidden flex flex-wrap md:flex-nowrap">
-                <input type="url" #imgUrlInput [placeholder]="TEXT_IMG_URL_PLACEH" class="p-2 text-black text-center md:text-end focus:outline-none w-full md:grow">
-                <button type="button" class="p-2 px-4 hover:bg-sky-800 text-center min-w-full md:min-w-fit md:shrink" (click)="addImageByUrl(imgUrlInput.value)">Add by URL</button>
+                <input type="url" #imgUrlInput (input)="urlFileTypeSelect.value = guessFileType(imgUrlInput.value)" [placeholder]="TEXT_IMG_URL_PLACEH" class="p-2 text-black text-center md:text-end focus:outline-none w-full md:grow">
+                <select class="p-2 bg-cyan-700 hover:bg-sky-800 text-center min-w-full md:min-w-fit md:shrink" #urlFileTypeSelect>
+                    <option value="image/png" i18n>PNG-Image</option>
+                    <option value="image/jpg" i18n>JPG-Image</option>
+                    <option value="image/webp" i18n>WebP-Image</option>
+                    <option value="image/gif" i18n>GIF</option>
+                    <option value="video/mp4" i18n>MP4-Video</option>
+                    <option value="unknown" selected i18n>Unknown</option>
+                </select>
+                <button type="button" class="p-2 px-4 disabled:bg-slate-700 hover:bg-sky-800 text-center min-w-full md:min-w-fit md:shrink" (click)="addImageByUrl(imgUrlInput.value, urlFileTypeSelect.value)" [disabled]="!isUploadButtonEnabled(urlFileTypeSelect, imgUrlInput.value)">Add by URL</button>
             </div>
                 
         </div>

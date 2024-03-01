@@ -44,9 +44,10 @@ export class SettingsComponent {
   imageRotations: FormControl[] = [];
   imageFlips: { v: FormControl; h: FormControl }[] = [];
   imageBrightness: FormControl[] = [];
+  imageTypes: string[] = [];
   
-  currentImages: { name: string; src: string }[] = [];
-  imagesChanged$ = new Subject<string[]>();
+  currentImages: { name: string; src: string, type: string }[] = [];
+  imagesChanged$ = new Subject<{ src: string; type: string }[]>();
   settingsResetRequested$ = this.settingsBroadcaster.selectNotificationChannel('SettingsReset');
 
   readonly controlsAndTargets: {
@@ -67,7 +68,9 @@ export class SettingsComponent {
     });
 
     this.imagesChanged$.subscribe((imgList) => {
-      this.settingsBroadcaster.broadcastChange('NewImages', imgList);
+      this.settingsBroadcaster.broadcastChange('NewImages', imgList.map((imagePair) => {
+        return { src: imagePair.src, type: imagePair.type };
+      }));
       this.settingsBroadcaster.broadcastChange('ImageSizes', this.imageSizes.map((control) => control.value));
       this.settingsBroadcaster.broadcastChange('ImagePositions', this.imagePositions.map((control) => control.value));
       this.settingsBroadcaster.broadcastChange('ImageRotations', this.imageRotations.map((control) => control.value));
@@ -97,6 +100,7 @@ export class SettingsComponent {
       imageRotations: this.imageRotations.map((control) => control.value),
       imageFlips: this.imageFlips.map((pair) => ({ v: pair.v.value, h: pair.h.value })),
       imageBrightness: this.imageBrightness.map((control) => control.value),
+      imageTypes: this.imageTypes,
       images: this.currentImages.map((imagePair) => imagePair.src)
     };
 
@@ -143,13 +147,37 @@ export class SettingsComponent {
     this.imageBrightness = (settings.imageBrightness || standardImageBrightness)
       .map((brightness: number) => new FormControl(brightness));
 
-    this.currentImages = (settings.images)
-      .map((src: string, index: number) => ({ name: $localize`Image` + ' #' + (index + 1), src }));
+    // set image types by guessing them
+    if(settings.images) {
+      // there are image types listed, let's use and update them if they're "unknown"
+      if(settings.imageTypes) {
+        settings.imageTypes.forEach((type, index) => {
+          if(type === 'unknown') {
+            settings.imageTypes![index] = this.guessFileType(settings.images![index]);
+          }
+        });
 
+        // if there were not enough types, guess the rest
+        if(settings.imageTypes.length < numberOfImages) {
+          const guessedTypes = settings.images.slice(settings.imageTypes.length).map((image) => this.guessFileType(image));
+          settings.imageTypes = settings.imageTypes.concat(guessedTypes);
+        }
+      }
+
+      // there are no image types listed, let's guess them all
+      else {
+        settings.imageTypes = settings.images.map((image) => this.guessFileType(image));
+      }
+    }
+
+    this.currentImages = (settings.images)
+      .map((src: string, index: number) => ({ name: $localize`Image` + ' #' + (index + 1), src, type: settings.imageTypes?.[index] || 'unknown'}));
 
     // broadcast the changes
     this.imagesChanged$.next(
-      this.currentImages.map((imagePair) => imagePair.src)
+      this.currentImages.map((imagePair) => {
+        return { src: imagePair.src, type: imagePair.type };
+      })
     );
   }
 
@@ -169,16 +197,18 @@ export class SettingsComponent {
     }
   }
 
-  addImage(src: string, name: string = ''): void {
+  addImage(src: string, name: string = '', type: string): void {
     this.imageSizes.push(new FormControl(100));
     this.imagePositions.push(new FormControl(0));
     this.imageRotations.push(new FormControl(0));
     this.imageFlips.push({ v: new FormControl(false), h: new FormControl(false) });
     this.imageBrightness.push(new FormControl(100));
+    this.imageTypes.push(type);
 
     this.currentImages.push({
-      src: src || '',
-      name: name || $localize`Image` + ' #' + (this.currentImages.length + 1),
+      src,
+      name: name || $localize`File` + ' #' + (this.currentImages.length + 1),
+      type
     });
   }
 
@@ -191,14 +221,21 @@ export class SettingsComponent {
       let readingIndex = 0;
 
       fileReader.onload = (e) => {
-        this.addImage(e.target?.result?.toString() || '', fileList[readingIndex].name);
+
+        this.addImage(
+          e.target?.result?.toString() || '',
+          fileList[readingIndex].name,
+          fileList[readingIndex].type
+        );
 
         // add image to the list
         if (++readingIndex < fileList.length)
           fileReader.readAsDataURL(fileList[readingIndex]);
         else    // all images have been read
           this.imagesChanged$.next(
-            this.currentImages.map((imagePair) => imagePair.src)
+            this.currentImages.map((imagePair) => {
+              return { src: imagePair.src, type: imagePair.type };
+            })
           );
       };
 
@@ -206,11 +243,17 @@ export class SettingsComponent {
     }
   }
 
-  addImageByUrl(url: string): void {
-    this.addImage(url);
-    
+  addImageByUrl(url: string, type: string): void {
+    // guess the name
+    const urlSplits = url.split('.');
+    const guessedName = urlSplits[urlSplits.length - 2].split('/').pop() + '.' + urlSplits[urlSplits.length - 1];
+
+    this.addImage(url, guessedName, type);
+
     this.imagesChanged$.next(
-      this.currentImages.map((imagePair) => imagePair.src)
+      this.currentImages.map((imagePair) => {
+        return { src: imagePair.src, type: imagePair.type };
+      })
     );
   }
 
@@ -224,9 +267,12 @@ export class SettingsComponent {
     [this.imageRotations[imageIndex - 1], this.imageRotations[imageIndex]] = [this.imageRotations[imageIndex], this.imageRotations[imageIndex - 1]];
     [this.imageFlips[imageIndex - 1], this.imageFlips[imageIndex]] = [this.imageFlips[imageIndex], this.imageFlips[imageIndex - 1]];
     [this.imageBrightness[imageIndex - 1], this.imageBrightness[imageIndex]] = [this.imageBrightness[imageIndex], this.imageBrightness[imageIndex - 1]];
+    [this.imageTypes[imageIndex - 1], this.imageTypes[imageIndex]] = [this.imageTypes[imageIndex], this.imageTypes[imageIndex - 1]];
 
     this.imagesChanged$.next(
-      this.currentImages.map((imagePair) => imagePair.src)
+      this.currentImages.map((imagePair) => {
+        return { src: imagePair.src, type: imagePair.type };
+      })
     );
   }
 
@@ -240,9 +286,12 @@ export class SettingsComponent {
     [this.imageRotations[imageIndex + 1], this.imageRotations[imageIndex]] = [this.imageRotations[imageIndex], this.imageRotations[imageIndex + 1]];
     [this.imageFlips[imageIndex + 1], this.imageFlips[imageIndex]] = [this.imageFlips[imageIndex], this.imageFlips[imageIndex + 1]];
     [this.imageBrightness[imageIndex + 1], this.imageBrightness[imageIndex]] = [this.imageBrightness[imageIndex], this.imageBrightness[imageIndex + 1]];
+    [this.imageTypes[imageIndex + 1], this.imageTypes[imageIndex]] = [this.imageTypes[imageIndex], this.imageTypes[imageIndex + 1]];
 
     this.imagesChanged$.next(
-      this.currentImages.map((imagePair) => imagePair.src)
+      this.currentImages.map((imagePair) => {
+        return { src: imagePair.src, type: imagePair.type };
+      })
     );
   }
 
@@ -267,9 +316,12 @@ export class SettingsComponent {
     this.imageRotations.splice(imageIndex, 1);
     this.imageFlips.splice(imageIndex, 1);
     this.imageBrightness.splice(imageIndex, 1);
+    this.imageTypes.splice(imageIndex, 1);
 
     this.imagesChanged$.next(
-      this.currentImages.map((imagePair) => imagePair.src)
+      this.currentImages.map((imagePair) => {
+        return { src: imagePair.src, type: imagePair.type };
+      })
     );
   }
 
@@ -325,6 +377,29 @@ export class SettingsComponent {
         .get<SettingsData>(settingsUrl)
         .subscribe((data: SettingsData) => this.loadSettings(data));
   }
+
+  guessFileType(data: string): string {    
+    // check if it is base64 starting with data:category/type;base64,
+    const type = data.split(';')[0].split(':')[1];
+    
+    if(['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'video/mp4'].includes(type)) return type;
+    
+    // if it is not a known type, try to guess it from the end of the string (could be a url or a file name)
+    const extension = data.split('.').pop()?.toLowerCase();
+
+    if (extension === 'jpg' || extension === 'jpeg') return 'image/jpeg';
+    else if (extension === 'png') return 'image/png';
+    else if (extension === 'gif') return 'image/gif';
+    else if (extension === 'webp') return 'image/webp';
+    else if (extension === 'mp4') return 'video/mp4';
+
+    // still not known, return unknown
+    return 'unknown';
+  }
+
+  isUploadButtonEnabled(select: HTMLSelectElement, url: string): boolean {
+    return select.value !== 'unknown' && url.length > 0;
+  }
 }
 
 export type SettingsData = {
@@ -336,5 +411,6 @@ export type SettingsData = {
   imageRotations?: number[];
   imageFlips?: { v: boolean; h: boolean }[];
   imageBrightness?: number[];
+  imageTypes?: string[];
   images?: string[];
 };

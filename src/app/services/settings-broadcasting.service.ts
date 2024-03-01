@@ -21,7 +21,7 @@ export class SettingsBroadcastingService {
   private readonly imageSwap$ = new BehaviorSubject<boolean>(
     environment.defaultValueImageSwap
   );
-  private readonly newImages$ = new BehaviorSubject<string[]>(
+  private readonly newImages$ = new BehaviorSubject<{src: string, type: string}[]>(
     environment.defaultValueImageArray
   );
   private readonly imageRotations$ = new BehaviorSubject<number[]>([]);
@@ -35,7 +35,7 @@ export class SettingsBroadcastingService {
 
   public broadcastChange(
     target: BroadcastTarget,
-    value: number | boolean | string[] | number[] | { v: boolean; h: boolean }[]
+    value: number | boolean | string[] | number[] | { v: boolean; h: boolean }[] | {src: string, type: string}[]
   ): void {
     switch (target) {
       case 'InnerPolygonSize':
@@ -62,7 +62,7 @@ export class SettingsBroadcastingService {
         if (
           Array.isArray(value)
         )
-          this.newImages$.next(value as string[]);
+          this.newImages$.next(value as {src: string, type: string}[]);
         break;
       
       case 'ImageRotations':

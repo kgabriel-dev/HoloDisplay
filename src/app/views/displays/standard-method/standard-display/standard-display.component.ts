@@ -64,7 +64,7 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
     private tutorial: TutorialService
   ) {
     // subscribe to changes in the images to display
-    this.imageArray$.subscribe((imageData: string[]) => {
+    this.imageArray$.subscribe((imageData: { src: string, type: string }[]) => {
       const hiddenDisplayContainer: HTMLDivElement = document.getElementById('hiddenDisplayContainer') as HTMLDivElement;
 
       if(!hiddenDisplayContainer) {
@@ -77,9 +77,8 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
       this.displayedFiles = [];
 
       imageData.forEach((data, index) => {
-        const type = data.split(';')[0].split('/')[1];
-
-        if(data.includes('image/gif')) {let gif = decodeGif(new Uint8Array(atob(data.split(',')[1]).split('').map((c) => c.charCodeAt(0))));
+        if(data.type == 'image/gif') {
+          let gif = decodeGif(new Uint8Array(atob(data.src.split(',')[1]).split('').map((c) => c.charCodeAt(0))));
           let gifImages: HTMLImageElement[] = [];
 
           gif.frames.forEach((frame) => {
@@ -101,15 +100,15 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
           this.displayedFiles.push({type: 'gif', displayIndex: index, files: { original: gifImages, scaled: gifImages, currentIndex: 0 }});
         }
         
-        else if(data.includes('image/')) {
+        else if(['image/jpeg', 'image/png', 'image/webp'].includes(data.type)) {
           let image = new Image();
-          image.src = data;
+          image.src = data.src;
 
           this.displayedFiles.push({ type: 'image', displayIndex: index, files: { original: [image], scaled: [image], currentIndex: 0 }});
         }
 
-        else if(data.includes('video/')) {
-          hiddenDisplayContainer.innerHTML += `<video id="video${index}" autoplay muted loop="true"><source src="${data}" type="video/${type}"></video>`;
+        else if(data.type.startsWith('video')) {
+          hiddenDisplayContainer.innerHTML += `<video id="video${index}" autoplay muted loop="true"><source src="${data.src}" type="${data.type}"></video>`;
 
           const video = document.getElementById(`video${index}`) as HTMLVideoElement;
 
