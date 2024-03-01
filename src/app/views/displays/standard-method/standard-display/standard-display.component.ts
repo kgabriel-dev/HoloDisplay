@@ -82,12 +82,12 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
         if(data.includes('image/gif')) {let gif = decodeGif(new Uint8Array(atob(data.split(',')[1]).split('').map((c) => c.charCodeAt(0))));
           let gifImages: HTMLImageElement[] = [];
 
-          gif.frames.forEach((frame, index) => {
+          gif.frames.forEach((frame) => {
             let imageData = new ImageData(frame.data, gif.width, gif.height);
             let canvas = document.createElement('canvas');
             canvas.width = gif.width;
             canvas.height = gif.height;
-            let ctx = canvas.getContext('2d', { alpha: false });
+            let ctx = canvas.getContext('2d');
             ctx?.putImageData(imageData, 0, 0);
 
             let image = new Image();
@@ -98,23 +98,22 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
             gifImages.push(image);
           });
 
-          this.displayedFiles.push({type: 'gif', displayIndex: index, subFiles: { original: gifImages, scaled: gifImages, subIndex: 0 }});
+          this.displayedFiles.push({type: 'gif', displayIndex: index, files: { original: gifImages, scaled: gifImages, currentIndex: 0 }});
         }
         
         else if(data.includes('image/')) {
           let image = new Image();
           image.src = data;
 
-          this.displayedFiles.push({ type: 'image', displayIndex: index, singleFile: { original: image, scaled: image }});
+          this.displayedFiles.push({ type: 'image', displayIndex: index, files: { original: [image], scaled: [image], currentIndex: 0 }});
         }
 
         else if(data.includes('video/')) {
           hiddenDisplayContainer.innerHTML += `<video id="video${index}" autoplay muted loop="true"><source src="${data}" type="video/${type}"></video>`;
 
           const video = document.getElementById(`video${index}`) as HTMLVideoElement;
-          video.ontimeupdate = () => {this.settingsBroadcastingService.broadcastChange('SwapImage', true);};
 
-          this.displayedFiles.push({ type: 'video', displayIndex: index, singleFile: { original: video, scaled: video }});
+          this.displayedFiles.push({ type: 'video', displayIndex: index, files: { original: [video], scaled: [video], currentIndex: 0 }});
         };
       });
     });
@@ -134,7 +133,6 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
     });
 
     merge(
-      this.swapTime$,
       this.imageFlips$,
       this.imageBrightness$
     )
@@ -146,7 +144,7 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
     });
 
     this.requestDraw$
-      .pipe(debounceTime(100))
+      .pipe(debounceTime(1000/20))
       .subscribe(() => this.draw());
   }
 
@@ -208,30 +206,34 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
   
     // scale everything here and not in draw()
     this.displayedFiles.forEach((entry) => {
-      if(entry.type === 'video' && entry.singleFile) {
-        entry.singleFile.scaled = (entry.singleFile.original as HTMLVideoElement).cloneNode(true) as HTMLVideoElement;
-        entry.singleFile.scaled.setAttribute('width', `${(entry.singleFile.original as HTMLVideoElement).videoWidth * this.imageScalingFactors[entry.displayIndex]}`);
-        entry.singleFile.scaled.setAttribute('height', `${(entry.singleFile.original as HTMLVideoElement).videoHeight * this.imageScalingFactors[entry.displayIndex]}`);
+      const scalingFactor = this.imageScalingFactors[entry.displayIndex];
+      const originalFiles = entry.files.original;
+      const scaledFiles = entry.files.scaled;
+
+      if(entry.type === 'video' && originalFiles.length > 0 && scaledFiles.length > 0) {
+        scaledFiles[0] = (originalFiles[0] as HTMLVideoElement).cloneNode(true) as HTMLVideoElement;
+        scaledFiles[0].width = (originalFiles[0] as HTMLVideoElement).videoWidth * scalingFactor;
+        scaledFiles[0].height = (originalFiles[0] as HTMLVideoElement).videoHeight * scalingFactor;
       }
 
-      else if(entry.type === 'gif' && entry.subFiles) {
-        entry.subFiles.scaled = [];
+      else if(entry.type === 'gif' && originalFiles.length > 0 && scaledFiles.length > 0) {
+        const newlyScaledFiles: typeof scaledFiles = [];
 
-        entry.subFiles.original?.forEach((image) => {
-          if(!entry.subFiles) return;
+        originalFiles.forEach((image) => {
+          const scaled = image.cloneNode(true) as HTMLImageElement & HTMLVideoElement;
+          scaled.width = image.width * scalingFactor;
+          scaled.height = image.height * scalingFactor;
 
-          entry.subFiles.scaled?.push(image.cloneNode(true) as HTMLImageElement);
-
-          entry.subFiles.scaled[entry.subFiles.scaled.length - 1].setAttribute('width', `${image.width * this.imageScalingFactors[entry.displayIndex]}`);
-          entry.subFiles.scaled[entry.subFiles.scaled.length - 1].setAttribute('height', `${image.height * this.imageScalingFactors[entry.displayIndex]}`);
+          newlyScaledFiles.push(scaled);
         });
+
+        entry.files.scaled = newlyScaledFiles;
       }
 
-      else if(entry.type === 'image' && entry.singleFile) {
-        entry.singleFile.scaled = (entry.singleFile.original as HTMLImageElement).cloneNode(true) as HTMLImageElement;
-        (entry.singleFile.scaled as HTMLImageElement).width = entry.singleFile.original.width * this.imageScalingFactors[entry.displayIndex];
-        (entry.singleFile.scaled as HTMLImageElement).height = entry.singleFile.original.height * this.imageScalingFactors[entry.displayIndex];
-        console.log(entry.singleFile.scaled.width, entry.singleFile.scaled.height)
+      else if(entry.type === 'image' && originalFiles.length > 0 && scaledFiles.length > 0) {
+        scaledFiles[0] = (originalFiles[0] as HTMLImageElement).cloneNode(true) as HTMLImageElement;
+        scaledFiles[0].width = (originalFiles[0] as HTMLImageElement).width * scalingFactor;
+        scaledFiles[0].height = (originalFiles[0] as HTMLImageElement).height * scalingFactor;
       }
     });
 
@@ -243,7 +245,7 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
     const canvas = this.displayCanvas?.nativeElement;
     if(!canvas) return;
 
-    const ctx = canvas.getContext('2d', { alpha: false }) as CanvasRenderingContext2D;
+    const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
     ctx.save();
     ctx.resetTransform();
     canvas.width = canvas.width;  // clears canvas as a side effect
@@ -253,7 +255,6 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
     this.helperService.connectPointsWithStraightLines(ctx, this.outerEdgePoints, 'red');
 
     for(let iSide = 0; iSide < (this.settingsBroadcastingService.getLastValue('SideCount') as number); iSide++) {
-      const timeStart = performance.now();
 
       const iImage = iSide % this.displayedFiles.length;
       const imageData = this.displayedFiles[iImage];
@@ -261,29 +262,16 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
       if(!imageData) continue;
 
       // load the image
-      let image: HTMLImageElement | HTMLVideoElement;
-
-      if(imageData.type === 'video' || imageData.type === 'image') {
-        image = imageData.singleFile?.scaled as HTMLImageElement | HTMLVideoElement;
-      } else {
-        if(imageData.subFiles?.scaled && imageData.subFiles.scaled.length > 0 && imageData.subFiles.subIndex !== undefined) {
-          const currImageIndex = imageData.subFiles.subIndex;
-          image = imageData.subFiles.scaled[currImageIndex] as HTMLImageElement;
-        } else {
-          image = new Image();
-        }
-      }
+      const image = imageData.files.scaled[imageData.files.currentIndex];
 
       if(image instanceof HTMLVideoElement) {
-        (image as HTMLVideoElement).currentTime = (imageData.singleFile?.original as HTMLVideoElement).currentTime;
+        (image as HTMLVideoElement).currentTime = (imageData.files.original[0] as HTMLVideoElement).currentTime;
       }
 
       // reset the clip mask
       ctx.restore();
       ctx.resetTransform();
       ctx.save();
-
-      
 
       // store or apply transformation matrix instead of rotating and translating manually
       if(this.transformationMatrices[iSide] && this.transformationMatrices[iSide][0]) {
@@ -308,8 +296,6 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
 
       // undo the rotation
       ctx.rotate(-iSide * this.angle);
-
-      // draw the image
       
       // store or apply transformation matrix instead of rotating and translating manually
       if(this.transformationMatrices[iSide] && this.transformationMatrices[iSide][1]) {
@@ -329,6 +315,7 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
       // apply the brightness change
       ctx.filter = `brightness(${(this.settingsBroadcastingService.getLastValue('ImageBrightness') as number[])[iImage]}%)`;
 
+      // draw the image
       ctx.drawImage(
         image,
         -image.width/2,
@@ -336,17 +323,17 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
         image.width,
         image.height
       );
-
-      const timeEnd = performance.now();
-      console.log(`Drawing image ${iImage} took ${timeEnd - timeStart} ms`);
     }
 
     // increment all subimage counters
     this.displayedFiles.forEach((entry) => {
-      if(entry.subFiles?.original && entry.subFiles.original.length > 0 && entry.subFiles.subIndex !== undefined) {
-        entry.subFiles.subIndex = (entry.subFiles.subIndex + 1) % entry.subFiles.original.length;
-      }
+      entry.files.currentIndex = (entry.files.currentIndex + 1) % entry.files.scaled.length;
     });
+
+    // request the next draw if one of the images is animated (video or gif)
+    if(this.displayedFiles.some((entry) => entry.type === 'video' || entry.type === 'gif')) {
+      this.requestDraw$.next();
+    }
   }
 
   onCalculateClick(): void {
@@ -381,13 +368,9 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
 type DisplayedFile = {
   type: 'image' | 'video' | 'gif',
   displayIndex: number,
-  singleFile?: {
-    original: HTMLImageElement | HTMLVideoElement,
-    scaled: HTMLImageElement | HTMLVideoElement
-  },
-  subFiles?: {
-    original: HTMLImageElement[],
-    scaled: HTMLImageElement[]
-    subIndex: number
+  files: {
+    original: HTMLImageElement[] | HTMLVideoElement[],
+    scaled: HTMLImageElement[] | HTMLVideoElement[]
+    currentIndex: number
   }
 }
