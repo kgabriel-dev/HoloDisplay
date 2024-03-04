@@ -7,7 +7,7 @@ import {
   ViewChild
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import * as decodeGif from 'decode-gif';
+import { Frame, ParsedFrame, ParsedGif, decompressFrames, parseGIF } from 'gifuct-js';
 import { Observable, Subject, debounceTime, merge } from 'rxjs';
 import { StandardMethodCalculatorService } from 'src/app/services/calculators/standard-method/standard-method-calculator.service';
 import { HelperService, Point } from 'src/app/services/helpers/helper.service';
@@ -72,32 +72,68 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
         return;
       }
 
+      this.displayedFiles = [];
       hiddenDisplayContainer.innerHTML = "";
       
-      this.displayedFiles = [];
+      let gif: ParsedGif;
+      let gifFrames: ParsedFrame[];
 
       imageData.forEach((data, index) => {
         if(data.type == 'image/gif') {
-          let gif = decodeGif(new Uint8Array(atob(data.src.split(',')[1]).split('').map((c) => c.charCodeAt(0))));
-          let gifImages: HTMLImageElement[] = [];
+          const buildGifFiles = (frames: ParsedFrame[]) => {
+            let gifImages: HTMLImageElement[] = [];
+            console.log(gifFrames.length)
 
-          gif.frames.forEach((frame) => {
-            let imageData = new ImageData(frame.data, gif.width, gif.height);
-            let canvas = document.createElement('canvas');
-            canvas.width = gif.width;
-            canvas.height = gif.height;
-            let ctx = canvas.getContext('2d');
-            ctx?.putImageData(imageData, 0, 0);
+            gifFrames.forEach((frame) => {
+              let imageData = new ImageData(frame.patch, frame.dims.width, frame.dims.height);
+              let canvas = document.createElement('canvas');
+              canvas.width = frame.dims.width;
+              canvas.height = frame.dims.height;
+              let ctx = canvas.getContext('2d');
+              ctx?.putImageData(imageData, 0, 0);
 
-            let image = new Image();
-            image.src = canvas.toDataURL();
-            image.width = gif.width;
-            image.height = gif.height;
+              let image = new Image();
+              image.src = canvas.toDataURL();
+              image.width = canvas.width;
+              image.height = canvas.height;
 
-            gifImages.push(image);
-          });
+              gifImages.push(image);
+            });
 
-          this.displayedFiles.push({type: 'gif', displayIndex: index, files: { original: gifImages, scaled: gifImages, currentIndex: 0 }});
+            this.displayedFiles.push({type: 'gif', displayIndex: index, files: { original: gifImages, scaled: gifImages, currentIndex: 0 }});
+          }
+
+          if(data.src.startsWith('data:')) {
+            let buffer = new TextEncoder().encode(data.src.split(',')[1]).buffer;
+
+            gif = parseGIF(buffer);
+            gifFrames = decompressFrames(gif, true);
+
+            buildGifFiles(gifFrames);
+          } else {
+            let xhr = new XMLHttpRequest();
+            xhr.open('GET', data.src, true);
+            xhr.responseType = 'arraybuffer';
+
+            xhr.onload = () => {
+              let arrayBuffer = xhr.response;
+              
+              if(arrayBuffer) {
+                gif = parseGIF(arrayBuffer);
+                gifFrames = decompressFrames(gif, true);
+
+                buildGifFiles(gifFrames);
+              }
+            }
+
+            xhr.onerror = () => {
+              // TODO: remove the gif from the list
+              alert('Failed to load gif');
+              return;
+            }
+
+            xhr.send();
+          }
         }
         
         else if(['image/jpeg', 'image/png', 'image/webp'].includes(data.type)) {
@@ -127,6 +163,7 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
     )
     .pipe(debounceTime(100))
     .subscribe(() => {
+      this.imageFlips = (this.settingsBroadcastingService.getLastValue('ImageFlips') as { v: boolean, h: boolean }[]);
       this.recalculateValues();
       this.requestDraw$.next();
     });
@@ -151,6 +188,7 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
     this.resizeEvent$.pipe(debounceTime(20)).subscribe((event) => {
       this.resizeCanvas((event.target as Window).innerWidth, (event.target as Window).innerHeight);
       this.recalculateValues();
+      this.requestDraw$.next();
     });
 
     // define the calculation function
@@ -257,6 +295,8 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
 
       const iImage = iSide % this.displayedFiles.length;
       const imageData = this.displayedFiles[iImage];
+
+      console.log(this.displayedFiles)
 
       if(!imageData) continue;
 
