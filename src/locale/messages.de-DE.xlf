@@ -202,46 +202,6 @@
           <context context-type="linenumber">9</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="5718085525986225528" datatype="html">
-        <source>Position: <x id="INTERPOLATION" equiv-text="{{ this.imagePositions[i].value / POSITIONING_STEP_SIZE }}"/></source>
-        <target>Position: </target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/views/displays/standard-method/standard-settings/standard-settings.component.html</context>
-          <context context-type="linenumber">18</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="1444907508350169332" datatype="html">
-        <source>Size: <x id="INTERPOLATION" equiv-text="{{ this.imageSizes[i].value }}"/>%</source>
-        <target>Größe: </target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/views/displays/standard-method/standard-settings/standard-settings.component.html</context>
-          <context context-type="linenumber">19</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="1438663350786900285" datatype="html">
-        <source>Rotation: <x id="INTERPOLATION" equiv-text="{{ this.imageRotations[i].value }}"/>°</source>
-        <target>Drehung:</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/views/displays/standard-method/standard-settings/standard-settings.component.html</context>
-          <context context-type="linenumber">20</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="5308424160359206215" datatype="html">
-        <source>Flipped: <x id="INTERPOLATION" equiv-text="{{ getFlippingText(i) }}"/></source>
-        <target>Spiegelungen: </target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/views/displays/standard-method/standard-settings/standard-settings.component.html</context>
-          <context context-type="linenumber">21</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="7530123765660572758" datatype="html">
-        <source>Brightness: <x id="INTERPOLATION" equiv-text="{{ this.imageBrightness[i].value }}"/>%</source>
-        <target>Helligkeit: </target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/views/displays/standard-method/standard-settings/standard-settings.component.html</context>
-          <context context-type="linenumber">22</context>
-        </context-group>
-      </trans-unit>
       <trans-unit id="554511630329886641" datatype="html">
         <source>--- You have not uploaded any images yet. ---</source>
         <target>--- Sie haben noch keine Bilder hochgeladen ---</target>
@@ -516,6 +476,46 @@
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/views/displays/standard-method/standard-settings/standard-settings.component.ts</context>
           <context context-type="linenumber">300</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1532163742359653948" datatype="html">
+        <source>Brightness: <x id="PH" equiv-text="value"/>%</source>
+        <target>Helligkeit: <x id="PH" equiv-text="value"/>%</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/views/displays/standard-method/standard-settings/standard-settings.component.ts</context>
+          <context context-type="linenumber">333</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2948720631292902163" datatype="html">
+        <source>Flipped: <x id="PH" equiv-text="value"/></source>
+        <target>Spiegelungen: <x id="PH" equiv-text="value"/></target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/views/displays/standard-method/standard-settings/standard-settings.component.ts</context>
+          <context context-type="linenumber">336</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1383183616552424893" datatype="html">
+        <source>Rotation: <x id="PH" equiv-text="value"/>°</source>
+        <target>Drehung: <x id="PH" equiv-text="value"/>°</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/views/displays/standard-method/standard-settings/standard-settings.component.ts</context>
+          <context context-type="linenumber">339</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3714882407764457376" datatype="html">
+        <source>Size: <x id="PH" equiv-text="value"/>%</source>
+        <target>Größe: <x id="PH" equiv-text="value"/>%</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/views/displays/standard-method/standard-settings/standard-settings.component.ts</context>
+          <context context-type="linenumber">342</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5416373732780232325" datatype="html">
+        <source>Position: <x id="PH" equiv-text="value"/></source>
+        <target>Position: <x id="PH" equiv-text="value"/></target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/views/displays/standard-method/standard-settings/standard-settings.component.ts</context>
+          <context context-type="linenumber">345</context>
         </context-group>
       </trans-unit>
     </body>

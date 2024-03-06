@@ -326,6 +326,25 @@ export class SettingsComponent {
         .get<SettingsData>(settingsUrl)
         .subscribe((data: SettingsData) => this.loadSettings(data));
   }
+
+  getLocalizedString(string: 'brightness' | 'flipped' | 'rotation' | 'size' | 'position', value: any): string {
+    switch(string) {
+      case 'brightness':
+        return $localize`Brightness: ${value}%`;
+
+      case 'flipped':
+        return $localize`Flipped: ${value}`;
+
+      case 'rotation':
+        return $localize`Rotation: ${value}°`;
+
+      case 'size':
+        return $localize`Size: ${value}%`;
+
+      case 'position':
+        return $localize`Position: ${value}`;
+    }
+  }
 }
 
 export type SettingsData = {
