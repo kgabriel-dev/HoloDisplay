@@ -80,60 +80,48 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
 
       imageData.forEach((data, index) => {
         if(data.type == 'image/gif') {
-          const buildGifFiles = (frames: ParsedFrame[]) => {
-            let gifImages: HTMLImageElement[] = [];
-            console.log(gifFrames.length)
+          // prepare a request to load the gif
+          let xhr = new XMLHttpRequest();
+          xhr.open('GET', data.src, true);
+          xhr.responseType = 'arraybuffer';
 
-            gifFrames.forEach((frame) => {
-              let imageData = new ImageData(frame.patch, frame.dims.width, frame.dims.height);
-              let canvas = document.createElement('canvas');
-              canvas.width = frame.dims.width;
-              canvas.height = frame.dims.height;
-              let ctx = canvas.getContext('2d');
-              ctx?.putImageData(imageData, 0, 0);
+          xhr.onload = () => {
+            let arrayBuffer = xhr.response;
+            
+            if(arrayBuffer) {
+              // parse the gif and load the frames
+              gif = parseGIF(arrayBuffer);
+              gifFrames = decompressFrames(gif, true);
 
-              let image = new Image();
-              image.src = canvas.toDataURL();
-              image.width = canvas.width;
-              image.height = canvas.height;
+              let gifImages: HTMLImageElement[] = [];
 
-              gifImages.push(image);
-            });
+              gifFrames.forEach((frame) => {
+                let imageData = new ImageData(frame.patch, frame.dims.width, frame.dims.height);
+                let canvas = document.createElement('canvas');
+                canvas.width = frame.dims.width;
+                canvas.height = frame.dims.height;
+                let ctx = canvas.getContext('2d');
+                ctx?.putImageData(imageData, 0, 0);
 
-            this.displayedFiles.push({type: 'gif', displayIndex: index, files: { original: gifImages, scaled: gifImages, currentIndex: 0 }});
+                let image = new Image();
+                image.src = canvas.toDataURL();
+                image.width = canvas.width;
+                image.height = canvas.height;
+
+                gifImages.push(image);
+              });
+
+              this.displayedFiles.push({type: 'gif', displayIndex: index, files: { original: gifImages, scaled: gifImages, currentIndex: 0 }});
+            }
           }
 
-          if(data.src.startsWith('data:')) {
-            let buffer = new TextEncoder().encode(data.src.split(',')[1]).buffer;
-
-            gif = parseGIF(buffer);
-            gifFrames = decompressFrames(gif, true);
-
-            buildGifFiles(gifFrames);
-          } else {
-            let xhr = new XMLHttpRequest();
-            xhr.open('GET', data.src, true);
-            xhr.responseType = 'arraybuffer';
-
-            xhr.onload = () => {
-              let arrayBuffer = xhr.response;
-              
-              if(arrayBuffer) {
-                gif = parseGIF(arrayBuffer);
-                gifFrames = decompressFrames(gif, true);
-
-                buildGifFiles(gifFrames);
-              }
-            }
-
-            xhr.onerror = () => {
-              // TODO: remove the gif from the list
-              alert('Failed to load gif');
-              return;
-            }
-
-            xhr.send();
+          xhr.onerror = () => {
+            // TODO: remove the gif from the list
+            alert('Failed to load gif');
+            return;
           }
+
+          xhr.send();
         }
         
         else if(['image/jpeg', 'image/png', 'image/webp'].includes(data.type)) {
@@ -295,8 +283,6 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
 
       const iImage = iSide % this.displayedFiles.length;
       const imageData = this.displayedFiles[iImage];
-
-      console.log(this.displayedFiles)
 
       if(!imageData) continue;
 
