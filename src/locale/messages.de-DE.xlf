@@ -202,52 +202,12 @@
           <context context-type="linenumber">9</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="5718085525986225528" datatype="html">
-        <source>Position: <x id="INTERPOLATION" equiv-text="{{ this.imagePositions[i].value / POSITIONING_STEP_SIZE }}"/></source>
-        <target>Position: </target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/views/displays/standard-method/standard-settings/standard-settings.component.html</context>
-          <context context-type="linenumber">18</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="1444907508350169332" datatype="html">
-        <source>Size: <x id="INTERPOLATION" equiv-text="{{ this.imageSizes[i].value }}"/>%</source>
-        <target>Größe: </target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/views/displays/standard-method/standard-settings/standard-settings.component.html</context>
-          <context context-type="linenumber">19</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="1438663350786900285" datatype="html">
-        <source>Rotation: <x id="INTERPOLATION" equiv-text="{{ this.imageRotations[i].value }}"/>°</source>
-        <target>Drehung:</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/views/displays/standard-method/standard-settings/standard-settings.component.html</context>
-          <context context-type="linenumber">20</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="5308424160359206215" datatype="html">
-        <source>Flipped: <x id="INTERPOLATION" equiv-text="{{ getFlippingText(i) }}"/></source>
-        <target>Spiegelungen: </target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/views/displays/standard-method/standard-settings/standard-settings.component.html</context>
-          <context context-type="linenumber">21</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="7530123765660572758" datatype="html">
-        <source>Brightness: <x id="INTERPOLATION" equiv-text="{{ this.imageBrightness[i].value }}"/>%</source>
-        <target>Helligkeit: </target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/views/displays/standard-method/standard-settings/standard-settings.component.html</context>
-          <context context-type="linenumber">22</context>
-        </context-group>
-      </trans-unit>
       <trans-unit id="554511630329886641" datatype="html">
         <source>--- You have not uploaded any images yet. ---</source>
         <target>--- Sie haben noch keine Bilder hochgeladen ---</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/views/displays/standard-method/standard-settings/standard-settings.component.html</context>
-          <context context-type="linenumber">66</context>
+          <context context-type="linenumber">74</context>
         </context-group>
       </trans-unit>
       <trans-unit id="889671581456916004" datatype="html">
@@ -255,7 +215,55 @@
         <target>Bild(er) hochladen</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/views/displays/standard-method/standard-settings/standard-settings.component.html</context>
-          <context context-type="linenumber">70</context>
+          <context context-type="linenumber">78</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="98765632960684519" datatype="html">
+        <source>PNG-Image</source>
+        <target>PNG-Bild</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/views/displays/standard-method/standard-settings/standard-settings.component.html</context>
+          <context context-type="linenumber">84</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3997563195341792919" datatype="html">
+        <source>JPG-Image</source>
+        <target>JPG-Bild</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/views/displays/standard-method/standard-settings/standard-settings.component.html</context>
+          <context context-type="linenumber">85</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2782595619828860222" datatype="html">
+        <source>WebP-Image</source>
+        <target>WebP-Bild</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/views/displays/standard-method/standard-settings/standard-settings.component.html</context>
+          <context context-type="linenumber">86</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="152383012260026254" datatype="html">
+        <source>GIF</source>
+        <target>GIF</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/views/displays/standard-method/standard-settings/standard-settings.component.html</context>
+          <context context-type="linenumber">87</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7046827244412494442" datatype="html">
+        <source>MP4-Video</source>
+        <target>MP4-Video</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/views/displays/standard-method/standard-settings/standard-settings.component.html</context>
+          <context context-type="linenumber">88</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4467323362722952678" datatype="html">
+        <source>Unknown</source>
+        <target>Unbekannt</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/views/displays/standard-method/standard-settings/standard-settings.component.html</context>
+          <context context-type="linenumber">89</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3359631240272527848" datatype="html">
@@ -263,7 +271,7 @@
         <target>Einstellungen speichern &amp; laden</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/views/displays/standard-method/standard-settings/standard-settings.component.html</context>
-          <context context-type="linenumber">83</context>
+          <context context-type="linenumber">99</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7132230797799327014" datatype="html">
@@ -271,7 +279,7 @@
         <target>Speichern Sie die aktuellen Einstellungen in einer Datei auf Ihrem PC.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/views/displays/standard-method/standard-settings/standard-settings.component.html</context>
-          <context context-type="linenumber">86</context>
+          <context context-type="linenumber">102</context>
         </context-group>
       </trans-unit>
       <trans-unit id="894845733777227658" datatype="html">
@@ -279,7 +287,7 @@
         <target>Sie können auch zuvor gespeicherte Einstellungen von Ihrem PC laden.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/views/displays/standard-method/standard-settings/standard-settings.component.html</context>
-          <context context-type="linenumber">87</context>
+          <context context-type="linenumber">103</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3768927257183755959" datatype="html">
@@ -287,7 +295,7 @@
         <target>Speichern</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/views/displays/standard-method/standard-settings/standard-settings.component.html</context>
-          <context context-type="linenumber">91</context>
+          <context context-type="linenumber">107</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4363679334051186216" datatype="html">
@@ -295,7 +303,7 @@
         <target>Standard-Einstellungen laden</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/views/displays/standard-method/standard-settings/standard-settings.component.html</context>
-          <context context-type="linenumber">92</context>
+          <context context-type="linenumber">108</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7754035096622924583" datatype="html">
@@ -303,7 +311,7 @@
         <target>Größe des Polygons in der Mitte</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/views/displays/standard-method/standard-settings/standard-settings.component.html</context>
-          <context context-type="linenumber">104</context>
+          <context context-type="linenumber">120</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4517949070954488335" datatype="html">
@@ -311,7 +319,7 @@
         <target>Legen Sie hier die Größe des Polygons in der Mitte fest.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/views/displays/standard-method/standard-settings/standard-settings.component.html</context>
-          <context context-type="linenumber">107</context>
+          <context context-type="linenumber">123</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7709174949865335943" datatype="html">
@@ -319,7 +327,7 @@
         <target>Dieser Wert wird durch die Grundfläche Ihres Spiegels bestimmt.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/views/displays/standard-method/standard-settings/standard-settings.component.html</context>
-          <context context-type="linenumber">108</context>
+          <context context-type="linenumber">124</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5248907804377488378" datatype="html">
@@ -327,7 +335,7 @@
         <target>px</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/views/displays/standard-method/standard-settings/standard-settings.component.html</context>
-          <context context-type="linenumber">115</context>
+          <context context-type="linenumber">131</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6768385300720605008" datatype="html">
@@ -335,7 +343,7 @@
         <target>Anzahl der Seiten / Bilder</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/views/displays/standard-method/standard-settings/standard-settings.component.html</context>
-          <context context-type="linenumber">122</context>
+          <context context-type="linenumber">138</context>
         </context-group>
       </trans-unit>
       <trans-unit id="338470959412289336" datatype="html">
@@ -343,7 +351,7 @@
         <target>Mit dieser Einstellung können Sie die Anzahl der Seiten des Polygons anpassen.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/views/displays/standard-method/standard-settings/standard-settings.component.html</context>
-          <context context-type="linenumber">125</context>
+          <context context-type="linenumber">141</context>
         </context-group>
       </trans-unit>
       <trans-unit id="9023794801916517176" datatype="html">
@@ -351,7 +359,7 @@
         <target>An jeder Seite wird ein Bild dargestellt. Die Anzahl der Seiten sollte zwischen 3 und 10 liegen.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/views/displays/standard-method/standard-settings/standard-settings.component.html</context>
-          <context context-type="linenumber">126</context>
+          <context context-type="linenumber">142</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2296786869594482156" datatype="html">
@@ -359,7 +367,7 @@
         <target>Sie können so viele Bilder verwenden, wie das Polygon Seiten hat. Wenn Sie weniger Bilder verwenden, werden die Bilder wiederholt.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/views/displays/standard-method/standard-settings/standard-settings.component.html</context>
-          <context context-type="linenumber">127</context>
+          <context context-type="linenumber">143</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2937149724220940440" datatype="html">
@@ -367,7 +375,7 @@
         <target>Seiten</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/views/displays/standard-method/standard-settings/standard-settings.component.html</context>
-          <context context-type="linenumber">134</context>
+          <context context-type="linenumber">150</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5716119798687938784" datatype="html">
@@ -482,16 +490,36 @@
           <context context-type="linenumber">37</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="531376097358810783" datatype="html">
+        <source>Increase FPS</source>
+        <target>FPS erhöhen</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/views/displays/standard-method/standard-settings/standard-settings.component.ts</context>
+          <context context-type="linenumber">38</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7499281557857515452" datatype="html">
+        <source>Decrease FPS</source>
+        <target>FPS verringern</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/views/displays/standard-method/standard-settings/standard-settings.component.ts</context>
+          <context context-type="linenumber">39</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="3012906865384504293" datatype="html">
         <source>Image</source>
         <target>Bild</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/views/displays/standard-method/standard-settings/standard-settings.component.ts</context>
-          <context context-type="linenumber">148</context>
+          <context context-type="linenumber">186</context>
         </context-group>
+      </trans-unit>
+      <trans-unit id="8455204924704616723" datatype="html">
+        <source>File</source>
+        <target>Datei</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/views/displays/standard-method/standard-settings/standard-settings.component.ts</context>
-          <context context-type="linenumber">182</context>
+          <context context-type="linenumber">223</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8433377163064110848" datatype="html">
@@ -499,7 +527,7 @@
         <target>v</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/views/displays/standard-method/standard-settings/standard-settings.component.ts</context>
-          <context context-type="linenumber">290</context>
+          <context context-type="linenumber">358</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8398233202919865612" datatype="html">
@@ -507,7 +535,7 @@
         <target>h</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/views/displays/standard-method/standard-settings/standard-settings.component.ts</context>
-          <context context-type="linenumber">291</context>
+          <context context-type="linenumber">359</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6252070156626006029" datatype="html">
@@ -515,7 +543,55 @@
         <target>Keine</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/views/displays/standard-method/standard-settings/standard-settings.component.ts</context>
-          <context context-type="linenumber">300</context>
+          <context context-type="linenumber">368</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1532163742359653948" datatype="html">
+        <source>Brightness: <x id="PH" equiv-text="value"/>%</source>
+        <target>Helligkeit: <x id="PH" equiv-text="value"/>%</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/views/displays/standard-method/standard-settings/standard-settings.component.ts</context>
+          <context context-type="linenumber">434</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2948720631292902163" datatype="html">
+        <source>Flipped: <x id="PH" equiv-text="value"/></source>
+        <target>Spiegelungen: <x id="PH" equiv-text="value"/></target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/views/displays/standard-method/standard-settings/standard-settings.component.ts</context>
+          <context context-type="linenumber">437</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1383183616552424893" datatype="html">
+        <source>Rotation: <x id="PH" equiv-text="value"/>°</source>
+        <target>Drehung: <x id="PH" equiv-text="value"/>°</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/views/displays/standard-method/standard-settings/standard-settings.component.ts</context>
+          <context context-type="linenumber">440</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3714882407764457376" datatype="html">
+        <source>Size: <x id="PH" equiv-text="value"/>%</source>
+        <target>Größe: <x id="PH" equiv-text="value"/>%</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/views/displays/standard-method/standard-settings/standard-settings.component.ts</context>
+          <context context-type="linenumber">443</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5416373732780232325" datatype="html">
+        <source>Position: <x id="PH" equiv-text="value"/></source>
+        <target>Position: <x id="PH" equiv-text="value"/></target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/views/displays/standard-method/standard-settings/standard-settings.component.ts</context>
+          <context context-type="linenumber">446</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2123445243238314801" datatype="html">
+        <source>Framerate: <x id="PH" equiv-text="value"/>fps</source>
+        <target>Framerate: </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/views/displays/standard-method/standard-settings/standard-settings.component.ts</context>
+          <context context-type="linenumber">449</context>
         </context-group>
       </trans-unit>
     </body>

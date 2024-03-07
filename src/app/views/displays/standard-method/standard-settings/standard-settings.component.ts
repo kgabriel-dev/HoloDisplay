@@ -427,6 +427,31 @@ export class SettingsComponent {
 
     this.settingsBroadcaster.broadcastChange('GifFps', this.gifFps);
   }
+
+  getLocalizedString(key: string, value: any): string {
+    switch(key) {
+      case 'brightness':
+        return $localize`Brightness: ${value}%`;
+
+      case 'flipped':
+        return $localize`Flipped: ${value}`;
+
+      case 'rotation':
+        return $localize`Rotation: ${value}°`;
+
+      case 'size':
+        return $localize`Size: ${value}%`;
+
+      case 'position':
+        return $localize`Position: ${value}`;
+
+      case 'framerate':
+        return $localize`Framerate: ${value}fps`;
+
+      default:
+        return '';
+    }
+  }
 }
 
 export type SettingsData = {
