@@ -48,7 +48,6 @@ export class SettingsComponent {
   
   currentImages: { name: string; src: string, type: string }[] = [];
   imagesChanged$ = new Subject<{ src: string; type: string }[]>();
-  settingsResetRequested$ = this.settingsBroadcaster.selectNotificationChannel('SettingsReset');
 
   readonly controlsAndTargets: {
     control: FormControl;
@@ -84,8 +83,12 @@ export class SettingsComponent {
       });
     });
 
-    this.settingsResetRequested$.subscribe(() => {
+    this.settingsBroadcaster.selectNotificationChannel('SettingsReset').subscribe(() => {
       this.resetSettings();
+    });
+
+    this.settingsBroadcaster.selectNotificationChannel('RemovedImage').subscribe((index) => {
+      this.deleteImage(index);
     });
   }
 

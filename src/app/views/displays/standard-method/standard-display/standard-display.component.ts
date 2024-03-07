@@ -116,7 +116,7 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
           }
 
           xhr.onerror = () => {
-            // TODO: remove the gif from the list
+            this.settingsBroadcastingService.broadcastChange('RemovedImage', index);
             alert('Failed to load gif');
             return;
           }

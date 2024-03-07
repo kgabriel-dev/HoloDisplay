@@ -29,6 +29,7 @@ export class SettingsBroadcastingService {
   private readonly imageBrightness$ = new BehaviorSubject<number[]>([]);
 
   private readonly settingsReset$ = new Subject<void>();
+  private readonly removedImage$ = new Subject<number>();
 
   private imageSwapTime = environment.defaultValueSwapTime;
   private imageSwapInterval?: number;
@@ -76,6 +77,10 @@ export class SettingsBroadcastingService {
       case 'ImageBrightness':
         if (Array.isArray(value)) this.imageBrightness$.next(value as number[]);
         break;
+      
+      case 'RemovedImage':
+        if (typeof value == 'number') this.removedImage$.next(value);
+        break;
     }
   }
 
@@ -111,6 +116,8 @@ export class SettingsBroadcastingService {
         return this.imageBrightness$.asObservable();
       case 'SettingsReset':
         return this.settingsReset$.asObservable();
+      case 'RemovedImage':
+        return this.removedImage$.asObservable();
     }
   }
 
@@ -134,7 +141,9 @@ export class SettingsBroadcastingService {
         return this.imageFlips$.getValue();
       case 'ImageBrightness':
         return this.imageBrightness$.getValue();
-      case 'SettingsReset':
+
+      // all other cases are not supported
+      default:
         return;
     }
   }
@@ -154,4 +163,5 @@ export type BroadcastTarget =
   | 'ImageRotations'
   | 'ImageFlips'
   | 'ImageBrightness'
-  | 'SettingsReset';
+  | 'SettingsReset'
+  | 'RemovedImage';
