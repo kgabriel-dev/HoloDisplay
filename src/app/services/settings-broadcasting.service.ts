@@ -27,6 +27,7 @@ export class SettingsBroadcastingService {
   private readonly imageRotations$ = new BehaviorSubject<number[]>([]);
   private readonly imageFlips$ = new BehaviorSubject<{ v: boolean; h: boolean }[]>([]);
   private readonly imageBrightness$ = new BehaviorSubject<number[]>([]);
+  private readonly gifFps$ = new BehaviorSubject<number[]>([]);
 
   private readonly settingsReset$ = new Subject<void>();
   private readonly removedImage$ = new Subject<number>();
@@ -81,6 +82,9 @@ export class SettingsBroadcastingService {
       case 'RemovedImage':
         if (typeof value == 'number') this.removedImage$.next(value);
         break;
+      
+      case 'GifFps':
+        if (Array.isArray(value)) this.gifFps$.next(value as number[]);
     }
   }
 
@@ -118,6 +122,8 @@ export class SettingsBroadcastingService {
         return this.settingsReset$.asObservable();
       case 'RemovedImage':
         return this.removedImage$.asObservable();
+      case 'GifFps':
+        return this.gifFps$.asObservable();
     }
   }
 
@@ -141,6 +147,8 @@ export class SettingsBroadcastingService {
         return this.imageFlips$.getValue();
       case 'ImageBrightness':
         return this.imageBrightness$.getValue();
+      case 'GifFps':
+        return this.gifFps$.getValue();
 
       // all other cases are not supported
       default:
@@ -164,4 +172,5 @@ export type BroadcastTarget =
   | 'ImageFlips'
   | 'ImageBrightness'
   | 'SettingsReset'
-  | 'RemovedImage';
+  | 'RemovedImage'
+  | 'GifFps';

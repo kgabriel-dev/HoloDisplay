@@ -35,6 +35,8 @@ export class SettingsComponent {
   readonly TEXT_IMG_BRIGHTER = $localize`Make image brighter`;
   readonly TEXT_IMG_DARKER = $localize`Make image darker`;
   readonly TEXT_IMG_URL_PLACEH = $localize`URL of the image`;
+  readonly TEXT_FPS_PLUS = $localize`Increase FPS`;
+  readonly TEXT_FPS_MINUS = $localize`Decrease FPS`;
 
   innerPolygonSize = new FormControl(Number(environment.defaultValueInnerPolygonSize));
   imageSizes: FormControl[] = [];
@@ -45,6 +47,7 @@ export class SettingsComponent {
   imageFlips: { v: FormControl; h: FormControl }[] = [];
   imageBrightness: FormControl[] = [];
   imageTypes: string[] = [];
+  gifFps: number[] = [];
   
   currentImages: { name: string; src: string, type: string }[] = [];
   imagesChanged$ = new Subject<{ src: string; type: string }[]>();
@@ -75,6 +78,7 @@ export class SettingsComponent {
       this.settingsBroadcaster.broadcastChange('ImageRotations', this.imageRotations.map((control) => control.value));
       this.settingsBroadcaster.broadcastChange('ImageFlips', this.imageFlips.map((pair) => ({ v: pair.v.value, h: pair.h.value })));
       this.settingsBroadcaster.broadcastChange('ImageBrightness', this.imageBrightness.map((control) => control.value));
+      this.settingsBroadcaster.broadcastChange('GifFps', this.gifFps);
     });
 
     this.controlsAndTargets.forEach((pair) => {
@@ -104,6 +108,7 @@ export class SettingsComponent {
       imageFlips: this.imageFlips.map((pair) => ({ v: pair.v.value, h: pair.h.value })),
       imageBrightness: this.imageBrightness.map((control) => control.value),
       imageTypes: this.imageTypes,
+      gifFps: this.gifFps,
       images: this.currentImages.map((imagePair) => imagePair.src)
     };
 
@@ -126,7 +131,8 @@ export class SettingsComponent {
         standardImagePositions = Array(numberOfImages).fill(0),
         standardImageRotations = Array(numberOfImages).fill(0),
         standardImageFlips = Array(numberOfImages).fill({ v: false, h: false }),
-        standardImageBrightness = Array(numberOfImages).fill(100);
+        standardImageBrightness = Array(numberOfImages).fill(100),
+        standardGifFps = Array(numberOfImages).fill(10);
 
     // load settings or standard values into the form controls
     this.innerPolygonSize.setValue(settings.innerPolygonSize || 50);
@@ -150,6 +156,8 @@ export class SettingsComponent {
     this.imageBrightness = (settings.imageBrightness || standardImageBrightness)
       .map((brightness: number) => new FormControl(brightness));
 
+    this.gifFps = (settings.gifFps || standardGifFps);
+
     // set image types by guessing them
     if(settings.images) {
       // there are image types listed, let's use and update them if they're "unknown"
@@ -172,6 +180,7 @@ export class SettingsComponent {
         settings.imageTypes = settings.images.map((image) => this.guessFileType(image));
       }
     }
+
 
     this.currentImages = (settings.images)
       .map((src: string, index: number) => ({ name: $localize`Image` + ' #' + (index + 1), src, type: settings.imageTypes?.[index] || 'unknown'}));
@@ -207,6 +216,7 @@ export class SettingsComponent {
     this.imageFlips.push({ v: new FormControl(false), h: new FormControl(false) });
     this.imageBrightness.push(new FormControl(100));
     this.imageTypes.push(type);
+    this.gifFps.push(type === 'image/gif' ? 10 : 0);
 
     this.currentImages.push({
       src,
@@ -224,7 +234,6 @@ export class SettingsComponent {
       let readingIndex = 0;
 
       fileReader.onload = (e) => {
-
         this.addImage(
           e.target?.result?.toString() || '',
           fileList[readingIndex].name,
@@ -263,7 +272,7 @@ export class SettingsComponent {
   pushImageUp(imageIndex: number) {
     if (imageIndex <= 0) return;
 
-    // swap images, positions and sizes
+    // swap values in the arrays
     [this.currentImages[imageIndex - 1], this.currentImages[imageIndex]] = [this.currentImages[imageIndex], this.currentImages[imageIndex - 1]];
     [this.imagePositions[imageIndex - 1], this.imagePositions[imageIndex]] = [this.imagePositions[imageIndex], this.imagePositions[imageIndex - 1]];
     [this.imageSizes[imageIndex - 1], this.imageSizes[imageIndex]] = [this.imageSizes[imageIndex], this.imageSizes[imageIndex - 1]];
@@ -271,7 +280,9 @@ export class SettingsComponent {
     [this.imageFlips[imageIndex - 1], this.imageFlips[imageIndex]] = [this.imageFlips[imageIndex], this.imageFlips[imageIndex - 1]];
     [this.imageBrightness[imageIndex - 1], this.imageBrightness[imageIndex]] = [this.imageBrightness[imageIndex], this.imageBrightness[imageIndex - 1]];
     [this.imageTypes[imageIndex - 1], this.imageTypes[imageIndex]] = [this.imageTypes[imageIndex], this.imageTypes[imageIndex - 1]];
+    [this.gifFps[imageIndex - 1], this.gifFps[imageIndex]] = [this.gifFps[imageIndex], this.gifFps[imageIndex - 1]];
 
+    // broadcast the changes
     this.imagesChanged$.next(
       this.currentImages.map((imagePair) => {
         return { src: imagePair.src, type: imagePair.type };
@@ -282,7 +293,7 @@ export class SettingsComponent {
   pushImageDown(imageIndex: number) {
     if (imageIndex >= this.currentImages.length - 1) return;
 
-    // swap images, positions and sizes
+    // swap values in the arrays
     [this.currentImages[imageIndex + 1], this.currentImages[imageIndex]] = [this.currentImages[imageIndex], this.currentImages[imageIndex + 1]];
     [this.imagePositions[imageIndex + 1], this.imagePositions[imageIndex]] = [this.imagePositions[imageIndex], this.imagePositions[imageIndex + 1]];
     [this.imageSizes[imageIndex + 1], this.imageSizes[imageIndex]] = [this.imageSizes[imageIndex], this.imageSizes[imageIndex + 1]];
@@ -290,7 +301,9 @@ export class SettingsComponent {
     [this.imageFlips[imageIndex + 1], this.imageFlips[imageIndex]] = [this.imageFlips[imageIndex], this.imageFlips[imageIndex + 1]];
     [this.imageBrightness[imageIndex + 1], this.imageBrightness[imageIndex]] = [this.imageBrightness[imageIndex], this.imageBrightness[imageIndex + 1]];
     [this.imageTypes[imageIndex + 1], this.imageTypes[imageIndex]] = [this.imageTypes[imageIndex], this.imageTypes[imageIndex + 1]];
+    [this.gifFps[imageIndex + 1], this.gifFps[imageIndex]] = [this.gifFps[imageIndex], this.gifFps[imageIndex + 1]];
 
+    // broadcast the changes
     this.imagesChanged$.next(
       this.currentImages.map((imagePair) => {
         return { src: imagePair.src, type: imagePair.type };
@@ -320,6 +333,7 @@ export class SettingsComponent {
     this.imageFlips.splice(imageIndex, 1);
     this.imageBrightness.splice(imageIndex, 1);
     this.imageTypes.splice(imageIndex, 1);
+    this.gifFps.splice(imageIndex, 1);
 
     this.imagesChanged$.next(
       this.currentImages.map((imagePair) => {
@@ -384,7 +398,6 @@ export class SettingsComponent {
   guessFileType(data: string): string {    
     // check if it is base64 starting with data:category/type;base64,
     const type = data.split(';')[0].split(':')[1];
-    
     if(['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'video/mp4'].includes(type)) return type;
     
     // if it is not a known type, try to guess it from the end of the string (could be a url or a file name)
@@ -403,6 +416,17 @@ export class SettingsComponent {
   isUploadButtonEnabled(select: HTMLSelectElement, url: string): boolean {
     return select.value !== 'unknown' && url.length > 0;
   }
+
+  changeFps(imageIndex: number, amount: number) {
+    const oldValue = this.gifFps[imageIndex] || 10;
+    let newValue = oldValue + amount;
+
+    if(newValue < 1) newValue = 1;
+
+    this.gifFps[imageIndex] = newValue;
+
+    this.settingsBroadcaster.broadcastChange('GifFps', this.gifFps);
+  }
 }
 
 export type SettingsData = {
@@ -415,5 +439,6 @@ export type SettingsData = {
   imageFlips?: { v: boolean; h: boolean }[];
   imageBrightness?: number[];
   imageTypes?: string[];
+  gifFps?: number[];
   images?: string[];
 };

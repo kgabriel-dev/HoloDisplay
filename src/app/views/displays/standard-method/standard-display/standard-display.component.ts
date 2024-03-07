@@ -167,8 +167,26 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
       this.requestDraw$.next();
     });
 
+    // subscribe to changes in the gif fps
+    this.settingsBroadcastingService.selectNotificationChannel('GifFps')
+    .pipe(debounceTime(100))
+    .subscribe((fpsValues: number[]) => {
+      this.displayedFiles.forEach((file) => {
+        if(file.type == 'gif') {
+
+          // clear the old interval
+          if(file.updateImageIntervalId) window.clearInterval(file.updateImageIntervalId as number);
+
+          // create a new interval
+          file.updateImageIntervalId = window.setInterval(() => {
+            file.files.currentIndex = (file.files.currentIndex + 1) % file.files.scaled.length;
+              this.requestDraw$.next();
+            }, 1000 / fpsValues[file.displayIndex]);
+        }
+      });
+    });
+
     this.requestDraw$
-      .pipe(debounceTime(1000/20))
       .subscribe(() => this.draw());
   }
 
@@ -282,7 +300,7 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
     for(let iSide = 0; iSide < (this.settingsBroadcastingService.getLastValue('SideCount') as number); iSide++) {
 
       const iImage = iSide % this.displayedFiles.length;
-      const imageData = this.displayedFiles[iImage];
+      const imageData = this.displayedFiles.find((entry) => entry.displayIndex === iImage);
 
       if(!imageData) continue;
 
@@ -349,16 +367,6 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
         image.height
       );
     }
-
-    // increment all subimage counters
-    this.displayedFiles.forEach((entry) => {
-      entry.files.currentIndex = (entry.files.currentIndex + 1) % entry.files.scaled.length;
-    });
-
-    // request the next draw if one of the images is animated (video or gif)
-    if(this.displayedFiles.some((entry) => entry.type === 'video' || entry.type === 'gif')) {
-      this.requestDraw$.next();
-    }
   }
 
   onCalculateClick(): void {
@@ -397,5 +405,6 @@ type DisplayedFile = {
     original: HTMLImageElement[] | HTMLVideoElement[],
     scaled: HTMLImageElement[] | HTMLVideoElement[]
     currentIndex: number
-  }
+  },
+  updateImageIntervalId?: number
 }
