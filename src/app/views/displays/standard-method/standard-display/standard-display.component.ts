@@ -65,15 +65,7 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
   ) {
     // subscribe to changes in the images to display
     this.imageArray$.subscribe((imageData: { src: string, type: string }[]) => {
-      const hiddenDisplayContainer: HTMLDivElement = document.getElementById('hiddenDisplayContainer') as HTMLDivElement;
-
-      if(!hiddenDisplayContainer) {
-        console.log("Couldn't find the hidden dipsplay container!");
-        return;
-      }
-
       this.displayedFiles = [];
-      hiddenDisplayContainer.innerHTML = "";
       
       let gif: ParsedGif;
       let gifFrames: ParsedFrame[];
@@ -130,14 +122,6 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
 
           this.displayedFiles.push({ type: 'image', displayIndex: index, files: { original: [image], scaled: [image], currentIndex: 0 }});
         }
-
-        else if(data.type.startsWith('video')) {
-          hiddenDisplayContainer.innerHTML += `<video id="video${index}" autoplay muted loop="true"><source src="${data.src}" type="${data.type}"></video>`;
-
-          const video = document.getElementById(`video${index}`) as HTMLVideoElement;
-
-          this.displayedFiles.push({ type: 'video', displayIndex: index, files: { original: [video], scaled: [video], currentIndex: 0 }});
-        };
       });
     });
 
@@ -173,7 +157,6 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
     .subscribe((fpsValues: number[]) => {
       this.displayedFiles.forEach((file) => {
         if(file.type == 'gif') {
-
           // clear the old interval
           if(file.updateImageIntervalId) window.clearInterval(file.updateImageIntervalId as number);
 
@@ -253,17 +236,11 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
       const originalFiles = entry.files.original;
       const scaledFiles = entry.files.scaled;
 
-      if(entry.type === 'video' && originalFiles.length > 0 && scaledFiles.length > 0) {
-        scaledFiles[0] = (originalFiles[0] as HTMLVideoElement).cloneNode(true) as HTMLVideoElement;
-        scaledFiles[0].width = (originalFiles[0] as HTMLVideoElement).videoWidth * scalingFactor;
-        scaledFiles[0].height = (originalFiles[0] as HTMLVideoElement).videoHeight * scalingFactor;
-      }
-
-      else if(entry.type === 'gif' && originalFiles.length > 0 && scaledFiles.length > 0) {
+      if(entry.type === 'gif' && originalFiles.length > 0 && scaledFiles.length > 0) {
         const newlyScaledFiles: typeof scaledFiles = [];
 
         originalFiles.forEach((image) => {
-          const scaled = image.cloneNode(true) as HTMLImageElement & HTMLVideoElement;
+          const scaled = image.cloneNode(true) as HTMLImageElement;
           scaled.width = image.width * scalingFactor;
           scaled.height = image.height * scalingFactor;
 
@@ -306,10 +283,6 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
 
       // load the image
       const image = imageData.files.scaled[imageData.files.currentIndex];
-
-      if(image instanceof HTMLVideoElement) {
-        (image as HTMLVideoElement).currentTime = (imageData.files.original[0] as HTMLVideoElement).currentTime;
-      }
 
       // reset the clip mask
       ctx.restore();
@@ -399,11 +372,11 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
 }
 
 type DisplayedFile = {
-  type: 'image' | 'video' | 'gif',
+  type: 'image' | 'gif',
   displayIndex: number,
   files: {
-    original: HTMLImageElement[] | HTMLVideoElement[],
-    scaled: HTMLImageElement[] | HTMLVideoElement[]
+    original: HTMLImageElement[],
+    scaled: HTMLImageElement[],
     currentIndex: number
   },
   updateImageIntervalId?: number

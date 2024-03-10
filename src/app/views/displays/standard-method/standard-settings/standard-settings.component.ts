@@ -398,7 +398,7 @@ export class SettingsComponent {
   guessFileType(data: string): string {    
     // check if it is base64 starting with data:category/type;base64,
     const type = data.split(';')[0].split(':')[1];
-    if(['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'video/mp4'].includes(type)) return type;
+    if(['image/jpeg', 'image/png', 'image/gif', 'image/webp'].includes(type)) return type;
     
     // if it is not a known type, try to guess it from the end of the string (could be a url or a file name)
     const extension = data.split('.').pop()?.toLowerCase();
@@ -407,7 +407,6 @@ export class SettingsComponent {
     else if (extension === 'png') return 'image/png';
     else if (extension === 'gif') return 'image/gif';
     else if (extension === 'webp') return 'image/webp';
-    else if (extension === 'mp4') return 'video/mp4';
 
     // still not known, return unknown
     return 'unknown';
