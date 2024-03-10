@@ -11,7 +11,7 @@ import { Frame, ParsedFrame, ParsedGif, decompressFrames, parseGIF } from 'gifuc
 import { Observable, Subject, debounceTime, merge } from 'rxjs';
 import { StandardMethodCalculatorService } from 'src/app/services/calculators/standard-method/standard-method-calculator.service';
 import { HelperService, Point } from 'src/app/services/helpers/helper.service';
-import { SettingsBroadcastingService } from 'src/app/services/settings-broadcasting.service';
+import { MetaDataSet, SettingsBroadcastingService } from 'src/app/services/settings-broadcasting.service';
 import { TutorialService } from 'src/app/services/tutorial/tutorial.service';
 
 @Component({
@@ -121,6 +121,40 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
           image.src = data.src;
 
           this.displayedFiles.push({ type: 'image', displayIndex: index, files: { original: [image], scaled: [image], currentIndex: 0 }});
+        }
+
+        else if(data.type.startsWith('video')) {
+          // init a video element to load the video
+          let video = document.createElement('video');
+          video.src = data.src;
+          
+          video.onloadeddata = () => {
+            // load the video and extract the frames to handle it as a gif
+            const videoFrames = require('video-frames');
+
+            videoFrames({
+              url: data.src,
+              count: video.duration * 30, // extract 30 frames per second
+              width: 720,
+              onProgress: (framesExtracted: number, totalFrames: number) =>
+                this.settingsBroadcastingService.broadcastChange('MetaDataSet', { [index]: { 'Loading Progress': `${framesExtracted} of ${totalFrames} frames` }, check: 'metaDataSet' } as MetaDataSet )
+            }).then((frames: { offset: number, image: string }[]) => {
+              this.settingsBroadcastingService.broadcastChange('MetaDataSet', { [index]: { 'Loading Progress': 'Finalizing...' }, check: 'metaDataSet' } as MetaDataSet );
+
+              let videoImages: HTMLImageElement[] = [];
+
+              frames.forEach((frame) => {
+                let image = new Image();
+                image.src = frame.image;
+
+                videoImages.push(image);
+              });
+              
+              this.displayedFiles.push({type: 'gif', displayIndex: index, files: { original: videoImages, scaled: videoImages, currentIndex: 0 }});
+              this.settingsBroadcastingService.broadcastChange('GifFps', this.settingsBroadcastingService.getLastValue('GifFps') as number[]);
+              this.settingsBroadcastingService.broadcastChange('MetaDataSet', { check: 'metaDataSet' } as MetaDataSet );
+            });
+          }
         }
       });
     });
@@ -262,6 +296,7 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
   }
 
   private draw(): void {
+    console.log('drawing');
     const canvas = this.displayCanvas?.nativeElement;
     if(!canvas) return;
 

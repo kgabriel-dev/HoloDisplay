@@ -28,6 +28,7 @@ export class SettingsBroadcastingService {
   private readonly imageFlips$ = new BehaviorSubject<{ v: boolean; h: boolean }[]>([]);
   private readonly imageBrightness$ = new BehaviorSubject<number[]>([]);
   private readonly gifFps$ = new BehaviorSubject<number[]>([]);
+  private readonly metaDataSet$ = new BehaviorSubject<MetaDataSet>({check: 'metaDataSet'});
 
   private readonly settingsReset$ = new Subject<void>();
   private readonly removedImage$ = new Subject<number>();
@@ -37,7 +38,7 @@ export class SettingsBroadcastingService {
 
   public broadcastChange(
     target: BroadcastTarget,
-    value: number | boolean | string[] | number[] | { v: boolean; h: boolean }[] | {src: string, type: string}[]
+    value: number | boolean | string[] | number[] | { v: boolean; h: boolean }[] | {src: string, type: string}[] | MetaDataSet
   ): void {
     switch (target) {
       case 'InnerPolygonSize':
@@ -85,6 +86,11 @@ export class SettingsBroadcastingService {
       
       case 'GifFps':
         if (Array.isArray(value)) this.gifFps$.next(value as number[]);
+        break;
+      
+      case 'MetaDataSet':
+        if (this.isMetaDataSet(value)) this.metaDataSet$.next(value as MetaDataSet);
+        break;
     }
   }
 
@@ -124,6 +130,8 @@ export class SettingsBroadcastingService {
         return this.removedImage$.asObservable();
       case 'GifFps':
         return this.gifFps$.asObservable();
+      case 'MetaDataSet':
+        return this.metaDataSet$.asObservable();
     }
   }
 
@@ -149,6 +157,8 @@ export class SettingsBroadcastingService {
         return this.imageBrightness$.getValue();
       case 'GifFps':
         return this.gifFps$.getValue();
+      case 'MetaDataSet':
+        return this.metaDataSet$.getValue();
 
       // all other cases are not supported
       default:
@@ -158,6 +168,15 @@ export class SettingsBroadcastingService {
 
   public requestSettingsReset(): void {
     this.settingsReset$.next();
+  }
+
+  private isMetaDataSet(data: any): data is MetaDataSet {
+    let result = true;
+
+    if (typeof data !== 'object') result = false;
+    if (data.check !== 'metaDataSet') result = false;
+
+    return result;
   }
 }
 
@@ -173,4 +192,12 @@ export type BroadcastTarget =
   | 'ImageBrightness'
   | 'SettingsReset'
   | 'RemovedImage'
-  | 'GifFps';
+  | 'GifFps'
+  | 'MetaDataSet';
+
+export type MetaDataSet = {
+  [displayIndex: number]: {
+    [key: string]: string;
+  },
+  check: string;
+}

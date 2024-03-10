@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import {
   BroadcastTarget,
+  MetaDataSet,
   SettingsBroadcastingService,
 } from 'src/app/services/settings-broadcasting.service';
 import { Subject } from 'rxjs';
@@ -48,6 +49,7 @@ export class SettingsComponent {
   imageBrightness: FormControl[] = [];
   imageTypes: string[] = [];
   gifFps: number[] = [];
+  metaDataSet: MetaDataSet = { check: 'metaDataSet' };
   
   currentImages: { name: string; src: string, type: string }[] = [];
   imagesChanged$ = new Subject<{ src: string; type: string }[]>();
@@ -93,6 +95,10 @@ export class SettingsComponent {
 
     this.settingsBroadcaster.selectNotificationChannel('RemovedImage').subscribe((index) => {
       this.deleteImage(index);
+    });
+
+    this.settingsBroadcaster.selectNotificationChannel('MetaDataSet').subscribe((data) => {
+      this.metaDataSet = data;
     });
   }
 
@@ -216,7 +222,7 @@ export class SettingsComponent {
     this.imageFlips.push({ v: new FormControl(false), h: new FormControl(false) });
     this.imageBrightness.push(new FormControl(100));
     this.imageTypes.push(type);
-    this.gifFps.push(type === 'image/gif' ? 10 : 0);
+    this.gifFps.push(type === 'image/gif' ? 10 : type.startsWith('video') ? 30 : 0);
 
     this.currentImages.push({
       src,
@@ -398,7 +404,7 @@ export class SettingsComponent {
   guessFileType(data: string): string {    
     // check if it is base64 starting with data:category/type;base64,
     const type = data.split(';')[0].split(':')[1];
-    if(['image/jpeg', 'image/png', 'image/gif', 'image/webp'].includes(type)) return type;
+    if(['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'video/mp4'].includes(type)) return type;
     
     // if it is not a known type, try to guess it from the end of the string (could be a url or a file name)
     const extension = data.split('.').pop()?.toLowerCase();
@@ -407,6 +413,7 @@ export class SettingsComponent {
     else if (extension === 'png') return 'image/png';
     else if (extension === 'gif') return 'image/gif';
     else if (extension === 'webp') return 'image/webp';
+    else if (extension === 'mp4') return 'video/mp4';
 
     // still not known, return unknown
     return 'unknown';
