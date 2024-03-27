@@ -10,6 +10,7 @@ import { Subject } from 'rxjs';
 import { Router } from '@angular/router';
 import { environment } from 'src/environments/environment';
 import { HttpClient } from '@angular/common/http';
+import { StandardDisplaySettings } from '../../standard-display-settings.type';
 
 @Component({
   selector: 'app-standard-settings',
@@ -38,6 +39,8 @@ export class SettingsComponent {
   readonly TEXT_IMG_URL_PLACEH = $localize`URL of the image`;
   readonly TEXT_FPS_PLUS = $localize`Increase FPS`;
   readonly TEXT_FPS_MINUS = $localize`Decrease FPS`;
+
+  displaySettings: StandardDisplaySettings = this.settingsBroadcaster.getSettingsBroadcastValue();
 
   innerPolygonSize = new FormControl(Number(environment.defaultValueInnerPolygonSize));
   imageSizes: FormControl[] = [];
@@ -376,6 +379,20 @@ export class SettingsComponent {
     return texts.join(', ');
   }
 
+  getFlippingText2(flips: { v: boolean, h: boolean }) {
+    const textFlipV = $localize`v`,
+          textFlipH = $localize`h`;
+    
+    const texts = [
+      ...flips.h ? [textFlipH] : [],
+      ...flips.v ? [textFlipV] : []
+    ];
+
+    if(texts.length === 0) return $localize`None`;
+
+    return texts.join(', ');
+  }
+
   changeImageBrightness(imageIndex: number, amount: number) {
     const oldValue = this.imageBrightness[imageIndex].value;
     let newValue = oldValue + amount;
@@ -457,6 +474,10 @@ export class SettingsComponent {
       default:
         return '';
     }
+  }
+
+  pushImageUp2(imageIndex: number) {
+    
   }
 }
 

@@ -1,11 +1,19 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { environment } from 'src/environments/environment';
+import { StandardDisplaySettings } from '../views/displays/standard-display-settings.type';
 
 @Injectable({
   providedIn: 'root',
 })
 export class SettingsBroadcastingService {
+  private readonly settingsBroadcasting$ = new BehaviorSubject<StandardDisplaySettings>({
+    generalSettings: {
+      numberOfSides: environment.defaultValueSideCount
+    },
+    fileSettings: []
+  });
+
   private readonly innerPolygonSize$ = new BehaviorSubject<number>(
     environment.defaultValueInnerPolygonSize
   );
@@ -177,6 +185,18 @@ export class SettingsBroadcastingService {
     if (data.check !== 'metaDataSet') result = false;
 
     return result;
+  }
+
+  public broadcastSettings(settings: StandardDisplaySettings): void {
+    this.settingsBroadcasting$.next(settings);
+  }
+
+  public getSettingsBroadcast(): Observable<StandardDisplaySettings> {
+    return this.settingsBroadcasting$.asObservable();
+  }
+
+  public getSettingsBroadcastValue(): StandardDisplaySettings {
+    return this.settingsBroadcasting$.getValue();
   }
 }
 
