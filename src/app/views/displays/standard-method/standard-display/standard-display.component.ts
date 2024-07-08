@@ -12,6 +12,8 @@ import { Observable, Subject, debounceTime, merge } from 'rxjs';
 import { StandardMethodCalculatorService } from 'src/app/services/calculators/standard-method/standard-method-calculator.service';
 import { HelperService, Point } from 'src/app/services/helpers/helper.service';
 import { MetaDataSet, SettingsBroadcastingService } from 'src/app/services/settings-broadcasting.service';
+import { SettingsBrokerService, TOPICS } from 'src/app/services/standard-display/settings-broker.service';
+import { SettingsKeeperService } from 'src/app/services/standard-display/settings-keeper.service';
 import { TutorialService } from 'src/app/services/tutorial/tutorial.service';
 
 @Component({
@@ -61,8 +63,17 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
     public settingsBroadcastingService: SettingsBroadcastingService,
     private helperService: HelperService,
     private calculator: StandardMethodCalculatorService,
-    private tutorial: TutorialService
+    private tutorial: TutorialService,
+    private settingsBroker: SettingsBrokerService
   ) {
+    settingsBroker.settings$.subscribe(({settings, topic}) => {
+      if(topic === TOPICS.BOTH || topic === TOPICS.ONLY_GENERAL_SETTINGS) {
+        this.settingsBroadcastingService.broadcastChange('SideCount', settings.generalSettings.numberOfSides);
+      }
+
+      
+    });
+
     // subscribe to changes in the images to display
     this.imageArray$.subscribe((imageData: { src: string, type: string }[]) => {
       this.displayedFiles = [];
