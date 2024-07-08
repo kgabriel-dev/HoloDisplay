@@ -9,14 +9,15 @@ import { environment } from 'src/environments/environment';
 export class SettingsBrokerService {
   private settings: StandardDisplaySettings = {
     generalSettings: {
-      numberOfSides: environment.defaultValueSideCount
+      numberOfSides: environment.defaultValueSideCount,
+      innerPolygonSize: environment.defaultValueInnerPolygonSize
     },
     fileSettings: []
   }
 
-  private settingsSubject = new BehaviorSubject<{settings: StandardDisplaySettings, topic: TOPICS}>({
+  private settingsSubject = new BehaviorSubject<{settings: StandardDisplaySettings, changedBy: string | undefined}>({
     settings: this.settings,
-    topic: TOPICS.BOTH
+    changedBy: undefined
   });
   public settings$ = this.settingsSubject.asObservable();
 
@@ -24,39 +25,13 @@ export class SettingsBrokerService {
     this.settings$.subscribe((value) => (this.settings = value.settings));
   }
 
-  public updateSettings(settings: StandardDisplaySettings): void {
-    const topic = this.spotTopics(settings, this.settings);
+  public updateSettings(settings: StandardDisplaySettings, changedBy: string): void {
+    
 
-    if(!topic) return;
-
-    this.settingsSubject.next({settings, topic});
+    this.settingsSubject.next({settings, changedBy});
   }
 
   public getSettings(): StandardDisplaySettings {
     return this.settings;
   }
-
-  private spotTopics(newSettings: StandardDisplaySettings, oldSettings: StandardDisplaySettings): TOPICS | undefined {
-    let changesInGeneralSettings = false,
-      changesInDisplaySettings = false;
-
-    changesInGeneralSettings = JSON.stringify(newSettings.generalSettings) !== JSON.stringify(oldSettings.generalSettings);
-    changesInDisplaySettings = JSON.stringify(newSettings.fileSettings) !== JSON.stringify(oldSettings.fileSettings);
-
-    if (changesInGeneralSettings && changesInDisplaySettings) {
-      return TOPICS.BOTH;
-    } else if (changesInGeneralSettings) {
-      return TOPICS.ONLY_GENERAL_SETTINGS;
-    } else if (changesInDisplaySettings) {
-      return TOPICS.ONLY_DISPLAY_SETTINGS;
-    } else {
-      return undefined;
-    }
-  }
-}
-
-export enum TOPICS {
-  ONLY_GENERAL_SETTINGS,
-  ONLY_DISPLAY_SETTINGS,
-  BOTH
 }
