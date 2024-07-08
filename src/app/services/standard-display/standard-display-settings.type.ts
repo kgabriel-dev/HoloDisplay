@@ -8,7 +8,7 @@ type GeneralSettings = {
     innerPolygonSize: number;
 }
 
-type FileSettings = {
+export type FileSettings = {
     fileName: string;
     mimeType: string;
     unique_id: string;

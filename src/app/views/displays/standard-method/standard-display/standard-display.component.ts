@@ -13,7 +13,7 @@ import { StandardMethodCalculatorService } from 'src/app/services/calculators/st
 import { HelperService, Point } from 'src/app/services/helpers/helper.service';
 import { MetaDataSet, SettingsBroadcastingService } from 'src/app/services/settings-broadcasting.service';
 import { SettingsBrokerService } from 'src/app/services/standard-display/settings-broker.service';
-import { MetaDataKeys, StandardDisplaySettings } from 'src/app/services/standard-display/standard-display-settings.type';
+import { FileSettings, MetaDataKeys, StandardDisplaySettings } from 'src/app/services/standard-display/standard-display-settings.type';
 import { TutorialService } from 'src/app/services/tutorial/tutorial.service';
 
 @Component({
@@ -27,15 +27,6 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
   @Input() resizeEvent$!: Observable<Event>;
   @Input() calculate$!: Observable<void>;
 
-  // private readonly imagePositions$ = this.settingsBroadcastingService.selectNotificationChannel('ImagePositions');
-  // private readonly imageSizes$ = this.settingsBroadcastingService.selectNotificationChannel('ImageSizes');
-  // private readonly innerPolygonSize$ = this.settingsBroadcastingService.selectNotificationChannel('InnerPolygonSize');
-  // private readonly sideCount$ = this.settingsBroadcastingService.selectNotificationChannel('SideCount');
-  // private readonly swapTime$ = this.settingsBroadcastingService.selectNotificationChannel('SwapImage');
-  // private readonly imageArray$ = this.settingsBroadcastingService.selectNotificationChannel('NewImages');
-  // private readonly imageRotations$ = this.settingsBroadcastingService.selectNotificationChannel('ImageRotations');
-  // private readonly imageFlips$ = this.settingsBroadcastingService.selectNotificationChannel('ImageFlips');
-  // private readonly imageBrightness$ = this.settingsBroadcastingService.selectNotificationChannel('ImageBrightness');
   private readonly requestDraw$ = new Subject<void>();
 
   private readonly MY_SETTINGS_BROKER_ID = "StandardDisplayComponent";
@@ -47,10 +38,6 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
   private outerEdgePoints: Point[] = [];
   private canvasSize = 0;
   private angle = 0;
-  // private displayedFiles: DisplayedFile[] = [];
-  // private imageScalingFactors: number[] = [];
-  // private imageFlips: { v: boolean, h: boolean }[] = [];
-  // private imagePositions: number[] = [];
   private innerPolygonIncircleRadius = 0;
   private polygonInfo: { rotation: number, offset: {dx: number, dy: number}, sides: number } = {} as typeof this.polygonInfo;
   private transformationMatrices: DOMMatrix[][] = [];
@@ -87,146 +74,6 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
       this.lastDisplayedSettings = JSON.parse(JSON.stringify(this.latestSettings));
     });
 
-    // subscribe to changes in the images to display
-    // this.imageArray$.subscribe((imageData: { src: string, type: string }[]) => {
-    //   this.displayedFiles = [];
-      
-    //   let gif: ParsedGif;
-    //   let gifFrames: ParsedFrame[];
-
-    //   imageData.forEach((data, index) => {
-    //     if(data.type == 'image/gif') {
-    //       // prepare a request to load the gif
-    //       let xhr = new XMLHttpRequest();
-    //       xhr.open('GET', data.src, true);
-    //       xhr.responseType = 'arraybuffer';
-
-    //       xhr.onload = () => {
-    //         let arrayBuffer = xhr.response;
-            
-    //         if(arrayBuffer) {
-    //           // parse the gif and load the frames
-    //           gif = parseGIF(arrayBuffer);
-    //           gifFrames = decompressFrames(gif, true);
-
-    //           let gifImages: HTMLImageElement[] = [];
-
-    //           gifFrames.forEach((frame) => {
-    //             let imageData = new ImageData(frame.patch, frame.dims.width, frame.dims.height);
-    //             let canvas = document.createElement('canvas');
-    //             canvas.width = frame.dims.width;
-    //             canvas.height = frame.dims.height;
-    //             let ctx = canvas.getContext('2d');
-    //             ctx?.putImageData(imageData, 0, 0);
-
-    //             let image = new Image();
-    //             image.src = canvas.toDataURL();
-    //             image.width = canvas.width;
-    //             image.height = canvas.height;
-
-    //             gifImages.push(image);
-    //           });
-
-    //           this.displayedFiles.push({type: 'gif', displayIndex: index, files: { original: gifImages, scaled: gifImages, currentIndex: 0 }});
-    //         }
-    //       }
-
-    //       xhr.onerror = () => {
-    //         this.settingsBroadcastingService.broadcastChange('RemovedImage', index);
-    //         alert('Failed to load gif');
-    //         return;
-    //       }
-
-    //       xhr.send();
-    //     }
-        
-    //     else if(['image/jpeg', 'image/png', 'image/webp'].includes(data.type)) {
-    //       let image = new Image();
-    //       image.src = data.src;
-
-    //       this.displayedFiles.push({ type: 'image', displayIndex: index, files: { original: [image], scaled: [image], currentIndex: 0 }});
-    //     }
-
-    //     else if(data.type.startsWith('video')) {
-    //       // init a video element to load the video
-    //       let video = document.createElement('video');
-    //       video.src = data.src;
-          
-    //       video.onloadeddata = () => {
-    //         // load the video and extract the frames to handle it as a gif
-    //         const videoFrames = require('video-frames');
-
-    //         videoFrames({
-    //           url: data.src,
-    //           count: video.duration * 30, // extract 30 frames per second
-    //           width: 720,
-    //           onProgress: (framesExtracted: number, totalFrames: number) =>
-    //             this.settingsBroadcastingService.broadcastChange('MetaDataSet', { [index]: { 'Loading Progress': `${framesExtracted} of ${totalFrames} frames` }, check: 'metaDataSet' } as MetaDataSet )
-    //         }).then((frames: { offset: number, image: string }[]) => {
-    //           this.settingsBroadcastingService.broadcastChange('MetaDataSet', { [index]: { 'Loading Progress': 'Finalizing...' }, check: 'metaDataSet' } as MetaDataSet );
-
-    //           let videoImages: HTMLImageElement[] = [];
-
-    //           frames.forEach((frame) => {
-    //             let image = new Image();
-    //             image.src = frame.image;
-
-    //             videoImages.push(image);
-    //           });
-              
-    //           this.displayedFiles.push({type: 'gif', displayIndex: index, files: { original: videoImages, scaled: videoImages, currentIndex: 0 }});
-    //           this.settingsBroadcastingService.broadcastChange('GifFps', this.settingsBroadcastingService.getLastValue('GifFps') as number[]);
-    //           this.settingsBroadcastingService.broadcastChange('MetaDataSet', { check: 'metaDataSet' } as MetaDataSet );
-    //         });
-    //       }
-    //     }
-    //   });
-    // });
-
-    // // subscribe to all other settings broadcast channels
-    // merge(
-    //   this.imagePositions$,
-    //   this.imageSizes$,
-    //   this.innerPolygonSize$,
-    //   this.sideCount$,
-    //   this.imageRotations$,
-    // )
-    // .pipe(debounceTime(100))
-    // .subscribe(() => {
-    //   this.imageFlips = (this.settingsBroadcastingService.getLastValue('ImageFlips') as { v: boolean, h: boolean }[]);
-    //   this.recalculateValues();
-    //   this.requestDraw$.next();
-    // });
-
-    // merge(
-    //   this.imageFlips$,
-    //   this.imageBrightness$
-    // )
-    // .pipe(debounceTime(100))
-    // .subscribe(() => {
-    //   this.imageFlips = (this.settingsBroadcastingService.getLastValue('ImageFlips') as { v: boolean, h: boolean }[]);
-
-    //   this.requestDraw$.next();
-    // });
-
-    // // subscribe to changes in the gif fps
-    // this.settingsBroadcastingService.selectNotificationChannel('GifFps')
-    // .pipe(debounceTime(100))
-    // .subscribe((fpsValues: number[]) => {
-    //   this.displayedFiles.forEach((file) => {
-    //     if(file.type == 'gif') {
-    //       // clear the old interval
-    //       if(file.updateImageIntervalId) window.clearInterval(file.updateImageIntervalId as number);
-
-    //       // create a new interval
-    //       file.updateImageIntervalId = window.setInterval(() => {
-    //         file.files.currentIndex = (file.files.currentIndex + 1) % file.files.scaled.length;
-    //           this.requestDraw$.next();
-    //         }, 1000 / fpsValues[file.displayIndex]);
-    //     }
-    //   });
-    // });
-
     this.requestDraw$
       .subscribe(() => this.draw());
   }
@@ -242,9 +89,6 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
     this.calculate$.subscribe(() => {
       this.toggleModal('calculatorExtraSettingsModal');
     });
-
-    // load initial settings to show something
-    // this.settingsBroadcastingService.requestSettingsReset();
   }
 
   ngAfterViewInit(): void {
@@ -384,6 +228,19 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
 
                 gifImages.push(image);
               });
+
+              fileSetting.fps = {
+                framerate: 10,
+                intervalId: window.setInterval(() => {
+                  const updatedSettings = this.settingsBroker.getSettings();
+
+                  if(updatedSettings.fileSettings.findIndex((f) => f.unique_id == file.unique_id) == -1) return;
+
+                  const upToDateFile = updatedSettings.fileSettings.find((f) => f.unique_id == file.unique_id)!;
+
+                  upToDateFile.files.currentFileIndex = (upToDateFile.files.currentFileIndex + 1) % upToDateFile.files.original.length;
+                })
+              }
             }
           }
 
@@ -395,11 +252,16 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
 
           xhr.send();
 
-          // TODO: check and set values for possibly empty settings
+          this.fillMissingFileValues(fileSetting);
         }
         
         else if(['image/jpeg', 'image/png', 'image/webp'].includes(file.mimeType)) {
-          // TODO: check and set values for possibly empty settings
+          this.fillMissingFileValues(fileSetting);
+          
+          const originalImage = new Image();
+          originalImage.src = fileSetting.src;
+
+          fileSetting.files.original = [originalImage];
         }
 
         else if(file.mimeType.startsWith('video')) {
@@ -440,7 +302,7 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
                 videoImages.push(image);
               });
 
-              // TODO: check and set values for possibly empty settings
+              this.fillMissingFileValues(fileSetting);
             });
           }
         }
@@ -448,6 +310,14 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
     });
 
     this.settingsBroker.updateSettings(this.latestSettings, this.MY_SETTINGS_BROKER_ID);
+  }
+
+  private fillMissingFileValues(fileSetting: FileSettings): void {
+    fileSetting.brightness = fileSetting.brightness || 100;
+    fileSetting.flips = fileSetting.flips || { v: false, h: false };
+    fileSetting.position = fileSetting.position || 0;
+    fileSetting.rotation = fileSetting.rotation || 0;
+    fileSetting.scalingFactor = fileSetting.scalingFactor || 100;
   }
 
   private draw(): void {
@@ -573,14 +443,3 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
     document.getElementById(modalId)!.classList.toggle("hidden");
   }
 }
-
-// type DisplayedFile = {
-//   type: 'image' | 'gif',
-//   displayIndex: number,
-//   files: {
-//     original: HTMLImageElement[],
-//     scaled: HTMLImageElement[],
-//     currentIndex: number
-//   },
-//   updateImageIntervalId?: number
-// }
