@@ -59,11 +59,14 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
     private settingsBroker: SettingsBrokerService
   ) {
     settingsBroker.settings$.subscribe(({settings, changedBy}) => {
-      if(changedBy == this.MY_SETTINGS_BROKER_ID) return;
+      if(changedBy == this.MY_SETTINGS_BROKER_ID) {
+        this.lastDisplayedSettings = settings;
+        return;
+      };
 
       // read in the new settings
       this.latestSettings = settings;
-      
+
       // update the calculated values (working with the general settings)
       this.recalculateValues();
 
@@ -72,6 +75,9 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
 
       // update the stored settings
       this.lastDisplayedSettings = JSON.parse(JSON.stringify(this.latestSettings));
+
+      // request a draw
+      this.requestDraw$.next();
     });
 
     this.requestDraw$
@@ -138,24 +144,24 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
     // scale everything here and not in draw()
     this.latestSettings!.fileSettings.forEach((entry) => {
       const scalingFactor = entry.scalingFactor;
-      const originalFiles = entry.files.original;
-      const scaledFiles = entry.files.scaled;
+      const originalFiles = entry.files.original as HTMLImageElement[];
+      const scaledFiles = entry.files.scaled as HTMLImageElement[];
 
-      if(entry.mimeType === 'image/gif' && originalFiles.length > 0 && scaledFiles.length > 0) {
-        const newlyScaledFiles: typeof scaledFiles = [];
+      if(entry.mimeType === 'image/gif' && originalFiles.length > 0) {
+        const newlyScaledFiles: HTMLImageElement[] = [];
 
         originalFiles.forEach((image) => {
           const scaled = image.cloneNode(true) as HTMLImageElement;
           scaled.width = image.width * scalingFactor;
           scaled.height = image.height * scalingFactor;
 
-          newlyScaledFiles.push(scaled);
+          newlyScaledFiles.push(scaled as HTMLImageElement);
         });
 
         entry.files.scaled = newlyScaledFiles;
       }
 
-      else if(entry.mimeType.startsWith('image') && originalFiles.length > 0 && scaledFiles.length > 0) {
+      else if(entry.mimeType.startsWith('image') && originalFiles.length > 0) {
         scaledFiles[0] = (originalFiles[0] as HTMLImageElement).cloneNode(true) as HTMLImageElement;
         scaledFiles[0].width = (originalFiles[0] as HTMLImageElement).width * scalingFactor;
         scaledFiles[0].height = (originalFiles[0] as HTMLImageElement).height * scalingFactor;
@@ -167,9 +173,13 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
   }
 
   private updateImageSettings() {
-    if(!this.latestSettings || !this.lastDisplayedSettings) {
+    if(!this.latestSettings) {
       console.error("Cannot udpate the image settings values because no latest settings were found!");
       return;
+    }
+
+    if(!this.lastDisplayedSettings) {
+      this.lastDisplayedSettings = JSON.parse(JSON.stringify(this.latestSettings));
     }
 
     this.latestSettings.fileSettings.forEach((fileSetting) => {
@@ -196,6 +206,8 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
         
         const i = this.latestSettings!.fileSettings.push(fileSetting);
         file = this.latestSettings!.fileSettings[i];
+
+        file = this.settingsBroker.fillMissingFileValues(fileSetting);
 
         if(file.mimeType == 'image/gif') {
           // prepare a request to load the gif
@@ -252,14 +264,14 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
 
           xhr.send();
 
-          this.fillMissingFileValues(fileSetting);
+          fileSetting = this.settingsBroker.fillMissingFileValues(fileSetting);
         }
         
         else if(['image/jpeg', 'image/png', 'image/webp'].includes(file.mimeType)) {
-          this.fillMissingFileValues(fileSetting);
+          fileSetting = this.settingsBroker.fillMissingFileValues(fileSetting);
           
           const originalImage = new Image();
-          originalImage.src = fileSetting.src;
+          originalImage.src = fileSetting.src || '';
 
           fileSetting.files.original = [originalImage];
         }
@@ -302,7 +314,7 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
                 videoImages.push(image);
               });
 
-              this.fillMissingFileValues(fileSetting);
+              fileSetting = this.settingsBroker.fillMissingFileValues(fileSetting);
             });
           }
         }
@@ -312,16 +324,8 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
     this.settingsBroker.updateSettings(this.latestSettings, this.MY_SETTINGS_BROKER_ID);
   }
 
-  private fillMissingFileValues(fileSetting: FileSettings): void {
-    fileSetting.brightness = fileSetting.brightness || 100;
-    fileSetting.flips = fileSetting.flips || { v: false, h: false };
-    fileSetting.position = fileSetting.position || 0;
-    fileSetting.rotation = fileSetting.rotation || 0;
-    fileSetting.scalingFactor = fileSetting.scalingFactor || 100;
-  }
-
   private draw(): void {
-    console.log('drawing');
+    console.log('drawing with latest settings: ', this.latestSettings);
 
     if(!this.latestSettings) {
       console.error("No latest settings found while drawing! Drawing cancelled.");
@@ -340,17 +344,25 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
     this.helperService.connectPointsWithStraightLines(ctx, this.innerEdgePoints, 'blue');
     this.helperService.connectPointsWithStraightLines(ctx, this.outerEdgePoints, 'red');
 
-    const maxDisplayIndex = Math.max(...this.lastDisplayedSettings!.fileSettings.map((file) => file.displayIndex));
+    const maxDisplayIndex = Math.max(...this.latestSettings.fileSettings.map((file) => file.displayIndex)) + 1;
 
     for(let iSide = 0; iSide < this.latestSettings.generalSettings.numberOfSides; iSide++) {
 
       const iImage = iSide % maxDisplayIndex;
       const imageData = this.lastDisplayedSettings!.fileSettings.find((entry) => entry.displayIndex === iImage);
 
-      if(!imageData) continue;
+      if(!imageData) {
+        console.error("No image data found for side " + iSide + " and image " + iImage + "!");
+        continue;
+      };
 
       // load the image
       const image = imageData.files.scaled[Math.min(imageData.files.currentFileIndex, imageData.files.scaled.length)];
+      if(!image) {
+        console.error("No image found for side " + iSide + " and image " + iImage + "!");
+        console.error(imageData)
+        continue;
+      }
 
       // reset the clip mask
       ctx.restore();
@@ -398,7 +410,7 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
       ctx.scale(imageData.flips.h ? -1 : 1, imageData.flips.v ? -1 : 1);
       // apply the brightness change
       ctx.filter = `brightness(${imageData.brightness}%)`;
-
+      
       // draw the image
       ctx.drawImage(
         image,

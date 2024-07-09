@@ -12,7 +12,7 @@ export type FileSettings = {
     fileName: string;
     mimeType: string;
     unique_id: string;
-    metaData: {[key in MetaDataKeys]: any};
+    metaData: {[key in MetaDataKeys]?: any};
     scalingFactor: number;
     rotation: number;
     position: number;
