@@ -13,7 +13,7 @@ import { StandardMethodCalculatorService } from 'src/app/services/calculators/st
 import { HelperService, Point } from 'src/app/services/helpers/helper.service';
 import { MetaDataSet, SettingsBroadcastingService } from 'src/app/services/settings-broadcasting.service';
 import { SettingsBrokerService } from 'src/app/services/standard-display/settings-broker.service';
-import { FileSettings, MetaDataKeys, StandardDisplaySettings } from 'src/app/services/standard-display/standard-display-settings.type';
+import { StandardDisplayFileSettings, MetaDataKeys, StandardDisplayGeneralSettings, StandardDisplaySettings } from 'src/app/services/standard-display/standard-display-settings.type';
 import { TutorialService } from 'src/app/services/tutorial/tutorial.service';
 
 @Component({
@@ -42,9 +42,6 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
   private polygonInfo: { rotation: number, offset: {dx: number, dy: number}, sides: number } = {} as typeof this.polygonInfo;
   private transformationMatrices: DOMMatrix[][] = [];
 
-  private latestSettings?: StandardDisplaySettings;
-  private lastDisplayedSettings?: StandardDisplaySettings;
-
   calculatorDPI = 96;
   calculatorSlope = 45;
   calculatorImageWidthPx = 0;
@@ -60,35 +57,29 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
   ) {
     settingsBroker.settings$.subscribe(({settings, changedBy}) => {
       if(changedBy == this.MY_SETTINGS_BROKER_ID) {
-        this.lastDisplayedSettings = settings;
         return;
-      };
-
-      // read in the new settings
-      this.latestSettings = settings;
+      }
 
       // update the calculated values (working with the general settings)
-      this.recalculateValues();
+      this.recalculateValues(settings.generalSettings);
 
       // update the images (working with the file settings)
-      this.updateImageSettings();
-
-      // update the stored settings
-      this.lastDisplayedSettings = JSON.parse(JSON.stringify(this.latestSettings));
-
-      // request a draw
-      this.requestDraw$.next();
+      this.updateImageSettings(settings);
     });
 
-    this.requestDraw$
-      .subscribe(() => this.draw());
+    this.requestDraw$.subscribe(() => this.draw());
   }
 
   ngOnInit(): void {
     this.resizeEvent$.pipe(debounceTime(20)).subscribe((event) => {
       this.resizeCanvas((event.target as Window).innerWidth, (event.target as Window).innerHeight);
-      this.recalculateValues();
-      this.requestDraw$.next();
+
+      // scale the images again because the canvas size changed
+      const settings = this.settingsBroker.getSettings();
+      this.scaleImagesFromFileSetting(settings.fileSettings).then(() => {
+        this.recalculateValues(settings.generalSettings);
+        this.requestDraw$.next();
+      });
     });
 
     // define the calculation function
@@ -99,7 +90,7 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
     this.resizeCanvas(this.container.nativeElement.clientWidth, this.container.nativeElement.clientHeight);
-    this.recalculateValues();
+    this.recalculateValues(this.settingsBroker.getSettings().generalSettings);
 
     if(!this.tutorial.isTutorialDeactivated('standardDisplay'))
       this.tutorial.startTutorial('standardDisplay');
@@ -117,13 +108,8 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
     }
   }
 
-  private recalculateValues(): void {
-    if(!this.latestSettings) {
-      console.error("No latest settings found! This is *only* correct on startup.")
-      return;
-    }
-
-    const sideCount = this.latestSettings.generalSettings.numberOfSides;
+  private recalculateValues(generalSettings: StandardDisplayGeneralSettings): void {
+    const sideCount = generalSettings.numberOfSides;
 
     this.angle = 2 * Math.PI / sideCount;
     let outerPolygon = this.helperService.getMaxRegPolygonPointsHeuristic(this.canvasSize, sideCount, false);
@@ -132,87 +118,166 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
 
     this.innerEdgePoints = [];
     for(let i = 0; i < sideCount; i++) {
-      this.innerEdgePoints.push(this.helperService.getPointOnCircle(this.latestSettings.generalSettings.innerPolygonSize, i * this.angle - this.polygonInfo.rotation, {x: 0, y: 0}));
+      this.innerEdgePoints.push(this.helperService.getPointOnCircle(generalSettings.innerPolygonSize, i * this.angle - this.polygonInfo.rotation, {x: 0, y: 0}));
     }
     this.innerEdgePoints = this.helperService.centerPoints(this.innerEdgePoints, outerPolygon.offset).points;
     this.innerEdgePoints.reverse();
     const lastPoint = this.innerEdgePoints.pop() as Point;
     this.innerEdgePoints.unshift(lastPoint);
 
-    this.innerPolygonIncircleRadius = this.helperService.getRadiusOfIncircleOfRegularPolygon((this.latestSettings.generalSettings.innerPolygonSize) / 2, sideCount);
-  
-    // scale everything here and not in draw()
-    this.latestSettings!.fileSettings.forEach((entry) => {
-      const scalingFactor = entry.scalingFactor;
-      const originalFiles = entry.files.original as HTMLImageElement[];
-      const scaledFiles = entry.files.scaled as HTMLImageElement[];
-
-      if(entry.mimeType === 'image/gif' && originalFiles.length > 0) {
-        const newlyScaledFiles: HTMLImageElement[] = [];
-
-        originalFiles.forEach((image) => {
-          const scaled = image.cloneNode(true) as HTMLImageElement;
-          scaled.width = image.width * scalingFactor;
-          scaled.height = image.height * scalingFactor;
-
-          newlyScaledFiles.push(scaled as HTMLImageElement);
-        });
-
-        entry.files.scaled = newlyScaledFiles;
-      }
-
-      else if(entry.mimeType.startsWith('image') && originalFiles.length > 0) {
-        scaledFiles[0] = (originalFiles[0] as HTMLImageElement).cloneNode(true) as HTMLImageElement;
-        scaledFiles[0].width = (originalFiles[0] as HTMLImageElement).width * scalingFactor;
-        scaledFiles[0].height = (originalFiles[0] as HTMLImageElement).height * scalingFactor;
-      }
-    });
+    this.innerPolygonIncircleRadius = this.helperService.getRadiusOfIncircleOfRegularPolygon((generalSettings.innerPolygonSize) / 2, sideCount);
 
     // reset transformation matrices because they are not valid anymore
     this.transformationMatrices = [];
   }
 
-  private updateImageSettings() {
-    if(!this.latestSettings) {
-      console.error("Cannot udpate the image settings values because no latest settings were found!");
-      return;
-    }
+  private scaleImagesFromFileSetting(fileSettings: StandardDisplayFileSettings[]) {
+    let settingsFinished = 0;
 
-    if(!this.lastDisplayedSettings) {
-      this.lastDisplayedSettings = JSON.parse(JSON.stringify(this.latestSettings));
-    }
+    fileSettings.forEach((fileSetting) => {
+      const scalingFactor = fileSetting.scalingFactor;
+      const originalFiles = fileSetting.files.original;
 
-    this.latestSettings.fileSettings.forEach((fileSetting) => {
-      const unique_ids_displayed = this.lastDisplayedSettings!.fileSettings.map((file) => file.unique_id);
-      let file: typeof this.latestSettings.fileSettings[number];
+      if((fileSetting.mimeType === 'image/gif' || fileSetting.mimeType.startsWith('video')) && originalFiles.length > 0) {
+        const newlyScaledFiles: HTMLImageElement[] = [];
+        let loadedImages = 0;
 
-      if(unique_ids_displayed.includes(fileSetting.unique_id)) {
-        file = this.lastDisplayedSettings?.fileSettings.find((file) => file.unique_id == fileSetting.unique_id)!;
+        originalFiles.forEach((image) => {
+          const scaled = document.createElement('img');
+          scaled.src = image.src;
+          scaled.width = image.width * scalingFactor/100;
+          scaled.height = image.height * scalingFactor/100;
+
+          scaled.onload = () => {
+            newlyScaledFiles.push(scaled);
+            loadedImages++;
+          }
+
+          scaled.onerror = () => {
+            console.error('Failed to load gif frame');
+            loadedImages++;
+          }
+
+        });
+
+        // wait until all images are loaded
+        const intervalId = window.setInterval(() => {
+          if(loadedImages == originalFiles.length) {
+            window.clearInterval(intervalId);
+            fileSetting.files.scaled = newlyScaledFiles;
+            settingsFinished++;
+          }
+        }, 100);
+      }
+
+      else if(fileSetting.mimeType.startsWith('image') && originalFiles.length > 0) {
+        const scaled = document.createElement('img');
+        scaled.src = originalFiles[0].src;
+        scaled.width = originalFiles[0].width * scalingFactor/100;
+        scaled.height = originalFiles[0].height * scalingFactor/100;
+
+
+        scaled.onload = () => {
+          fileSetting.files.scaled = [scaled];
+          settingsFinished++;
+        }
+
+        scaled.onerror = () => {
+          console.error('Failed to load image');
+          settingsFinished++;
+        }
+      }
+    });
+
+    return new Promise<void>((resolve) => {
+      const intervalId = window.setInterval(() => {
+        if(settingsFinished == fileSettings.length) {
+          clearInterval(intervalId);
+          resolve();
+        }
+      }, 100);
+    });
+  }
+
+  private updateImageSettings(settings: StandardDisplaySettings) {
+    settings.fileSettings.forEach((latestFile) => {
+      const unique_ids_displayed = settings.fileSettings.map((file) => file.unique_id);
+
+      latestFile = this.settingsBroker.fillMissingFileValues(latestFile);
+
+      // update the file if it is already displayed
+      if(unique_ids_displayed.includes(latestFile.unique_id) && latestFile.files.original.length > 0) {
+        const existingFile = settings.fileSettings.find((file) => file.unique_id == latestFile.unique_id)!;
 
         // update all changeable settings of the already existing file
-        file.brightness = fileSetting.brightness;
-        file.flips = fileSetting.flips;
-        file.fps = fileSetting.fps;
-        file.metaData = fileSetting.metaData;
-        file.position = fileSetting.position;
-        file.rotation = fileSetting.rotation;
-        file.scalingFactor = fileSetting.scalingFactor;
+        existingFile.brightness = latestFile.brightness;
+        existingFile.flips = latestFile.flips;
+        existingFile.metaData = latestFile.metaData;
+        existingFile.position = latestFile.position;
+        existingFile.rotation = latestFile.rotation;
+        existingFile.scalingFactor = latestFile.scalingFactor;
+
+        if(existingFile.mimeType === 'image/gif' || existingFile.mimeType.startsWith('video')) {
+          const framerate = latestFile.fps?.framerate || (latestFile.mimeType === 'image/gif' ? 10 : 30);
+
+          this.scaleImagesFromFileSetting([existingFile]).then(() => {
+            const updatedSettings = this.settingsBroker.getSettings();
+            const updatedFileIndex = updatedSettings.fileSettings.findIndex((f) => f.unique_id == existingFile.unique_id);
+
+            if(updatedFileIndex == -1) return;
+
+            if(existingFile.fps)
+              window.clearInterval(existingFile.fps.intervalId);
+
+            existingFile.fps = {
+              framerate,
+              intervalId: window.setInterval(() => {
+                const updatedSettings = this.settingsBroker.getSettings();
+  
+                if(updatedSettings.fileSettings.findIndex((f) => f.unique_id == existingFile.unique_id) == -1) return;
+  
+                const upToDateFile = updatedSettings.fileSettings.find((f) => f.unique_id == existingFile.unique_id)!;
+  
+                upToDateFile.files.currentFileIndex = (upToDateFile.files.currentFileIndex + 1) % upToDateFile.files.original.length;
+  
+                this.requestDraw$.next();
+                this.settingsBroker.updateSettings(updatedSettings, this.MY_SETTINGS_BROKER_ID);
+              }, 1000/framerate)
+            };
+
+            updatedSettings.fileSettings[updatedFileIndex] = existingFile;
+            this.settingsBroker.updateSettings(updatedSettings, this.MY_SETTINGS_BROKER_ID);
+          });
+        }
+
+        else if(existingFile.mimeType.startsWith('image')) {
+          this.scaleImagesFromFileSetting([existingFile]).then(() => {
+            const updatedSettings = this.settingsBroker.getSettings();
+            const updatedFileIndex = updatedSettings.fileSettings.findIndex((f) => f.unique_id == existingFile.unique_id);
+
+            if(updatedFileIndex == -1) return;
+
+            updatedSettings.fileSettings[updatedFileIndex] = existingFile;
+            this.settingsBroker.updateSettings(updatedSettings, this.MY_SETTINGS_BROKER_ID);
+            this.requestDraw$.next();
+          });
+        }
       }
+
+      // load the file if it is not already displayed
       else {
-        if(!fileSetting.src) {
-          console.error("Passed file has no src attribute and therefore cannot be loaded!", fileSetting);
+        if(!latestFile.src) {
+          console.error("Passed file has no src attribute and therefore cannot be loaded!", latestFile);
           return;
         }
         
-        const i = this.latestSettings!.fileSettings.push(fileSetting);
-        file = this.latestSettings!.fileSettings[i];
+        if(latestFile.fps)
+          window.clearInterval(latestFile.fps.intervalId);
 
-        file = this.settingsBroker.fillMissingFileValues(fileSetting);
-
-        if(file.mimeType == 'image/gif') {
+        if(latestFile.mimeType == 'image/gif') {
           // prepare a request to load the gif
           let xhr = new XMLHttpRequest();
-          xhr.open('GET', file.src!, true);
+          xhr.open('GET', latestFile.src!, true);
           xhr.responseType = 'arraybuffer';
 
           xhr.onload = () => {
@@ -224,7 +289,46 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
               let gifFrames = decompressFrames(gif, true);
 
               let gifImages: HTMLImageElement[] = [];
+              let gifImagesLoaded = 0;
 
+              // wait until all images are loaded by checking the number of loaded images every 100ms
+              const interval = window.setInterval(() => {
+                if(gifImagesLoaded == gifFrames.length) {
+                  window.clearInterval(interval);
+    
+                  latestFile.files.original = gifImages;
+                  latestFile.files.currentFileIndex = 0;
+                  this.scaleImagesFromFileSetting([latestFile]).then(() => {
+                    const updatedSettings = this.settingsBroker.getSettings();
+                    const updatedFileIndex = updatedSettings.fileSettings.findIndex((f) => f.unique_id == latestFile.unique_id);
+    
+                    if(updatedFileIndex == -1) return;
+
+                    if(latestFile.fps)
+                      window.clearInterval(latestFile.fps.intervalId);
+      
+                    latestFile.fps = {
+                      framerate: 10,
+                      intervalId: window.setInterval(() => {
+                        const updatedSettings = this.settingsBroker.getSettings();
+      
+                        if(updatedSettings.fileSettings.findIndex((f) => f.unique_id == latestFile.unique_id) == -1) return;
+      
+                        const upToDateFile = updatedSettings.fileSettings.find((f) => f.unique_id == latestFile.unique_id)!;
+      
+                        upToDateFile.files.currentFileIndex = (upToDateFile.files.currentFileIndex + 1) % upToDateFile.files.original.length;
+  
+                        this.requestDraw$.next();
+                      }, 1000/10)
+                    }
+    
+                    updatedSettings.fileSettings[updatedFileIndex] = latestFile;
+                    this.settingsBroker.updateSettings(updatedSettings, this.MY_SETTINGS_BROKER_ID);
+                  });
+                }
+              })
+
+              // load the images
               gifFrames.forEach((frame) => {
                 let imageData = new ImageData(frame.patch, frame.dims.width, frame.dims.height);
                 let canvas = document.createElement('canvas');
@@ -239,47 +343,64 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
                 image.height = canvas.height;
 
                 gifImages.push(image);
+
+                image.onload = () => {
+                  gifImagesLoaded++;
+                }
               });
+            }
 
-              fileSetting.fps = {
-                framerate: 10,
-                intervalId: window.setInterval(() => {
-                  const updatedSettings = this.settingsBroker.getSettings();
+            else {
+              const settings = this.settingsBroker.getSettings();
+              const latestFileIndex = settings.fileSettings.findIndex((f) => f.unique_id == latestFile.unique_id);
 
-                  if(updatedSettings.fileSettings.findIndex((f) => f.unique_id == file.unique_id) == -1) return;
-
-                  const upToDateFile = updatedSettings.fileSettings.find((f) => f.unique_id == file.unique_id)!;
-
-                  upToDateFile.files.currentFileIndex = (upToDateFile.files.currentFileIndex + 1) % upToDateFile.files.original.length;
-                })
-              }
+              settings.fileSettings.splice(latestFileIndex, 1);
+              alert('Failed to load gif');
+              this.settingsBroker.updateSettings(settings, this.MY_SETTINGS_BROKER_ID);
+              return;
             }
           }
 
           xhr.onerror = () => {
-            this.latestSettings!.fileSettings.splice(i, 1);
+            const settings = this.settingsBroker.getSettings();
+            const latestFileIndex = settings.fileSettings.findIndex((f) => f.unique_id == latestFile.unique_id);
+
+            settings.fileSettings.splice(latestFileIndex, 1);
             alert('Failed to load gif');
+            this.settingsBroker.updateSettings(settings, this.MY_SETTINGS_BROKER_ID);
             return;
           }
 
           xhr.send();
-
-          fileSetting = this.settingsBroker.fillMissingFileValues(fileSetting);
         }
         
-        else if(['image/jpeg', 'image/png', 'image/webp'].includes(file.mimeType)) {
-          fileSetting = this.settingsBroker.fillMissingFileValues(fileSetting);
-          
+        else if(['image/jpeg', 'image/png', 'image/webp'].includes(latestFile.mimeType)) {          
           const originalImage = new Image();
-          originalImage.src = fileSetting.src || '';
+          originalImage.src = latestFile.src || '';
 
-          fileSetting.files.original = [originalImage];
+          latestFile.files.original = [originalImage];
+          latestFile.files.currentFileIndex = 0;
+
+          originalImage.onload = () => this.scaleImagesFromFileSetting([latestFile]).then(() => {
+              const updatedSettings = this.settingsBroker.getSettings();
+              const updatedFileIndex = updatedSettings.fileSettings.findIndex((f) => f.unique_id == latestFile.unique_id);
+
+              if(updatedFileIndex == -1) return;
+
+              updatedSettings.fileSettings[updatedFileIndex] = latestFile;
+              this.settingsBroker.updateSettings(updatedSettings, this.MY_SETTINGS_BROKER_ID);
+              this.requestDraw$.next();
+            });
         }
 
-        else if(file.mimeType.startsWith('video')) {
+        else if(latestFile.mimeType.startsWith('video')) {
+          // clear the interval id if it exists
+          if(latestFile.fps)
+            window.clearInterval(latestFile.fps.intervalId);
+
           // init a video element to load the video
           let video = document.createElement('video');
-          video.src = file.src!;
+          video.src = latestFile.src!;
           
           video.onloadeddata = () => {
             // load the video and extract the frames to handle it as a gif
@@ -292,47 +413,91 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
               onProgress: (framesExtracted: number, totalFrames: number) => {
                 const updatedSettings = this.settingsBroker.getSettings();
 
-                if(updatedSettings.fileSettings.findIndex((f) => f.unique_id == file.unique_id) == -1)
+                if(updatedSettings.fileSettings.findIndex((f) => f.unique_id == latestFile.unique_id) == -1)
                   return;
 
-                updatedSettings.fileSettings.find((f) => f.unique_id == file.unique_id)!.metaData[MetaDataKeys.LOADING_PROGRESS] = `${framesExtracted} of ${totalFrames} frames`;
+                updatedSettings.fileSettings.find((f) => f.unique_id == latestFile.unique_id)!.metaData[MetaDataKeys.LOADING_PROGRESS] = `${framesExtracted} of ${totalFrames} frames`;
               }
             }).then((frames: { offset: number, image: string }[]) => {
               const updatedSettings = this.settingsBroker.getSettings();
+              const updatedFile = updatedSettings.fileSettings.find((f) => f.unique_id == latestFile.unique_id);
 
-              if(updatedSettings.fileSettings.findIndex((f) => f.unique_id == file.unique_id) == -1)
-                return;
+              if(!updatedFile) return;
 
-              updatedSettings.fileSettings.find((f) => f.unique_id == file.unique_id)!.metaData[MetaDataKeys.LOADING_PROGRESS] = `Finalizing...`;
+              updatedFile.metaData[MetaDataKeys.LOADING_PROGRESS] = `Finalizing...`;
+              this.settingsBroker.updateSettings(updatedSettings, this.MY_SETTINGS_BROKER_ID);
 
               let videoImages: HTMLImageElement[] = [];
+              let videoImagesLoaded = 0;
 
+              // wait until all images are loaded by checking the number of loaded images every 100ms
+              const interval = window.setInterval(() => {
+                if(videoImagesLoaded == frames.length) {
+                  window.clearInterval(interval);
+              
+                  if(updatedFile.fps)
+                    window.clearInterval(updatedFile.fps.intervalId);
+
+                  delete latestFile.metaData[MetaDataKeys.LOADING_PROGRESS];
+                  latestFile.files.original = videoImages;
+                  latestFile.files.currentFileIndex = 0;
+    
+                  if(latestFile.fps)
+                    window.clearInterval(latestFile.fps.intervalId);
+    
+                  this.scaleImagesFromFileSetting([latestFile]).then(() => {
+                    latestFile.fps = {
+                      framerate: 30,
+                      intervalId: window.setInterval(() => {
+                        const updatedSettings = this.settingsBroker.getSettings();
+      
+                        if(updatedSettings.fileSettings.findIndex((f) => f.unique_id == latestFile.unique_id) == -1) return;
+      
+                        const upToDateFile = updatedSettings.fileSettings.find((f) => f.unique_id == latestFile.unique_id)!;
+                        upToDateFile.files.currentFileIndex = (upToDateFile.files.currentFileIndex + 1) % upToDateFile.files.original.length;
+      
+                        this.requestDraw$.next();
+                      }, 1000/30)
+                    };
+    
+                    const updatedSettings = this.settingsBroker.getSettings();
+                    const i = updatedSettings.fileSettings.findIndex((f) => f.unique_id == latestFile.unique_id);
+                    updatedSettings.fileSettings[i] = latestFile;
+      
+                    this.settingsBroker.updateSettings(updatedSettings!, this.MY_SETTINGS_BROKER_ID);
+                  });
+                }
+              }, 100);
+
+              // load the images
               frames.forEach((frame) => {
                 let image = new Image();
                 image.src = frame.image;
 
                 videoImages.push(image);
-              });
 
-              fileSetting = this.settingsBroker.fillMissingFileValues(fileSetting);
+                image.onload = () => {
+                  videoImagesLoaded++;
+                }
+              });
             });
           }
         }
       }
     });
 
-    this.settingsBroker.updateSettings(this.latestSettings, this.MY_SETTINGS_BROKER_ID);
+    // remove all files that are not in the latest settings anymore
+    settings.fileSettings.forEach((file) => {
+      if(settings.fileSettings.findIndex((f) => f.unique_id == file.unique_id) == -1) {
+        if(file.fps)
+          window.clearInterval(file.fps.intervalId);
+      }
+    });
+
+    this.settingsBroker.updateSettings(settings, this.MY_SETTINGS_BROKER_ID);
   }
 
-  private draw(): void {
-    console.log('drawing with latest settings: ', this.latestSettings);
-
-    if(!this.latestSettings) {
-      console.error("No latest settings found while drawing! Drawing cancelled.");
-      return;
-    }
-
-    const canvas = this.displayCanvas?.nativeElement;
+  private draw(): void {const canvas = this.displayCanvas?.nativeElement;
     if(!canvas) return;
 
     const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
@@ -344,23 +509,22 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
     this.helperService.connectPointsWithStraightLines(ctx, this.innerEdgePoints, 'blue');
     this.helperService.connectPointsWithStraightLines(ctx, this.outerEdgePoints, 'red');
 
-    const maxDisplayIndex = Math.max(...this.latestSettings.fileSettings.map((file) => file.displayIndex)) + 1;
+    const settings = this.settingsBroker.getSettings();
 
-    for(let iSide = 0; iSide < this.latestSettings.generalSettings.numberOfSides; iSide++) {
+    const maxDisplayIndex = Math.max(...settings.fileSettings.map((file) => file.displayIndex)) + 1;
 
+    for(let iSide = 0; iSide < settings.generalSettings.numberOfSides; iSide++) {
       const iImage = iSide % maxDisplayIndex;
-      const imageData = this.lastDisplayedSettings!.fileSettings.find((entry) => entry.displayIndex === iImage);
+      const imageData = settings.fileSettings.find((entry) => entry.displayIndex === iImage);
 
       if(!imageData) {
-        console.error("No image data found for side " + iSide + " and image " + iImage + "!");
         continue;
       };
 
       // load the image
       const image = imageData.files.scaled[Math.min(imageData.files.currentFileIndex, imageData.files.scaled.length)];
       if(!image) {
-        console.error("No image found for side " + iSide + " and image " + iImage + "!");
-        console.error(imageData)
+        console.error(`No image found for side ${iSide} in image data!`);
         continue;
       }
 
@@ -399,7 +563,7 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
       } else {
         ctx.rotate(Math.PI)
         ctx.rotate((iSide - (0.25 * (this.polygonInfo.sides - 2))) * this.angle + this.polygonInfo.rotation); // Why does this equation work?
-        ctx.translate(0, -this.innerPolygonIncircleRadius - this.canvasSize/4 - imageData.rotation);
+        ctx.translate(0, -this.innerPolygonIncircleRadius - this.canvasSize/4 - imageData.position);
         ctx.rotate(imageData.rotation * Math.PI / 180);
 
         // store the transformation matrix
@@ -410,7 +574,7 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
       ctx.scale(imageData.flips.h ? -1 : 1, imageData.flips.v ? -1 : 1);
       // apply the brightness change
       ctx.filter = `brightness(${imageData.brightness}%)`;
-      
+
       // draw the image
       ctx.drawImage(
         image,
@@ -423,15 +587,12 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
   }
 
   onCalculateClick(): void {
-    if(!this.latestSettings) {
-      console.error("Cannot calculate because no latest settings were found!")
-      return;
-    }
+    const settings = this.settingsBroker.getSettings();
 
     const canvas = this.calculator.calculateImage(
-      this.latestSettings.generalSettings.numberOfSides,
+      settings.generalSettings.numberOfSides,
       this.calculatorSlope,
-      this.latestSettings.generalSettings.innerPolygonSize,
+      settings.generalSettings.innerPolygonSize,
       this.canvasSize,
     );
 

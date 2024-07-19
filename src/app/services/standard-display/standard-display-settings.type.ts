@@ -1,14 +1,14 @@
 export type StandardDisplaySettings = {
-    generalSettings: GeneralSettings;
-    fileSettings: FileSettings[];
+    generalSettings: StandardDisplayGeneralSettings;
+    fileSettings: StandardDisplayFileSettings[];
 }
 
-type GeneralSettings = {
+export type StandardDisplayGeneralSettings = {
     numberOfSides: number;
     innerPolygonSize: number;
 }
 
-export type FileSettings = {
+export type StandardDisplayFileSettings = {
     fileName: string;
     mimeType: string;
     unique_id: string;

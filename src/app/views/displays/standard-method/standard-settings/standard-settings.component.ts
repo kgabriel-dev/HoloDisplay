@@ -10,7 +10,7 @@ import { generate, Subject } from 'rxjs';
 import { Router } from '@angular/router';
 import { environment } from 'src/environments/environment';
 import { HttpClient } from '@angular/common/http';
-import { FileSettings, StandardDisplaySettings } from 'src/app/services/standard-display/standard-display-settings.type';
+import { StandardDisplayFileSettings, StandardDisplaySettings } from 'src/app/services/standard-display/standard-display-settings.type';
 import { SettingsBrokerService } from 'src/app/services/standard-display/settings-broker.service';
 
 @Component({
@@ -46,7 +46,6 @@ export class SettingsComponent {
   public lastUsedSettings?: StandardDisplaySettings;
 
   constructor(
-    private settingsBroadcaster: SettingsBroadcastingService,
     private settingsBroker: SettingsBrokerService,
     public router: Router,
     private http: HttpClient
@@ -54,28 +53,6 @@ export class SettingsComponent {
     this.settingsBroker.settings$.subscribe(({settings, changedBy}) => {
       this.lastUsedSettings = settings;
     });
-  }
-
-  private generateUniqueId(mimeType: string): string {
-    if(mimeType === 'image/gif') {
-      // count all the gifs
-      const gifCount = this.lastUsedSettings?.fileSettings.filter((f) => f.mimeType === 'image/gif').length || 0;
-      return `gif-${gifCount}`;
-    }
-
-    else if(mimeType.startsWith('image')) {
-      // count all the images
-      const imageCount = this.lastUsedSettings?.fileSettings.filter((f) => f.mimeType.startsWith('image')).length || 0;
-      return `img-${imageCount}`;
-    }
-
-    else if(mimeType.startsWith('video')) {
-      // count all the videos
-      const videoCount = this.lastUsedSettings?.fileSettings.filter((f) => f.mimeType.startsWith('video')).length || 0;
-      return `vid-${videoCount}`;
-    }
-
-    return 'error-' + Math.ceil(Math.random() * 1000);
   }
 
   saveSettings(): void {
@@ -110,7 +87,7 @@ export class SettingsComponent {
     const numberOfImages = settings.imageTypes?.length || 0;
 
     // create new FileSettings for each image
-    const fileSettings: FileSettings[] = [];
+    const fileSettings: StandardDisplayFileSettings[] = [];
     for(let i = 0; i < numberOfImages; i++) {
       if(!settings.sources[i]) continue; // skip empty sources (no image or video)
       if(!settings.imageTypes || !settings.imageTypes[i] || settings.imageTypes[i] === 'unknown') {
@@ -133,7 +110,7 @@ export class SettingsComponent {
         scalingFactor: settings.imageSizes ? settings.imageSizes[i] : 100,
         src: settings.sources[i],
         fps: undefined,
-        unique_id: this.generateUniqueId(settings.imageTypes![i]),
+        unique_id: this.settingsBroker.generateUniqueId(settings.imageTypes![i]),
         metaData: {},
         files: {
           currentFileIndex: 0,
@@ -172,23 +149,18 @@ export class SettingsComponent {
     }
   }
 
-  addImage(src: string, name: string = '', type: string): void {
-    if(!this.lastUsedSettings) {
-      console.error("Couldn't add the image because there are no last used settings!");
-      return;
-    }
-    
+  addImage(src: string, name: string = '', type: string, settings: StandardDisplaySettings): void {
     const newFileSettings = this.settingsBroker.fillMissingFileValues({
-      src, fileName: name, mimeType: type
+      src, fileName: name, mimeType: type, unique_id: this.settingsBroker.generateUniqueId(type)
     });
 
-    this.lastUsedSettings.fileSettings.push(newFileSettings);
-    this.settingsBroker.updateSettings(this.lastUsedSettings, this.MY_SETTINGS_BROKER_ID);
+    settings.fileSettings.push(newFileSettings);
   }
 
   onUploadImagesClick(event: Event) {
     const element = event.currentTarget as HTMLInputElement,
-      fileList = element.files;
+      fileList = element.files,
+      settings = this.settingsBroker.getSettings();
 
     if (fileList) {
       const fileReader = new FileReader();
@@ -198,14 +170,17 @@ export class SettingsComponent {
         this.addImage(
           e.target?.result?.toString() || '',
           fileList[readingIndex].name,
-          fileList[readingIndex].type
+          fileList[readingIndex].type,
+          settings
         );
 
         // add image to the list
         if (++readingIndex < fileList.length)
           fileReader.readAsDataURL(fileList[readingIndex]);
-        else    // all images have been read
-          this.settingsBroker.updateSettings(this.lastUsedSettings!, this.MY_SETTINGS_BROKER_ID);
+        else {   // all images have been read
+          console.log(settings);
+          this.settingsBroker.updateSettings(settings, this.MY_SETTINGS_BROKER_ID);
+        }
       };
 
       fileReader.readAsDataURL(fileList[readingIndex]);
@@ -216,22 +191,25 @@ export class SettingsComponent {
     // guess the name
     const urlSplits = url.split('.');
     const guessedName = urlSplits[urlSplits.length - 2].split('/').pop() + '.' + urlSplits[urlSplits.length - 1];
+    const settings = this.settingsBroker.getSettings();
 
-    this.addImage(url, guessedName, type);
+    this.addImage(url, guessedName, type, settings);
 
-    this.settingsBroker.updateSettings(this.lastUsedSettings!, this.MY_SETTINGS_BROKER_ID);
+    this.settingsBroker.updateSettings(settings, this.MY_SETTINGS_BROKER_ID);
   }
 
   pushImageUp(imageIndex: number) {
     if (imageIndex <= 0) return;
     
-    const changedFile = this.lastUsedSettings?.fileSettings[imageIndex];
+    const settings = this.settingsBroker.getSettings();
+    const changedFile = settings.fileSettings[imageIndex];
+    
     if(!changedFile) {
       console.error("Couldn't find the file to move up!");
       return;
     }
 
-    const fileToChangeWith = this.lastUsedSettings?.fileSettings[imageIndex - 1];
+    const fileToChangeWith = settings.fileSettings[imageIndex - 1];
     if(!fileToChangeWith) {
       console.error("Couldn't find the file to swap with!");
       return;
@@ -242,19 +220,21 @@ export class SettingsComponent {
     fileToChangeWith.position = tempPosition;
 
     // broadcast the changes
-    this.settingsBroker.updateSettings(this.lastUsedSettings!, this.MY_SETTINGS_BROKER_ID);
+    this.settingsBroker.updateSettings(settings, this.MY_SETTINGS_BROKER_ID);
   }
 
   pushImageDown(imageIndex: number) {
-    if(!this.lastUsedSettings || imageIndex >= this.lastUsedSettings?.fileSettings.length - 1) return;
+    const settings = this.settingsBroker.getSettings();
 
-    const changedFile = this.lastUsedSettings.fileSettings[imageIndex];
+    if(imageIndex >= settings.fileSettings.length - 1) return;
+
+    const changedFile = settings.fileSettings[imageIndex];
     if(!changedFile) {
       console.error("Couldn't find the file to move down!");
       return;
     }
 
-    const fileToChangeWith = this.lastUsedSettings.fileSettings[imageIndex + 1];
+    const fileToChangeWith = settings.fileSettings[imageIndex + 1];
     if(!fileToChangeWith) {
       console.error("Couldn't find the file to swap with!");
       return;
@@ -265,11 +245,12 @@ export class SettingsComponent {
     fileToChangeWith.position = tempPosition;
 
     // broadcast the changes
-    this.settingsBroker.updateSettings(this.lastUsedSettings, this.MY_SETTINGS_BROKER_ID);
+    this.settingsBroker.updateSettings(settings, this.MY_SETTINGS_BROKER_ID);
   }
 
   scaleImage(imageIndex: number, action: 'plus' | 'minus') {
-    const image = this.lastUsedSettings?.fileSettings[imageIndex];
+    const settings = this.settingsBroker.getSettings();
+    const image = settings.fileSettings[imageIndex];
 
     if(!image) {
       console.error("Couldn't find the image to scale!");
@@ -279,11 +260,12 @@ export class SettingsComponent {
     if (action === 'plus') image.scalingFactor += this.SCALING_STEP_SIZE;
     else if (action === 'minus' && image.scalingFactor > this.SCALING_STEP_SIZE) image.scalingFactor -= this.SCALING_STEP_SIZE;
 
-    this.settingsBroker.updateSettings(this.lastUsedSettings!, this.MY_SETTINGS_BROKER_ID);
+    this.settingsBroker.updateSettings(settings, this.MY_SETTINGS_BROKER_ID);
   }
 
   moveImage(imageIndex: number, action: 'up' | 'down') {
-    const image = this.lastUsedSettings?.fileSettings[imageIndex];
+    const settings = this.settingsBroker.getSettings();
+    const image = settings.fileSettings[imageIndex];
 
     if(!image) {
       console.error("Couldn't find the image to scale!");
@@ -293,17 +275,19 @@ export class SettingsComponent {
     if (action === 'up') image.position += this.POSITIONING_STEP_SIZE;
     else if (action === 'down') image.position -= this.POSITIONING_STEP_SIZE;
 
-    this.settingsBroker.updateSettings(this.lastUsedSettings!, this.MY_SETTINGS_BROKER_ID);
+    this.settingsBroker.updateSettings(settings, this.MY_SETTINGS_BROKER_ID);
   }
 
   deleteImage(imageIndex: number): void {
-    this.lastUsedSettings?.fileSettings.splice(imageIndex, 1);
+    const settings = this.settingsBroker.getSettings();
+    settings.fileSettings.splice(imageIndex, 1);
 
-    this.settingsBroker.updateSettings(this.lastUsedSettings!, this.MY_SETTINGS_BROKER_ID);
+    this.settingsBroker.updateSettings(settings, this.MY_SETTINGS_BROKER_ID);
   }
 
   flipImage(imageIndex: number, direction: 'v' | 'h'): void {
-    const image = this.lastUsedSettings?.fileSettings[imageIndex];
+    const settings = this.settingsBroker.getSettings();
+    const image = settings.fileSettings[imageIndex];
 
     if(!image) {
       console.error("Couldn't find the image to scale!");
@@ -312,11 +296,12 @@ export class SettingsComponent {
 
     image.flips[direction] = !image.flips[direction];
 
-    this.settingsBroker.updateSettings(this.lastUsedSettings!, this.MY_SETTINGS_BROKER_ID);
+    this.settingsBroker.updateSettings(settings, this.MY_SETTINGS_BROKER_ID);
   }
 
   rotateImage(imageIndex: number, angle: number): void {
-    const image = this.lastUsedSettings?.fileSettings[imageIndex];
+    const settings = this.settingsBroker.getSettings();
+    const image = settings.fileSettings[imageIndex];
 
     if(!image) {
       console.error("Couldn't find the image to scale!");
@@ -325,11 +310,12 @@ export class SettingsComponent {
 
     image.rotation = (image.rotation + angle) % 360;
 
-    this.settingsBroker.updateSettings(this.lastUsedSettings!, this.MY_SETTINGS_BROKER_ID);
+    this.settingsBroker.updateSettings(settings, this.MY_SETTINGS_BROKER_ID);
   }
 
   getFlippingText(imageIndex: number) {
-    const image = this.lastUsedSettings?.fileSettings[imageIndex];
+    const settings = this.settingsBroker.getSettings();
+    const image = settings.fileSettings[imageIndex];
 
     if(!image) {
       console.error("Couldn't find the image to scale!");
@@ -350,7 +336,8 @@ export class SettingsComponent {
   }
 
   changeImageBrightness(imageIndex: number, amount: number) {
-    const image = this.lastUsedSettings?.fileSettings[imageIndex];
+    const settings = this.settingsBroker.getSettings();
+    const image = settings.fileSettings[imageIndex];
 
     if(!image) {
       console.error("Couldn't find the image to scale!");
@@ -364,7 +351,7 @@ export class SettingsComponent {
 
     image.brightness = newValue;
 
-    this.settingsBroker.updateSettings(this.lastUsedSettings!, this.MY_SETTINGS_BROKER_ID);
+    this.settingsBroker.updateSettings(settings, this.MY_SETTINGS_BROKER_ID);
   }
 
   resetSettings(): void {
@@ -404,7 +391,8 @@ export class SettingsComponent {
   }
 
   changeFps(imageIndex: number, amount: number) {
-    const image = this.lastUsedSettings?.fileSettings[imageIndex];
+    const settings = this.settingsBroker.getSettings();
+    const image = settings.fileSettings[imageIndex];
 
     if(!image) {
       console.error("Couldn't find the image to scale!");
@@ -420,7 +408,7 @@ export class SettingsComponent {
 
     image.fps.framerate = newValue;
 
-    this.settingsBroker.updateSettings(this.lastUsedSettings!, this.MY_SETTINGS_BROKER_ID);
+    this.settingsBroker.updateSettings(settings, this.MY_SETTINGS_BROKER_ID);
   }
 
   getLocalizedString(key: string, value: any): string {
@@ -449,17 +437,13 @@ export class SettingsComponent {
   }
 
   updateSettingsAttribute(event: Event, key: string) {
-    if(!this.lastUsedSettings) {
-      console.error("Couldn't find the last used settings!");
-      return;
-    }
-
+    const settings = this.settingsBroker.getSettings();
     const value = Number.parseInt((event.currentTarget as HTMLInputElement).value);
     
     if(key == "NumberOfSides")
-      this.lastUsedSettings.generalSettings.numberOfSides = value;
+      settings.generalSettings.numberOfSides = value;
     else if(key == "InnerPolygonSize")
-      this.lastUsedSettings.generalSettings.innerPolygonSize = value;
+      settings.generalSettings.innerPolygonSize = value;
     else
       console.error("Couldn't find the settings to update for key '" + key + "'!");
   }
