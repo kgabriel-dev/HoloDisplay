@@ -213,9 +213,9 @@ export class SettingsComponent {
       return;
     }
 
-    const tempPosition = changedFile.position;
-    changedFile.position = fileToChangeWith.position;
-    fileToChangeWith.position = tempPosition;
+    const tempDisplayIndex = changedFile.displayIndex;
+    changedFile.displayIndex = fileToChangeWith.displayIndex;
+    fileToChangeWith.displayIndex = tempDisplayIndex;
 
     // broadcast the changes
     this.settingsBroker.updateSettings(settings, this.MY_SETTINGS_BROKER_ID);
@@ -238,9 +238,9 @@ export class SettingsComponent {
       return;
     }
 
-    const tempPosition = changedFile.position;
-    changedFile.position = fileToChangeWith.position;
-    fileToChangeWith.position = tempPosition;
+    const tempDisplayIndex = changedFile.displayIndex;
+    changedFile.displayIndex = fileToChangeWith.displayIndex;
+    fileToChangeWith.displayIndex = tempDisplayIndex;
 
     // broadcast the changes
     this.settingsBroker.updateSettings(settings, this.MY_SETTINGS_BROKER_ID);
@@ -446,6 +446,12 @@ export class SettingsComponent {
       settings.generalSettings.innerPolygonSize = value;
     else
       console.error("Couldn't find the settings to update for key '" + key + "'!");
+  }
+
+  getFilesSortedByDisplayIndex(): StandardDisplayFileSettings[] {
+    const settings = this.settingsBroker.getSettings();
+
+    return settings.fileSettings.sort((a, b) => a.displayIndex - b.displayIndex);
   }
 }
 
