@@ -71,4 +71,12 @@ export class HoloDisplayComponent {
     this.forceIconsVisible = false;
     this.iconsVisible = this.forceIconsVisible && !this.iconsCanBeInvisible;
   }
+
+  toggleFullScreen() {
+    if(document.fullscreenElement) {
+      document.exitFullscreen();
+    } else {
+      document.documentElement.requestFullscreen();
+    }
+  }
 }
