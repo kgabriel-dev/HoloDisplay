@@ -177,10 +177,8 @@ export class SettingsComponent {
         // add image to the list
         if (++readingIndex < fileList.length)
           fileReader.readAsDataURL(fileList[readingIndex]);
-        else {   // all images have been read
-          console.log(settings);
+        else   // all images have been read
           this.settingsBroker.updateSettings(settings, this.MY_SETTINGS_BROKER_ID);
-        }
       };
 
       fileReader.readAsDataURL(fileList[readingIndex]);

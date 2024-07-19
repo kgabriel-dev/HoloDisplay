@@ -218,7 +218,7 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
         existingFile.scalingFactor = latestFile.scalingFactor;
 
         if(existingFile.mimeType === 'image/gif' || existingFile.mimeType.startsWith('video')) {
-          const framerate = latestFile.fps?.framerate || (latestFile.mimeType === 'image/gif' ? 10 : 30);
+          const framerate = existingFile.fps?.framerate || (latestFile.mimeType === 'image/gif' ? 10 : 30);
 
           this.scaleImagesFromFileSetting([existingFile]).then(() => {
             const updatedSettings = this.settingsBroker.getSettings();
@@ -307,8 +307,10 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
                     if(latestFile.fps)
                       window.clearInterval(latestFile.fps.intervalId);
       
+                    const framerate = latestFile.fps?.framerate || 10;
+
                     latestFile.fps = {
-                      framerate: 10,
+                      framerate,
                       intervalId: window.setInterval(() => {
                         const updatedSettings = this.settingsBroker.getSettings();
       
@@ -319,7 +321,7 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
                         upToDateFile.files.currentFileIndex = (upToDateFile.files.currentFileIndex + 1) % upToDateFile.files.original.length;
   
                         this.requestDraw$.next();
-                      }, 1000/10)
+                      }, 1000/framerate)
                     }
     
                     updatedSettings.fileSettings[updatedFileIndex] = latestFile;
@@ -444,10 +446,12 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
     
                   if(latestFile.fps)
                     window.clearInterval(latestFile.fps.intervalId);
+
+                  const framerate = latestFile.fps?.framerate || 30;
     
                   this.scaleImagesFromFileSetting([latestFile]).then(() => {
                     latestFile.fps = {
-                      framerate: 30,
+                      framerate,
                       intervalId: window.setInterval(() => {
                         const updatedSettings = this.settingsBroker.getSettings();
       
@@ -457,7 +461,7 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
                         upToDateFile.files.currentFileIndex = (upToDateFile.files.currentFileIndex + 1) % upToDateFile.files.original.length;
       
                         this.requestDraw$.next();
-                      }, 1000/30)
+                      }, 1000/framerate)
                     };
     
                     const updatedSettings = this.settingsBroker.getSettings();
