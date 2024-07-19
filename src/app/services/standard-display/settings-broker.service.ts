@@ -90,4 +90,19 @@ export class SettingsBrokerService {
     const errorCount = settings.fileSettings.filter((f) => f.unique_id.startsWith('error')).length || 0;
     return `error-${errorCount}`;
   }
+
+  public restoreDisplayIndexConsistency(fileSettings: StandardDisplayFileSettings[]): StandardDisplayFileSettings[] {
+    const settings = this.getSettings();
+
+    const filesSortedByDisplayIndex = fileSettings.sort((a, b) => a.displayIndex - b.displayIndex);
+
+    let currentIndex = 0;
+    
+    filesSortedByDisplayIndex.forEach((fileSetting) => {
+      fileSetting.displayIndex = currentIndex;
+      currentIndex++;
+    });
+
+    return fileSettings;
+  }
 }

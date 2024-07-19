@@ -282,6 +282,8 @@ export class SettingsComponent {
     const settings = this.settingsBroker.getSettings();
     settings.fileSettings.splice(imageIndex, 1);
 
+    settings.fileSettings = this.settingsBroker.restoreDisplayIndexConsistency(settings.fileSettings);
+
     this.settingsBroker.updateSettings(settings, this.MY_SETTINGS_BROKER_ID);
   }
 
