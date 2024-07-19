@@ -402,10 +402,25 @@ export class SettingsComponent {
     if(!image.fps) return;
 
     const oldValue = image.fps.framerate;
-    let newValue = oldValue + amount;
+    let newValue;
 
-    if(newValue < 1) newValue = 1;
+    if(oldValue <= 1) {
+      const denominator = 1 / oldValue;
+      let newDenominator = denominator - amount;
 
+      if(newDenominator == 0) {
+        if(amount > 0) newValue = amount == 1 ? 2 : amount;
+        else {
+          newDenominator = 1 - amount
+          newValue = 1 / newDenominator;
+        }
+      } else {
+        newValue = 1 / newDenominator;
+      }
+    } 
+    else
+      newValue = oldValue + amount;
+    
     image.fps.framerate = newValue;
 
     this.settingsBroker.updateSettings(settings, this.MY_SETTINGS_BROKER_ID);
@@ -452,6 +467,16 @@ export class SettingsComponent {
     const settings = this.settingsBroker.getSettings();
 
     return settings.fileSettings.sort((a, b) => a.displayIndex - b.displayIndex);
+  }
+
+  convertToReadableFps(fps: number): string {
+    if(fps < 1) {
+      let denominator = 1 / fps;
+      denominator = Math.round(denominator);
+      return `1/${denominator}`;
+    }
+
+    return fps.toString();
   }
 }
 

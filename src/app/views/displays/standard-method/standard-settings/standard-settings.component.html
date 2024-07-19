@@ -27,7 +27,7 @@
                                 <p>{{ getLocalizedString('rotation', file.rotation) }}</p>
                                 <p>{{ getLocalizedString('flipped', getFlippingText(i)) }}</p>
                                 <p>{{ getLocalizedString('brightness', file.brightness) }}</p>
-                                <p *ngIf="file.fps">{{ getLocalizedString('framerate', file.fps.framerate) }}</p>
+                                <p *ngIf="file.fps">{{ getLocalizedString('framerate', convertToReadableFps(file.fps.framerate)) }}</p>
                             </div>
 
                             <div class="grow">
