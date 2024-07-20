@@ -61,7 +61,7 @@
       <!--body-->
       <div class="relative p-6 flex-auto">
         <p class="my-4 text-slate-500 text-lg leading-relaxed">
-          The image you can download here shows the template to build your mirror. You will need {{ settingsBroadcastingService.getLastValue('SideCount') }} of these trapezes. The image is generated using the values you entered in the Settings Menu. If you want to change these values, please go back to the Settings Menu.
+          The image you can download here shows the template to build your mirror. You will need {{ settingsBroker.getSettings().generalSettings.numberOfSides }} of these trapezes. The image is generated using the values you entered in the Settings Menu. If you want to change these values, please go back to the Settings Menu.
         </p>
         <p class="my-4 text-slate-500 tx-lg leading-relaxed">
           Make sure to print the image at the correct size. The image is {{ (calculatorImageWidthPx / calculatorDPI).toFixed(2) }} x {{ (calculatorImageHeightPx / calculatorDPI).toFixed(2) }} inches or {{ ((calculatorImageWidthPx * calculatorJsPixelRatio / calculatorDPI) * 2.54).toFixed(2) }} x {{ ((calculatorImageHeightPx * calculatorJsPixelRatio / calculatorDPI) * 2.54).toFixed(2) }} cm.

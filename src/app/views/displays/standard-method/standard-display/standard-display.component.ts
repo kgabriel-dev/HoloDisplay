@@ -11,7 +11,6 @@ import { Frame, ParsedFrame, ParsedGif, decompressFrames, parseGIF } from 'gifuc
 import { Observable, Subject, debounceTime, merge } from 'rxjs';
 import { StandardMethodCalculatorService } from 'src/app/services/calculators/standard-method/standard-method-calculator.service';
 import { HelperService, Point } from 'src/app/services/helpers/helper.service';
-import { MetaDataSet, SettingsBroadcastingService } from 'src/app/services/settings-broadcasting.service';
 import { SettingsBrokerService } from 'src/app/services/standard-display/settings-broker.service';
 import { StandardDisplayFileSettings, MetaDataKeys, StandardDisplayGeneralSettings, StandardDisplaySettings } from 'src/app/services/standard-display/standard-display-settings.type';
 import { TutorialService } from 'src/app/services/tutorial/tutorial.service';
@@ -49,11 +48,10 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
   calculatorJsPixelRatio = window.devicePixelRatio;
 
   constructor(
-    public settingsBroadcastingService: SettingsBroadcastingService,
     private helperService: HelperService,
     private calculator: StandardMethodCalculatorService,
     private tutorial: TutorialService,
-    private settingsBroker: SettingsBrokerService
+    public settingsBroker: SettingsBrokerService
   ) {
     settingsBroker.settings$.subscribe(({settings, changedBy}) => {
       if(changedBy == this.MY_SETTINGS_BROKER_ID) {
