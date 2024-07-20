@@ -26,7 +26,7 @@ export class StandardMethodCalculatorService {
 
     // create the image and download it
     const imageResizeFactor = dpi / 96;
-    this.drawAndSaveImage(sideA, sideB, trapezeTiltedHeight, 0.96);
+    this.drawAndSaveImage(sideA, sideB, trapezeTiltedHeight, imageResizeFactor);
   }
 
   private drawAndSaveImage(sideA: number, sideB: number, tiltedHeight: number, imageResizeFactor: number) {
