@@ -129,10 +129,10 @@
             <p class="my-5" i18n>This value is determined by the surface area of your mirror.</p>
         </div>
         <div class="p-5 bg-cyan-700 ">
-            <input type="range" min="0" max="400" [value]="lastUsedSettings?.generalSettings?.numberOfSides || 4" (input)="updateSettingsAttribute($event, 'InnerPolygonSize')" class="form-range h-5 w-3/5 rounded-lg cursor-pointer mx-3">
+            <input type="range" min="0" max="400" [value]="lastUsedSettings?.generalSettings?.innerPolygonSize != undefined ? lastUsedSettings?.generalSettings?.innerPolygonSize : 50" (input)="updateSettingsAttribute($event, 'InnerPolygonSize')" class="form-range h-5 w-3/5 rounded-lg cursor-pointer mx-3">
             
             <span class="border-2 rounded w-1/5 inline-block mx-3">
-                <input type="number" [value]="lastUsedSettings?.generalSettings?.numberOfSides || 4" (input)="updateSettingsAttribute($event, 'InnerPolygonSize')" class="text-white text-left appearance-none bg-inherit w-1/2 shrink h-5">
+                <input type="number" [value]="lastUsedSettings?.generalSettings?.innerPolygonSize != undefined ? lastUsedSettings?.generalSettings?.innerPolygonSize : 50" (input)="updateSettingsAttribute($event, 'InnerPolygonSize')" class="text-white text-left appearance-none bg-inherit w-1/2 shrink h-5">
                 <span class="w-6" i18n>px</span>
             </span>
         </div>

@@ -60,7 +60,7 @@ export class SettingsComponent {
 
     // build the settings string
     const currSettings: SettingsData = {
-      innerPolygonSize: latestSesttings.generalSettings.innerPolygonSize || 50,
+      innerPolygonSize: latestSesttings.generalSettings.innerPolygonSize != undefined ? latestSesttings.generalSettings.innerPolygonSize : 50,
       imagePositions: latestSesttings.fileSettings.map((f) => f.position),
       imageSizes: latestSesttings.fileSettings.map((f) => f.scalingFactor),
       sideCount: latestSesttings.generalSettings.numberOfSides,
@@ -124,7 +124,7 @@ export class SettingsComponent {
     const restoredSettings: StandardDisplaySettings = {
       generalSettings: {
         numberOfSides: settings.sideCount || 4,
-        innerPolygonSize: settings.innerPolygonSize || 50
+        innerPolygonSize: settings.innerPolygonSize != undefined ? settings.innerPolygonSize : 50
       },
       fileSettings
     }
@@ -455,10 +455,14 @@ export class SettingsComponent {
     const settings = this.settingsBroker.getSettings();
     const value = Number.parseInt((event.currentTarget as HTMLInputElement).value);
     
-    if(key == "NumberOfSides")
+    if(key == "NumberOfSides") {
       settings.generalSettings.numberOfSides = value;
-    else if(key == "InnerPolygonSize")
+      this.settingsBroker.updateSettings(settings, this.MY_SETTINGS_BROKER_ID);
+    }
+    else if(key == "InnerPolygonSize") {
       settings.generalSettings.innerPolygonSize = value;
+      this.settingsBroker.updateSettings(settings, this.MY_SETTINGS_BROKER_ID);
+    }
     else
       console.error("Couldn't find the settings to update for key '" + key + "'!");
   }
