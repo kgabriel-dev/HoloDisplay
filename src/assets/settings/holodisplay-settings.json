@@ -1,26 +1,24 @@
 {
-  "innerPolygonSize": 50,
-  "imagePositions": [
-    30
-  ],
-  "imageSizes": [
-    35
-  ],
-  "sideCount": 4,
-  "imageSwapTime": 500,
-  "imageRotations": [
-    0
-  ],
-  "imageFlips": [
+  "generalSettings": {
+    "numberOfSides": 4,
+    "innerPolygonSize": 50
+  },
+  "fileSettings": [
     {
-      "v": false,
-      "h": false
+      "src": "https://hologram.kgabriel.dev/en-US/assets/images/default-image.png",
+      "fileName": "default-image.png",
+      "mimeType": "image/png",
+      "displayIndex": 0,
+      "scalingFactor": 35,
+      "position": 30,
+      "flips": {
+        "v": false,
+        "h": false
+      },
+      "rotation": 0,
+      "brightness": 100,
+      "metaData": {},
+      "framerate": 0
     }
-  ],
-  "imageBrightness": [
-    100
-  ],
-  "images": [
-    "assets/images/default-image.png"
   ]
 }

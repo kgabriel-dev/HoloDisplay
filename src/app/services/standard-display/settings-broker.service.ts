@@ -33,7 +33,7 @@ export class SettingsBrokerService {
     return this.settings;
   }
 
-  public fillMissingFileValues(fileSetting: Partial<StandardDisplayFileSettings>, resetInterval=true): StandardDisplayFileSettings {
+  public fillMissingFileValues(fileSetting: Partial<StandardDisplayFileSettings>): StandardDisplayFileSettings {
     const currentSettings = this.getSettings();
 
     const getNextFreeDisplayIndex = () => {
@@ -43,7 +43,7 @@ export class SettingsBrokerService {
       return index;
     }
 
-    const newSettings = {
+    return {
       brightness: fileSetting.brightness || 100,
       flips: fileSetting.flips || { v: false, h: false },
       position: fileSetting.position || 0,
@@ -56,13 +56,8 @@ export class SettingsBrokerService {
       files: fileSetting.files || { original: [] as HTMLImageElement[], scaled: [] as HTMLImageElement[], currentFileIndex: 0 },
       displayIndex: fileSetting.displayIndex != undefined ? fileSetting.displayIndex : getNextFreeDisplayIndex(),
       src: fileSetting.src || '',
-      fps: resetInterval ? undefined : (fileSetting.fps ? fileSetting.fps : undefined)
+      fps: fileSetting.fps
     }
-
-    if(resetInterval)
-      window.clearInterval(fileSetting.fps?.intervalId);
-  
-    return newSettings;
   }
 
   public generateUniqueId(mimeType: string): string {

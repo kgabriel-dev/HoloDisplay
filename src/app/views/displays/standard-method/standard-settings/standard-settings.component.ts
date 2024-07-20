@@ -1,16 +1,9 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormControl, ReactiveFormsModule, FormsModule } from '@angular/forms';
-import {
-  BroadcastTarget,
-  MetaDataSet,
-  SettingsBroadcastingService,
-} from 'src/app/services/settings-broadcasting.service';
-import { generate, Subject } from 'rxjs';
+import { ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { environment } from 'src/environments/environment';
 import { HttpClient } from '@angular/common/http';
-import { StandardDisplayFileSettings, StandardDisplaySettings } from 'src/app/services/standard-display/standard-display-settings.type';
+import { MetaDataKeys, StandardDisplayFileSettings, StandardDisplayGeneralSettings, StandardDisplaySettings } from 'src/app/services/standard-display/standard-display-settings.type';
 import { SettingsBrokerService } from 'src/app/services/standard-display/settings-broker.service';
 
 @Component({
@@ -53,84 +46,61 @@ export class SettingsComponent {
     this.settingsBroker.settings$.subscribe(({settings, changedBy}) => {
       this.lastUsedSettings = settings;
     });
+
+    this.resetSettings();
   }
 
   saveSettings(): void {
     const latestSesttings = this.settingsBroker.getSettings();
 
-    // build the settings string
-    const currSettings: SettingsData = {
-      innerPolygonSize: latestSesttings.generalSettings.innerPolygonSize != undefined ? latestSesttings.generalSettings.innerPolygonSize : 50,
-      imagePositions: latestSesttings.fileSettings.map((f) => f.position),
-      imageSizes: latestSesttings.fileSettings.map((f) => f.scalingFactor),
-      sideCount: latestSesttings.generalSettings.numberOfSides,
-      imageSwapTimes: latestSesttings.fileSettings.map((f) => f.fps ? 1000 / f.fps.framerate : -1),
-      imageRotations: latestSesttings.fileSettings.map((f) => f.rotation),
-      imageFlips: latestSesttings.fileSettings.map((f) => f.flips),
-      imageBrightness: latestSesttings.fileSettings.map((f) => f.brightness),
-      imageTypes: latestSesttings.fileSettings.map((f) => f.mimeType),
-      sources: latestSesttings.fileSettings.map((f) => f.src || "")
-    };
+    const settingsToSave: SettingsData = {
+      generalSettings: latestSesttings.generalSettings,
+      fileSettings: latestSesttings.fileSettings.map((file) => ({
+        src: file.src || '',
+        fileName: file.fileName,
+        mimeType: file.mimeType,
+        displayIndex: file.displayIndex,
+        scalingFactor: file.scalingFactor,
+        position: file.position,
+        flips: file.flips,
+        rotation: file.rotation,
+        brightness: file.brightness,
+        metaData: file.metaData,
+        framerate: file.fps?.framerate || 0
+      }))
+    }
 
     const dlink: HTMLAnchorElement = document.createElement('a');
     dlink.download = 'holodisplay-settings.json'; // the file name
-    const myFileContent: string = JSON.stringify(currSettings, undefined, 2);
+    const myFileContent: string = JSON.stringify(settingsToSave, undefined, 2);
     dlink.href = 'data:text/plain;charset=utf-8,' + myFileContent;
     dlink.click(); // this will trigger the dialog window
     dlink.remove();
   }
 
   loadSettings(settings: SettingsData): void {
-    // if there are no images, there is nothing to do here
-    if(!settings.sources || settings.sources.length === 0) return;
+    const newSettings: StandardDisplaySettings = {
+      generalSettings: settings.generalSettings,
+      fileSettings: settings.fileSettings.map((file) => ({
+        fileName: file.fileName,
+        mimeType: file.mimeType,
+        unique_id: this.settingsBroker.generateUniqueId(file.mimeType),
+        metaData: file.metaData,
+        scalingFactor: file.scalingFactor,
+        position: file.position,
+        flips: file.flips,
+        rotation: file.rotation,
+        brightness: file.brightness,
+        fps: file.framerate > 0 ? { framerate: file.framerate, intervalId: 0 } : undefined,
+        files: { original: [], scaled: [], currentFileIndex: 0 },
+        src: file.src,
+        displayIndex: file.displayIndex
+      }))
+    };
 
-    const numberOfImages = settings.imageTypes?.length || 0;
+    newSettings.fileSettings.forEach((file) => this.settingsBroker.fillMissingFileValues(file));
 
-    // create new FileSettings for each image
-    const fileSettings: StandardDisplayFileSettings[] = [];
-    for(let i = 0; i < numberOfImages; i++) {
-      if(!settings.sources[i]) continue; // skip empty sources (no image or video)
-      if(!settings.imageTypes || !settings.imageTypes[i] || settings.imageTypes[i] === 'unknown') {
-        settings.imageTypes![i] = this.guessFileType(settings.sources[i]);
-
-        if(settings.imageTypes![i] === 'unknown') {
-          console.error(`Couldn't guess the type of the image at index ${i}!`);
-          continue;
-        }
-      }
-
-      fileSettings.push({
-        brightness: settings.imageBrightness ? settings.imageBrightness[i] : 100,
-        displayIndex: i,
-        fileName: `File ${i+1}`,
-        flips: { v: false, h: false },
-        mimeType: settings.imageTypes![i],
-        position: settings.imagePositions ? settings.imagePositions[i] : 0,
-        rotation: settings.imageRotations ? settings.imageRotations[i] : 0,
-        scalingFactor: settings.imageSizes ? settings.imageSizes[i] : 100,
-        src: settings.sources[i],
-        fps: undefined,
-        unique_id: this.settingsBroker.generateUniqueId(settings.imageTypes![i]),
-        metaData: {},
-        files: {
-          currentFileIndex: 0,
-          original: [],
-          scaled: []
-        }
-      });
-    }
-
-    // create a new StandardDisplaySettings object
-    const restoredSettings: StandardDisplaySettings = {
-      generalSettings: {
-        numberOfSides: settings.sideCount || 4,
-        innerPolygonSize: settings.innerPolygonSize != undefined ? settings.innerPolygonSize : 50
-      },
-      fileSettings
-    }
-
-    // broadcast the changes
-    this.settingsBroker.updateSettings(restoredSettings, this.MY_SETTINGS_BROKER_ID);
+    this.settingsBroker.updateSettings(newSettings, this.MY_SETTINGS_BROKER_ID);
   }
 
   onLoadSettingsClick(event: Event): void {
@@ -484,15 +454,19 @@ export class SettingsComponent {
   }
 }
 
-export type SettingsData = {
-  innerPolygonSize?: number;
-  imageSizes?: number[];
-  imagePositions?: number[];
-  sideCount?: number;
-  imageSwapTimes?: number[];
-  imageRotations?: number[];
-  imageFlips?: { v: boolean; h: boolean }[];
-  imageBrightness?: number[];
-  imageTypes?: string[];
-  sources?: string[];
-};
+type SettingsData = {
+  generalSettings: StandardDisplayGeneralSettings;
+  fileSettings: {
+    fileName: string;
+    mimeType: string;
+    metaData: {[key in MetaDataKeys]?: any};
+    scalingFactor: number;
+    rotation: number;
+    position: number;
+    flips: { v: boolean; h: boolean; };
+    brightness: number;
+    framerate: number;
+    src: string;
+    displayIndex: number;
+  }[];
+}
