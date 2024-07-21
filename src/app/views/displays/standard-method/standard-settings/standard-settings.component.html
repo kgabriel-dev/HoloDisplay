@@ -12,7 +12,7 @@
                         <p *ngIf="file.metaData" class="w-full bg-cyan-600">
                             <!-- write every object as "key: value" -->
                             <ng-container *ngFor="let pair of file.metaData| keyvalue">
-                                <span class="text-xs">{{pair.key}}: {{pair.value}}</span>
+                                <span class="text-xs">{{getLocalizedMetaData(pair.key)}}: {{pair.value}}</span>
                             </ng-container>
                         </p>
                         <div class="flex flex-row items-center">

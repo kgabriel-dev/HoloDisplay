@@ -421,6 +421,19 @@ export class SettingsComponent {
     }
   }
 
+  getLocalizedMetaData(key: string): string {
+    switch(key) {
+      case MetaDataKeys.LOADING_STATE.toString():
+        return $localize`Loading state`;
+
+      case MetaDataKeys.LOADING_PROGRESS.toString():
+        return $localize`Loading progress`;
+
+      default:
+        return '';
+    }
+  }
+
   updateSettingsAttribute(event: Event, key: string) {
     const settings = this.settingsBroker.getSettings();
     const value = Number.parseInt((event.currentTarget as HTMLInputElement).value);

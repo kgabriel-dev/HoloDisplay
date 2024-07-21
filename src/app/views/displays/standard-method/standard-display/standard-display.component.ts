@@ -416,7 +416,7 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
                 if(updatedSettings.fileSettings.findIndex((f) => f.unique_id == latestFile.unique_id) == -1)
                   return;
 
-                updatedSettings.fileSettings.find((f) => f.unique_id == latestFile.unique_id)!.metaData[MetaDataKeys.LOADING_PROGRESS] = `${framesExtracted} of ${totalFrames} frames`;
+                updatedSettings.fileSettings.find((f) => f.unique_id == latestFile.unique_id)!.metaData[MetaDataKeys.LOADING_PROGRESS] = $localize`${framesExtracted} of ${totalFrames} frames`;
               }
             }).then((frames: { offset: number, image: string }[]) => {
               const updatedSettings = this.settingsBroker.getSettings();
@@ -424,7 +424,7 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
 
               if(!updatedFile) return;
 
-              updatedFile.metaData[MetaDataKeys.LOADING_PROGRESS] = `Finalizing...`;
+              updatedFile.metaData[MetaDataKeys.LOADING_PROGRESS] = $localize`Finalizing...`;
               this.settingsBroker.updateSettings(updatedSettings, this.MY_SETTINGS_BROKER_ID);
 
               let videoImages: HTMLImageElement[] = [];

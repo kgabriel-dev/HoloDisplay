@@ -31,13 +31,7 @@ export type StandardDisplayFileSettings = {
     displayIndex: number;
 }
 
-type MetaDataSet = {
-    [displayIndex: number]: {
-      [key: string]: string;
-    }
-};
-
 export enum MetaDataKeys {
     LOADING_STATE,
-    LOADING_PROGRESS
+    LOADING_PROGRESS,
 }
