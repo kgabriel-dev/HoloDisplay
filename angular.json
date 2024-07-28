@@ -27,7 +27,7 @@
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
             "localize": [
-              "en-US"
+              "de-DE"
             ],
             "outputPath": "dist/holodisplay",
             "index": "src/index.html",

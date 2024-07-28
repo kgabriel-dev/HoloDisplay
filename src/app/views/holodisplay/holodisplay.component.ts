@@ -16,7 +16,7 @@ import { LayeredDisplayComponent } from '../displays/layered-method/layered-disp
   styleUrls: ['./holodisplay.component.scss']
 })
 export class HoloDisplayComponent {
-  selectedDisplayMethod = 'Standard Method';
+  selectedDisplayMethodId = 'StandardDisplayMethod';
 
   iconsVisible = false;
   iconsCanBeInvisible = true;
@@ -25,9 +25,9 @@ export class HoloDisplayComponent {
   resizeEvent$: Subject<Event>;
   doCalculation$ = new Subject<void>();
 
-  readonly displayMethods: {name: string, component: any}[] = [
-    { name: 'Standard Method', component: StandardDisplayComponent },
-    { name: 'Layered Method', component: LayeredDisplayComponent }
+  readonly displayMethods: {name: string, component: any, id: string}[] = [
+    { name: $localize`Standard Display Method`, component: StandardDisplayComponent, id: 'StandardDisplayMethod' },
+    { name: $localize`Layered Display Method`, component: LayeredDisplayComponent, id: 'LayeredDisplayMethod' }
   ]
 
   constructor(public language: LanguageService, private tutorial: TutorialService) {
@@ -62,9 +62,13 @@ export class HoloDisplayComponent {
   }
 
   startCurrentTutorial() {
-    switch(this.selectedDisplayMethod) {
-      case 'Standard Method':
+    switch(this.selectedDisplayMethodId) {
+      case 'StandardDisplayMethod':
         this.tutorial.startTutorial('standardDisplay');
+        break;
+
+      case 'LayeredDisplayMethod':
+        // TODO: Implement tutorial for layered display
         break;
     }
   }

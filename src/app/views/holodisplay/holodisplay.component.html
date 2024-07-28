@@ -15,7 +15,7 @@
     </button>
 </div>
 
-<select [hidden]="!iconsVisible && !forceIconsVisible" id="displayMethodSelection" [(ngModel)]="selectedDisplayMethod" class="form-select appearance-none z-40
+<select [hidden]="!iconsVisible && !forceIconsVisible" id="displayMethodSelection" [(ngModel)]="selectedDisplayMethodId" class="form-select appearance-none z-40
       fixed top-5 left-5
       w-1/3
       px-3
@@ -28,7 +28,7 @@
       rounded
       m-0
       focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none" (mouseover)="forceIconsVisible=true" (mouseleave)="hideIcons()">
-        <option *ngFor="let displayMethod of displayMethods" [value]="displayMethod.name">{{displayMethod.name}}</option>
+        <option *ngFor="let displayMethod of displayMethods" [value]="displayMethod.id">{{displayMethod.name}}</option>
 </select>
 
 <div *ngIf="iconsVisible || forceIconsVisible" class="z-40 fixed bottom-5 right-5 flex flex-row gap-2">
@@ -62,14 +62,14 @@
     </a>
 </div>
 
-<app-display-standard *ngIf="selectedDisplayMethod === 'Standard Method'" [calculate$]="this.doCalculation$.asObservable()" [resizeEvent$]="resizeEvent$.asObservable()" (window:resize)="onResize($event)" class="block w-full h-full bg-blue"></app-display-standard>
-<app-layered-display *ngIf="selectedDisplayMethod == 'Layered Method'"></app-layered-display>
+<app-display-standard *ngIf="selectedDisplayMethodId === 'StandardDisplayMethod'" [calculate$]="this.doCalculation$.asObservable()" [resizeEvent$]="resizeEvent$.asObservable()" (window:resize)="onResize($event)" class="block w-full h-full bg-blue"></app-display-standard>
+<app-layered-display *ngIf="selectedDisplayMethodId == 'LayeredDisplayMethod'"></app-layered-display>
 
 <div class="hidden overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none" id="settingsModal">
     <div class="relative w-full md:w-2/3 my-6 mx-auto">
       <!--content-->
       <div class="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
-        <app-standard-settings *ngIf="selectedDisplayMethod === 'Standard Method'"></app-standard-settings>
+        <app-standard-settings *ngIf="selectedDisplayMethodId === 'StandardDisplayMethod'"></app-standard-settings>
         <!--footer-->
         <div class="flex items-center justify-end p-6 border-t border-solid border-slate-200 rounded-b">
           <button class="text-red-500 background-transparent font-bold uppercase px-6 py-2 text-sm outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150" type="button" (click)="toggleModal('settingsModal')">

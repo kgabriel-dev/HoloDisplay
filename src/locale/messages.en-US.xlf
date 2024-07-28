@@ -527,6 +527,20 @@
           <context context-type="linenumber">430</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="2491008428696230874" datatype="html">
+        <source>Standard Display Method</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/views/holodisplay/holodisplay.component.ts</context>
+          <context context-type="linenumber">29</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5752017741488628794" datatype="html">
+        <source>Layered Display Method</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/views/holodisplay/holodisplay.component.ts</context>
+          <context context-type="linenumber">30</context>
+        </context-group>
+      </trans-unit>
     </body>
   </file>
 </xliff>
