@@ -13,7 +13,7 @@ import { StandardDisplaySettingsBrokerService } from 'src/app/services/standard-
   templateUrl: './standard-settings.component.html',
   styleUrls: ['./standard-settings.component.scss'],
 })
-export class SettingsComponent {
+export class StandardDisplaySettingsComponent {
   readonly SCALING_STEP_SIZE = 5;
   readonly POSITIONING_STEP_SIZE = 5;
 
@@ -329,9 +329,9 @@ export class SettingsComponent {
 
     // decide if the settings for desktop or mobile should be loaded
     if (window.innerWidth < 768)
-      settingsUrl = 'assets/settings/holodisplay-settings-mobile.json';
+      settingsUrl = 'assets/settings/standard-display-method/mobile-settings.json';
     else
-      settingsUrl = 'assets/settings/holodisplay-settings.json';
+      settingsUrl = 'assets/settings/standard-display-method/desktop-settings.json';
 
     this.http
         .get<SettingsData>(settingsUrl)

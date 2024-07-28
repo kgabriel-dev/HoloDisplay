@@ -499,7 +499,8 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
     this.settingsBroker.updateSettings(settings, this.MY_SETTINGS_BROKER_ID);
   }
 
-  private draw(): void {const canvas = this.displayCanvas?.nativeElement;
+  private draw(): void {
+    const canvas = this.displayCanvas?.nativeElement;
     if(!canvas) return;
 
     const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;

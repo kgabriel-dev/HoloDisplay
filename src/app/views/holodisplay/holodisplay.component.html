@@ -63,13 +63,14 @@
 </div>
 
 <app-display-standard *ngIf="selectedDisplayMethodId === 'StandardDisplayMethod'" [calculate$]="this.doCalculation$.asObservable()" [resizeEvent$]="resizeEvent$.asObservable()" (window:resize)="onResize($event)" class="block w-full h-full bg-blue"></app-display-standard>
-<app-layered-display *ngIf="selectedDisplayMethodId == 'LayeredDisplayMethod'"></app-layered-display>
+<app-layered-display *ngIf="selectedDisplayMethodId == 'LayeredDisplayMethod'" [resizeEvent$]="resizeEvent$.asObservable()" (window:resize)="onResize($event)"></app-layered-display>
 
 <div class="hidden overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none" id="settingsModal">
     <div class="relative w-full md:w-2/3 my-6 mx-auto">
       <!--content-->
       <div class="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
         <app-standard-settings *ngIf="selectedDisplayMethodId === 'StandardDisplayMethod'"></app-standard-settings>
+        <app-layered-settings *ngIf="selectedDisplayMethodId === 'LayeredDisplayMethod'"></app-layered-settings>
         <!--footer-->
         <div class="flex items-center justify-end p-6 border-t border-solid border-slate-200 rounded-b">
           <button class="text-red-500 background-transparent font-bold uppercase px-6 py-2 text-sm outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150" type="button" (click)="toggleModal('settingsModal')">
