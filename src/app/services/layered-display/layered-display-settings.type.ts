@@ -1,14 +1,13 @@
-export type StandardDisplaySettings = {
-    generalSettings: StandardDisplayGeneralSettings;
-    fileSettings: StandardDisplayFileSettings[];
+export type LayeredDisplaySettings = {
+    generalSettings: LayeredDisplayGeneralSettings;
+    fileSettings: LayeredDisplayFileSettings[];
 }
 
-export type StandardDisplayGeneralSettings = {
-    numberOfSides: number;
-    innerPolygonSize: number;
+export type LayeredDisplayGeneralSettings = {
+    numberOfLayers: number;
 }
 
-export type StandardDisplayFileSettings = {
+export type LayeredDisplayFileSettings = {
     fileName: string;
     mimeType: string;
     unique_id: string;
@@ -28,7 +27,7 @@ export type StandardDisplayFileSettings = {
         currentFileIndex: number;
     };
     src?: string;
-    displayIndex: number;
+    layer: number;
 }
 
 export enum MetaDataKeys {

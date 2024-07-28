@@ -7,11 +7,11 @@ import {
   ViewChild
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Frame, ParsedFrame, ParsedGif, decompressFrames, parseGIF } from 'gifuct-js';
+import { decompressFrames, parseGIF } from 'gifuct-js';
 import { Observable, Subject, debounceTime, merge } from 'rxjs';
 import { StandardMethodCalculatorService } from 'src/app/services/calculators/standard-method/standard-method-calculator.service';
 import { HelperService, Point } from 'src/app/services/helpers/helper.service';
-import { SettingsBrokerService } from 'src/app/services/standard-display/settings-broker.service';
+import { StandardDisplaySettingsBrokerService } from 'src/app/services/standard-display/standard-display-settings-broker.service';
 import { StandardDisplayFileSettings, MetaDataKeys, StandardDisplayGeneralSettings, StandardDisplaySettings } from 'src/app/services/standard-display/standard-display-settings.type';
 import { TutorialService } from 'src/app/services/tutorial/tutorial.service';
 
@@ -51,7 +51,7 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
     private helperService: HelperService,
     private calculator: StandardMethodCalculatorService,
     private tutorial: TutorialService,
-    public settingsBroker: SettingsBrokerService
+    public settingsBroker: StandardDisplaySettingsBrokerService
   ) {
     settingsBroker.settings$.subscribe(({settings, changedBy}) => {
       if(changedBy == this.MY_SETTINGS_BROKER_ID) {

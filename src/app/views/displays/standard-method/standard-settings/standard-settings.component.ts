@@ -4,7 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { MetaDataKeys, StandardDisplayFileSettings, StandardDisplayGeneralSettings, StandardDisplaySettings } from 'src/app/services/standard-display/standard-display-settings.type';
-import { SettingsBrokerService } from 'src/app/services/standard-display/settings-broker.service';
+import { StandardDisplaySettingsBrokerService } from 'src/app/services/standard-display/standard-display-settings-broker.service';
 
 @Component({
   selector: 'app-standard-settings',
@@ -39,7 +39,7 @@ export class SettingsComponent {
   public lastUsedSettings?: StandardDisplaySettings;
 
   constructor(
-    private settingsBroker: SettingsBrokerService,
+    private settingsBroker: StandardDisplaySettingsBrokerService,
     public router: Router,
     private http: HttpClient
   ) {
@@ -423,9 +423,6 @@ export class SettingsComponent {
 
   getLocalizedMetaData(key: string): string {
     switch(key) {
-      case MetaDataKeys.LOADING_STATE.toString():
-        return $localize`Loading state`;
-
       case MetaDataKeys.LOADING_PROGRESS.toString():
         return $localize`Loading progress`;
 

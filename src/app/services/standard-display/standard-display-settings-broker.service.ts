@@ -1,16 +1,15 @@
 import { Injectable } from '@angular/core';
 import { StandardDisplayFileSettings, StandardDisplaySettings } from './standard-display-settings.type';
 import { BehaviorSubject } from 'rxjs';
-import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
-export class SettingsBrokerService {
+export class StandardDisplaySettingsBrokerService {
   private settings: StandardDisplaySettings = {
     generalSettings: {
-      numberOfSides: environment.defaultValueSideCount,
-      innerPolygonSize: environment.defaultValueInnerPolygonSize
+      numberOfSides: 4,
+      innerPolygonSize: 50
     },
     fileSettings: []
   }
@@ -21,11 +20,8 @@ export class SettingsBrokerService {
   });
   public settings$ = this.settingsSubject.asObservable();
 
-  constructor() {
-    this.settings$.subscribe((value) => (this.settings = value.settings));
-  }
-
   public updateSettings(settings: StandardDisplaySettings, changedBy: string): void {
+    this.settings = settings;
     this.settingsSubject.next({settings, changedBy});
   }
 

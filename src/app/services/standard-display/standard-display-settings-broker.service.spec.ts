@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { SettingsBrokerService } from './settings-broker.service';
+import { StandardDisplaySettingsBrokerService } from './standard-display-settings-broker.service';
 
 describe('SettingsBrokerService', () => {
-  let service: SettingsBrokerService;
+  let service: StandardDisplaySettingsBrokerService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(SettingsBrokerService);
+    service = TestBed.inject(StandardDisplaySettingsBrokerService);
   });
 
   it('should be created', () => {
