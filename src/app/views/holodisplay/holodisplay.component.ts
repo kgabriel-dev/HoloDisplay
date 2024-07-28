@@ -6,11 +6,12 @@ import { SettingsComponent } from '../displays/standard-method/standard-settings
 import { StandardDisplayComponent } from '../displays/standard-method/standard-display/standard-display.component';
 import { LanguageService } from 'src/app/services/i18n/language.service';
 import { TutorialService } from 'src/app/services/tutorial/tutorial.service';
+import { LayeredDisplayComponent } from '../displays/layered-method/layered-display/layered-display.component';
 
 @Component({
   selector: 'app-holodisplay',
   standalone: true,
-  imports: [CommonModule, SettingsComponent, StandardDisplayComponent, FormsModule],
+  imports: [CommonModule, SettingsComponent, StandardDisplayComponent, LayeredDisplayComponent, FormsModule],
   templateUrl: './holodisplay.component.html',
   styleUrls: ['./holodisplay.component.scss']
 })
@@ -25,7 +26,8 @@ export class HoloDisplayComponent {
   doCalculation$ = new Subject<void>();
 
   readonly displayMethods: {name: string, component: any}[] = [
-    { name: 'Standard Method', component: StandardDisplayComponent }
+    { name: 'Standard Method', component: StandardDisplayComponent },
+    { name: 'Layered Method', component: LayeredDisplayComponent }
   ]
 
   constructor(public language: LanguageService, private tutorial: TutorialService) {
