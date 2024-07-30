@@ -7,8 +7,24 @@
             "name": "default-image.png",
             "src": "https://hologram.kgabriel.dev/en-US/assets/images/default-image.png",
             "mimeType": "image/png",
-            "layer": 1,
+            "layer": 0,
             "scalingFactor": 100,
+            "position": 0,
+            "flips": {
+                "v": false,
+                "h": false
+            },
+            "rotation": 0,
+            "brightness": 100,
+            "metaData": {},
+            "framerate": 0
+        },
+        {
+            "name": "default-image.png",
+            "src": "https://hologram.kgabriel.dev/en-US/assets/images/default-image.png",
+            "mimeType": "image/png",
+            "layer": 1,
+            "scalingFactor": 50,
             "position": 0,
             "flips": {
                 "v": false,

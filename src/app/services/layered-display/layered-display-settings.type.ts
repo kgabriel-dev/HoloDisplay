@@ -26,7 +26,7 @@ export type LayeredDisplayFileSettings = {
         scaled: HTMLImageElement[];
         currentFileIndex: number;
     };
-    src?: string;
+    src: string;
     layer: number;
 }
 
