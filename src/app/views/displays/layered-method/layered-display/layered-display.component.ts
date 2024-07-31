@@ -43,10 +43,10 @@ export class LayeredDisplayComponent implements AfterViewInit {
   onCanvasResize(): void {
     this.recalculateValues(this.settingsBroker.getSettings().generalSettings);
 
-    this.displayCanvas.nativeElement.width = this.container.nativeElement.clientWidth;
-    this.displayCanvas.nativeElement.height = this.container.nativeElement.clientHeight;
-    this.displayCanvas.nativeElement.style.width = `${this.container.nativeElement.clientWidth}px`;
-    this.displayCanvas.nativeElement.style.height = `${this.container.nativeElement.clientHeight}px`;
+    this.displayCanvas.nativeElement.width = window.innerWidth;
+    this.displayCanvas.nativeElement.height = window.innerHeight;
+    this.displayCanvas.nativeElement.style.width = `${window.innerWidth}px`;
+    this.displayCanvas.nativeElement.style.height = `${window.innerHeight}px`;
 
     this.requestDraw$.next();
   }
