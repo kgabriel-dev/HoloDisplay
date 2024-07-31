@@ -65,7 +65,7 @@ export class LayeredDisplayComponent implements AfterViewInit {
   private updateImageSettings(settings: LayeredDisplaySettings): void {
     settings.fileSettings.forEach((file) => {
       // check if the file needs to be loaded/configured
-      if(!this.lastSettings?.fileSettings.find((f) => f.unique_id == file.unique_id)) { // the file needs to be loaded
+      if(!this.lastSettings?.fileSettings.some((f) => f.unique_id == file.unique_id) || file.files.original.length == 0) { // the file needs to be loaded
         if(file.fps) window.clearInterval(file.fps.intervalId);
 
         // the file is a gif
@@ -220,9 +220,10 @@ export class LayeredDisplayComponent implements AfterViewInit {
                   return;
 
                 updatedSettings.fileSettings.find((f) => f.unique_id == file.unique_id)!.metaData[MetaDataKeys.LOADING_PROGRESS] = $localize`${framesExtracted} of ${totalFrames} frames`;
-                console.log(`Extracted ${framesExtracted} of ${totalFrames} frames`);
               }
             }).then((frames: { offset: number, image: string }[]) => {
+              if(file.fps) window.clearInterval(file.fps.intervalId);
+              
               const updatedSettings = this.settingsBroker.getSettings();
               const updatedFile = updatedSettings.fileSettings.find((f) => f.unique_id == file.unique_id);
 
@@ -245,13 +246,12 @@ export class LayeredDisplayComponent implements AfterViewInit {
                   delete file.metaData[MetaDataKeys.LOADING_PROGRESS];
                   file.files.original = videoImages;
                   file.files.currentFileIndex = 0;
-    
-                  if(file.fps)
-                    window.clearInterval(file.fps.intervalId);
 
                   const framerate = file.fps?.framerate || 30;
     
                   this.scaleImagesFromFileSetting([file]).then(() => {
+                    if(file.fps) window.clearInterval(file.fps.intervalId);
+
                     file.fps = {
                       framerate,
                       intervalId: window.setInterval(() => {
@@ -292,6 +292,107 @@ export class LayeredDisplayComponent implements AfterViewInit {
               });
             });
           }
+        }
+      }
+
+      // the file is already loaded and just needs to be updated
+      else {
+        const updatedFile = settings.fileSettings.find((f) => f.unique_id == file.unique_id);
+        const lastFile = this.lastSettings?.fileSettings.find((f) => f.unique_id == file.unique_id);
+
+        if(!updatedFile || !lastFile) {
+          console.error('Failed to find the file in the settings');
+          return;
+        }
+
+        if(lastFile.fps) window.clearInterval(lastFile.fps.intervalId);
+
+        if(updatedFile.mimeType == 'image/gif') {
+          updatedFile.files.currentFileIndex = lastFile.files.currentFileIndex;
+          updatedFile.files.original = lastFile.files.original;
+
+          this.scaleImagesFromFileSetting([updatedFile]).then(() => {
+            const updatedSettings = this.settingsBroker.getSettings();
+            const updatedFileIndex = updatedSettings.fileSettings.findIndex((f) => f.unique_id == updatedFile.unique_id);
+
+            if(updatedFileIndex == -1) {
+              console.error('Failed to find the file in the settings');
+              return;
+            }
+
+            updatedSettings.fileSettings[updatedFileIndex] = updatedFile;
+
+            updatedSettings.fileSettings[updatedFileIndex].fps = {
+              framerate: updatedFile.fps?.framerate || 10,
+              intervalId: window.setInterval(() => {
+                const updatedSettings = this.settingsBroker.getSettings();
+
+                if(updatedSettings.fileSettings.findIndex((f) => f.unique_id == updatedFile.unique_id) == -1) return;
+
+                const upToDateFile = updatedSettings.fileSettings.find((f) => f.unique_id == updatedFile.unique_id)!;
+
+                upToDateFile.files.currentFileIndex = (upToDateFile.files.currentFileIndex + 1) % upToDateFile.files.original.length;
+
+                this.requestDraw$.next();
+              }, 1000/(updatedFile.fps?.framerate || 10))
+            }
+
+            this.settingsBroker.updateSettings(updatedSettings, this.MY_SETTINGS_BROKER_ID);
+            this.requestDraw$.next();
+          });
+        }
+
+        else if(updatedFile.mimeType.startsWith('image')) {
+          updatedFile.files.currentFileIndex = lastFile.files.currentFileIndex;
+          updatedFile.files.original = lastFile.files.original;
+          
+          this.scaleImagesFromFileSetting([lastFile]).then(() => {
+            const updatedSettings = this.settingsBroker.getSettings();
+            const updatedFileIndex = updatedSettings.fileSettings.findIndex((f) => f.unique_id == updatedFile.unique_id);
+
+            if(updatedFileIndex == -1) {
+              console.error('Failed to find the file in the settings');
+              return;
+            }
+
+            updatedSettings.fileSettings[updatedFileIndex] = updatedFile;
+            this.settingsBroker.updateSettings(updatedSettings, this.MY_SETTINGS_BROKER_ID);
+            this.requestDraw$.next();
+          });
+        }
+
+        else if(updatedFile.mimeType.startsWith('video')) {
+          updatedFile.files.currentFileIndex = lastFile.files.currentFileIndex;
+          updatedFile.files.original = lastFile.files.original;
+          
+          this.scaleImagesFromFileSetting([updatedFile]).then(() => {
+            const updatedSettings = this.settingsBroker.getSettings();
+            const updatedFileIndex = updatedSettings.fileSettings.findIndex((f) => f.unique_id == updatedFile.unique_id);
+
+            if(updatedFileIndex == -1) {
+              console.error('Failed to find the file in the settings');
+              return;
+            }
+
+            updatedSettings.fileSettings[updatedFileIndex] = updatedFile;
+
+            updatedSettings.fileSettings[updatedFileIndex].fps = {
+              framerate: updatedFile.fps?.framerate || 30,
+              intervalId: window.setInterval(() => {
+                const updatedSettings = this.settingsBroker.getSettings();
+
+                if(updatedSettings.fileSettings.findIndex((f) => f.unique_id == updatedFile.unique_id) == -1) return;
+
+                const upToDateFile = updatedSettings.fileSettings.find((f) => f.unique_id == updatedFile.unique_id)!;
+                upToDateFile.files.currentFileIndex = (upToDateFile.files.currentFileIndex + 1) % upToDateFile.files.original.length;
+
+                this.requestDraw$.next();
+              }, 1000/(updatedFile.fps?.framerate || 30))
+            }
+
+            this.settingsBroker.updateSettings(updatedSettings, this.MY_SETTINGS_BROKER_ID);
+            this.requestDraw$.next();
+          });
         }
       }
     });
@@ -405,20 +506,27 @@ export class LayeredDisplayComponent implements AfterViewInit {
       ctx.restore();
       ctx.save();
 
-      ctx.translate(i * layerSize, 0);
+      ctx.translate(i * layerSize , 0);
 
       ctx.beginPath();
       ctx.rect(0, 0, layerSize, canvas.height);
       ctx.clip();
 
+      ctx.translate(layerSize/2, canvas.height/2);
+
       ctx.rotate(Math.PI / 2);
+
+      // apply image transformations
+      ctx.rotate(layerFile.rotation * Math.PI / 180); // image rotation
+      ctx.scale(layerFile.flips.v ? -1 : 1, layerFile.flips.h ? -1 : 1); // image flips (h and v are swapped because of the rotation)
+      ctx.filter = `brightness(${layerFile.brightness}%)`; // image brightness
 
       ctx.drawImage(
         image,
-        canvas.height/2 - (image.width/2 * (layerFile.scalingFactor/100)),
-        -layerSize/2 - (image.height/2 * (layerFile.scalingFactor/100)),
-        image.width * (layerFile.scalingFactor/100),
-        image.height * (layerFile.scalingFactor/100)
+        -image.width/2,
+        -image.height/2,
+        image.width,
+        image.height
       );
     }
 
