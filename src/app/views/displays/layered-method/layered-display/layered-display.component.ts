@@ -517,6 +517,7 @@ export class LayeredDisplayComponent implements AfterViewInit {
       ctx.rotate(Math.PI / 2);
 
       // apply image transformations
+      ctx.translate(0, -layerFile.position) // image position/offset
       ctx.rotate(layerFile.rotation * Math.PI / 180); // image rotation
       ctx.scale(layerFile.flips.v ? -1 : 1, layerFile.flips.h ? -1 : 1); // image flips (h and v are swapped because of the rotation)
       ctx.filter = `brightness(${layerFile.brightness}%)`; // image brightness
