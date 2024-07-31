@@ -10,8 +10,8 @@ import { LayeredDisplayFileSettings, LayeredDisplayGeneralSettings, LayeredDispl
   templateUrl: './layered-display.component.html',
   styleUrls: ['./layered-display.component.scss']
 })
-export class LayeredDisplayComponent implements AfterViewInit {
-  @Input() resizeEvent$ = fromEvent(window, 'resize');
+export class LayeredDisplayComponent implements OnInit, AfterViewInit {
+  @Input() resizeEvent$!: Observable<Event>;
 
   private readonly requestDraw$ = new Subject<void>();
   private readonly MY_SETTINGS_BROKER_ID = "LayeredDisplayComponent";
@@ -37,7 +37,10 @@ export class LayeredDisplayComponent implements AfterViewInit {
     });
 
     this.requestDraw$.subscribe(() => this.draw());
-    this.resizeEvent$.pipe(debounceTime(100)).subscribe(() => this.onCanvasResize());
+  }
+
+  ngOnInit(): void {
+    this.resizeEvent$.pipe(debounceTime(100)).subscribe((event) => this.onCanvasResize((event.target as Window).innerWidth, (event.target as Window).innerHeight));
   }
 
   ngAfterViewInit(): void {
@@ -47,13 +50,13 @@ export class LayeredDisplayComponent implements AfterViewInit {
     // TODO: Start the tutorial
   }
 
-  onCanvasResize(): void {
+  onCanvasResize(width=window.innerWidth, height=window.innerHeight): void {
     this.recalculateValues(this.settingsBroker.getSettings().generalSettings);
 
-    this.displayCanvas.nativeElement.width = window.innerWidth;
-    this.displayCanvas.nativeElement.height = window.innerHeight;
-    this.displayCanvas.nativeElement.style.width = `${window.innerWidth}px`;
-    this.displayCanvas.nativeElement.style.height = `${window.innerHeight}px`;
+    this.displayCanvas.nativeElement.width = width;
+    this.displayCanvas.nativeElement.height = height;
+    this.displayCanvas.nativeElement.style.width = `${width}px`;
+    this.displayCanvas.nativeElement.style.height = `${height}px`;
 
     this.requestDraw$.next();
   }
