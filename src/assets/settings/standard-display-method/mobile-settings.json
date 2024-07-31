@@ -5,7 +5,7 @@
   },
   "fileSettings": [
     {
-      "src": "https://hologram.kgabriel.dev/en-US/assets/images/default-image.png",
+      "src": "assets/images/standard-display-method/default-image.png",
       "fileName": "default-image.png",
       "mimeType": "image/png",
       "displayIndex": 0,

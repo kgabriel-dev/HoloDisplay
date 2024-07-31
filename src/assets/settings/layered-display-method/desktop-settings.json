@@ -1,29 +1,13 @@
 {
     "generalSettings": {
-        "numberOfLayers": 3
+        "numberOfLayers": 2
     },
     "fileSettings": [
         {
-            "name": "default-image.png",
-            "src": "assets/images/duck.gif",
-            "mimeType": "image/gif",
-            "layer": 0,
-            "scalingFactor": 30,
-            "position": 0,
-            "flips": {
-                "v": false,
-                "h": false
-            },
-            "rotation": 0,
-            "brightness": 100,
-            "metaData": {},
-            "framerate": 0
-        },
-        {
-            "name": "default-image.png",
-            "src": "assets/images/default-image.png",
+            "name": "foreground.png",
+            "src": "assets/images/layered-display-method/foreground.png",
             "mimeType": "image/png",
-            "layer": 1,
+            "layer": 0,
             "scalingFactor": 50,
             "position": 0,
             "flips": {
@@ -31,15 +15,15 @@
                 "h": false
             },
             "rotation": 0,
-            "brightness": 100,
+            "brightness": 70,
             "metaData": {},
             "framerate": 0
         },
         {
-            "name": "default-image.png",
-            "src": "assets/images/duck.mp4",
-            "mimeType": "video/mp4",
-            "layer": 2,
+            "name": "background.png",
+            "src": "assets/images/layered-display-method/background.png",
+            "mimeType": "image/png",
+            "layer": 1,
             "scalingFactor": 50,
             "position": 0,
             "flips": {
