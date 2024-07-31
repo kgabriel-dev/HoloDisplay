@@ -201,7 +201,7 @@ export class LayeredDisplaySettingsComponent {
     const settings = this.settingsBroker.getSettings();
     const value = Number.parseInt((event.currentTarget as HTMLInputElement).value);
     
-    if(key == "NumberOfSides") {
+    if(key == "NumberOfLayers") {
       settings.generalSettings.numberOfLayers = value;
       this.settingsBroker.updateSettings(settings, this.MY_SETTINGS_BROKER_ID);
     }
