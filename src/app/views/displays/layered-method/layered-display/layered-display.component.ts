@@ -16,15 +16,22 @@ export class LayeredDisplayComponent implements AfterViewInit {
   private readonly requestDraw$ = new Subject<void>();
   private readonly MY_SETTINGS_BROKER_ID = "LayeredDisplayComponent";
 
+  private lastSettings?: LayeredDisplaySettings;
+
   @ViewChild('displayCanvas') displayCanvas!: ElementRef<HTMLCanvasElement>;
   @ViewChild('container') container!: ElementRef<HTMLDivElement>;
 
   constructor(private settingsBroker: LayeredDisplaySettingsBrokerService) {
     settingsBroker.settings$.subscribe(({settings, changedBy}) => {
-      if(changedBy == this.MY_SETTINGS_BROKER_ID) return;
+      if(changedBy == this.MY_SETTINGS_BROKER_ID) {
+        this.lastSettings = settings;
+        return;
+      }
 
       this.recalculateValues(settings.generalSettings);
       this.updateImageSettings(settings);
+
+      this.lastSettings = settings;
 
       this.requestDraw$.next();
     });
@@ -58,7 +65,7 @@ export class LayeredDisplayComponent implements AfterViewInit {
   private updateImageSettings(settings: LayeredDisplaySettings): void {
     settings.fileSettings.forEach((file) => {
       // check if the file needs to be loaded/configured
-      if(file.files.original.length == 0) { // the file needs to be loaded
+      if(!this.lastSettings?.fileSettings.find((f) => f.unique_id == file.unique_id)) { // the file needs to be loaded
         if(file.fps) window.clearInterval(file.fps.intervalId);
 
         // the file is a gif
@@ -289,6 +296,14 @@ export class LayeredDisplayComponent implements AfterViewInit {
       }
     });
 
+    // remove all files that are not in the latest settings anymore
+    this.lastSettings?.fileSettings.forEach((file) => {
+      if(!settings.fileSettings.some((f) => f.unique_id == file.unique_id)) {
+        if(file.fps)
+          window.clearInterval(file.fps.intervalId);
+      }
+    });
+
     this.requestDraw$.next();
   }
 
@@ -400,10 +415,10 @@ export class LayeredDisplayComponent implements AfterViewInit {
 
       ctx.drawImage(
         image,
-        canvas.height/2 - image.width/2,
-        -layerSize/2 - image.height/2,
-        image.width,
-        image.height
+        canvas.height/2 - (image.width/2 * (layerFile.scalingFactor/100)),
+        -layerSize/2 - (image.height/2 * (layerFile.scalingFactor/100)),
+        image.width * (layerFile.scalingFactor/100),
+        image.height * (layerFile.scalingFactor/100)
       );
     }
 

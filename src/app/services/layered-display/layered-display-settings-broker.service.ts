@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { LayeredDisplaySettings } from './layered-display-settings.type';
+import { LayeredDisplayFileSettings, LayeredDisplaySettings } from './layered-display-settings.type';
 import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
@@ -66,6 +66,52 @@ export class LayeredDisplaySettingsBrokerService {
       const nextId = Math.max(...unknownIds, 0) + 1;
 
       return `error-${nextId}`;
+    }
+  }
+
+  public restoreLayerOrderConsistency(fileSettings: LayeredDisplayFileSettings[]): LayeredDisplayFileSettings[] {
+    const settings = this.getSettings();
+
+    const filesSortedByDisplayIndex = fileSettings.sort((a, b) => a.layer - b.layer);
+
+    let currentIndex = 0;
+    
+    filesSortedByDisplayIndex.forEach((fileSetting) => {
+      fileSetting.layer = currentIndex;
+      currentIndex++;
+    });
+
+    return fileSettings;
+  }
+
+  public fillMissingFileValues(fileSetting: Partial<LayeredDisplayFileSettings>): LayeredDisplayFileSettings {
+    const currSettings = this.getSettings();
+
+    // function to get the next free layer
+    const getNextFreeLayer = () => {
+      let layer = 0;
+      while(currSettings.fileSettings.some((fileSetting) => fileSetting.layer === layer))
+        layer++;
+      return layer;
+    }
+
+    // get the unique id
+    const unique_id = fileSetting.unique_id || this.generateUniqueId(fileSetting.mimeType || '', currSettings.fileSettings);
+
+    return {
+      brightness: fileSetting.brightness || 100,
+      fileName: fileSetting.fileName || unique_id,
+      files: fileSetting.files || { original: [] as HTMLImageElement[], scaled: [] as HTMLImageElement[], currentFileIndex: 0 },
+      flips: fileSetting.flips || { v: false, h: false },
+      layer: fileSetting.layer != undefined ? fileSetting.layer : getNextFreeLayer(),
+      metaData: fileSetting.metaData || {},
+      mimeType: fileSetting.mimeType || 'unknown',
+      position: fileSetting.position || 0,
+      rotation: fileSetting.rotation || 0,
+      scalingFactor: fileSetting.scalingFactor || 100,
+      src: fileSetting.src || '',
+      unique_id,
+      fps: fileSetting.fps
     }
   }
 }

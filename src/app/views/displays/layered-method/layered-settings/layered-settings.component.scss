@@ -1,0 +1,19 @@
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    display: none;
+}
+
+.icon-button-fill svg {
+    --svg-color: #fff !important;
+    fill: var(--svg-color) !important;
+}
+
+.icon-button-stroke svg {
+    --svg-color: #ffff !important;
+    stroke: var(--svg-color) !important;
+    fill: none !important;
+}
+
+button {
+    vertical-align: middle;
+}
