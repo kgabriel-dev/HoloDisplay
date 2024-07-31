@@ -122,19 +122,19 @@
 
     <div class="flex flex-col rounded-xl overflow-hidden border-4">
         <div class="bg-cyan-800 p-3">
-            <h1 class="font-medium text-lg" i18n>Number of sides / images</h1>
+            <h1 class="font-medium text-lg" i18n>Number of layers / images</h1>
         </div>
         <div class="px-5 grow bg-cyan-700 border-y-2">
-            <p class="my-5" i18n>With this setting you can adjust the number of sides the polygon has.</p>
-            <p class="my-5" i18n>Each side displays an image. The number should be between 3 and 10.</p>
-            <p class="my-5" i18n>You can use as many images as the polygon has sides. If you use fewer images, the images will be repeated.</p>
+            <p class="my-5" i18n>With this setting you can adjust the number of layers.</p>
+            <p class="my-5" i18n>Each layer displays one image.</p>
+            <p class="my-5" i18n>You can use as many images as there are layers. If you use less images, the last layers will stay empty.</p>
         </div>
         <div class="p-5 bg-cyan-700 ">
             <input type="range" min="1" max="6" [value]="lastUpdatedSettings?.generalSettings?.numberOfLayers || 1" (input)="updateSettingsAttribute($event, 'NumberOfLayers')" class="form-range h-5 w-3/5 rounded-lg cursor-pointer mx-3">
             
             <span class="border-2 rounded w-1/5 inline-block mx-3">
                 <input type="number" [value]="lastUpdatedSettings?.generalSettings?.numberOfLayers || 1" (input)="updateSettingsAttribute($event, 'NumberOfLayers')" class="text-white text-left appearance-none bg-inherit w-1/3 shrink h-5">
-                <span class="w-6" i18n>Sides</span>
+                <span class="w-6" i18n>Layers</span>
             </span>
         </div>
     </div>
