@@ -27,29 +27,45 @@ export class LayeredDisplaySettingsBrokerService {
     return this.settingsSubject.value.settings;
   }
 
-  public generateUniqueId(mimeType: string): string {
-    const settings = this.getSettings();
-
+  public generateUniqueId(mimeType: string, fileSettings=this.getSettings().fileSettings): string {
     if(mimeType === 'image/gif') {
-      // count all the gifs
-      const gifCount = settings.fileSettings.filter((f) => f.mimeType === 'image/gif').length || 0;
-      return `gif-${gifCount}`;
+      // get all unique ids for gifs
+      const gifIds = fileSettings.filter((f) => f.unique_id.startsWith('gif')).map((f) => parseInt(f.unique_id.split('-')[1]));
+
+      // get the next unique id
+      const nextId = Math.max(...gifIds, 0) + 1;
+
+      return `gif-${nextId}`;
     }
 
     else if(mimeType.startsWith('image')) {
-      // count all the images
-      const imageCount = settings.fileSettings.filter((f) => f.mimeType.startsWith('image')).length || 0;
-      return `img-${imageCount}`;
+      // get all unique ids for images
+      const imageIds = fileSettings.filter((f) => f.unique_id.startsWith('img')).map((f) => parseInt(f.unique_id.split('-')[1]));
+
+      // get the next unique id
+      const nextId = Math.max(...imageIds, 0) + 1;
+
+      return `img-${nextId}`;
     }
 
     else if(mimeType.startsWith('video')) {
-      // count all the videos
-      const videoCount = settings.fileSettings.filter((f) => f.mimeType.startsWith('video')).length || 0;
-      return `vid-${videoCount}`;
+      // get all unique ids for videos
+      const videoIds = fileSettings.filter((f) => f.unique_id.startsWith('video')).map((f) => parseInt(f.unique_id.split('-')[1]));
+
+      // get the next unique id
+      const nextId = Math.max(...videoIds, 0) + 1;
+
+      return `video-${nextId}`;
     }
 
-    // return an error id
-    const errorCount = settings.fileSettings.filter((f) => f.unique_id.startsWith('error')).length || 0;
-    return `error-${errorCount}`;
+    else {
+      // get all unique ids for unknown files
+      const unknownIds = fileSettings.filter((f) => f.unique_id.startsWith('error')).map((f) => parseInt(f.unique_id.split('-')[1]));
+
+      // get the next unique id
+      const nextId = Math.max(...unknownIds, 0) + 1;
+
+      return `error-${nextId}`;
+    }
   }
 }

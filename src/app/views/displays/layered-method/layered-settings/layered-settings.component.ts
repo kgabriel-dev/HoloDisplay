@@ -57,11 +57,13 @@ export class LayeredDisplaySettingsComponent {
             currentFileIndex: 0
           },
           src: file.src,
-          unique_id: this.settingsBroker.generateUniqueId(file.mimeType)
+          unique_id: 'REPLACE_ME'
       }))
     };
 
-    console.log(settings);
+    settings.fileSettings.forEach((fileSetting) => {
+      fileSetting.unique_id = this.settingsBroker.generateUniqueId(fileSetting.mimeType, settings.fileSettings);
+    });
 
     this.settingsBroker.updateSettings(settings, this.MY_SETTINGS_BROKER_ID);
   }

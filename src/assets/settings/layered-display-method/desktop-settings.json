@@ -5,10 +5,10 @@
     "fileSettings": [
         {
             "name": "default-image.png",
-            "src": "https://hologram.kgabriel.dev/en-US/assets/images/default-image.png",
-            "mimeType": "image/png",
+            "src": "assets/images/duck.gif",
+            "mimeType": "image/gif",
             "layer": 0,
-            "scalingFactor": 100,
+            "scalingFactor": 30,
             "position": 0,
             "flips": {
                 "v": false,
@@ -21,9 +21,25 @@
         },
         {
             "name": "default-image.png",
-            "src": "https://hologram.kgabriel.dev/en-US/assets/images/default-image.png",
+            "src": "assets/images/default-image.png",
             "mimeType": "image/png",
             "layer": 1,
+            "scalingFactor": 50,
+            "position": 0,
+            "flips": {
+                "v": false,
+                "h": false
+            },
+            "rotation": 0,
+            "brightness": 100,
+            "metaData": {},
+            "framerate": 0
+        },
+        {
+            "name": "default-image.png",
+            "src": "assets/images/duck.mp4",
+            "mimeType": "video/mp4",
+            "layer": 2,
             "scalingFactor": 50,
             "position": 0,
             "flips": {
