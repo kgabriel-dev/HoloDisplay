@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { debounceTime, fromEvent, map, Subject } from 'rxjs';
 import { StandardDisplaySettingsComponent } from '../displays/standard-method/standard-settings/standard-settings.component';
@@ -8,6 +8,7 @@ import { LanguageService } from 'src/app/services/i18n/language.service';
 import { TutorialService } from 'src/app/services/tutorial/tutorial.service';
 import { LayeredDisplayComponent } from '../displays/layered-method/layered-display/layered-display.component';
 import { LayeredDisplaySettingsComponent } from '../displays/layered-method/layered-settings/layered-settings.component';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-holodisplay',
@@ -23,7 +24,7 @@ import { LayeredDisplaySettingsComponent } from '../displays/layered-method/laye
   templateUrl: './holodisplay.component.html',
   styleUrls: ['./holodisplay.component.scss']
 })
-export class HoloDisplayComponent {
+export class HoloDisplayComponent implements OnInit {
   selectedDisplayMethodId = 'StandardDisplayMethod';
 
   iconsVisible = false;
@@ -38,7 +39,12 @@ export class HoloDisplayComponent {
     { name: $localize`Layered Display Method`, component: LayeredDisplayComponent, id: 'LayeredDisplayMethod' }
   ]
 
-  constructor(public language: LanguageService, private tutorial: TutorialService) {
+  constructor(
+    public language: LanguageService,
+    private tutorial: TutorialService,
+    private route: ActivatedRoute,
+    private router: Router
+  ) {
     this.mouseMoving$.pipe(
       map(() => this.iconsVisible = true),
       debounceTime(2000),
@@ -57,6 +63,24 @@ export class HoloDisplayComponent {
     });
 
     this.resizeEvent$ = new Subject<Event>();
+  }
+
+  ngOnInit(): void {
+    const queryParams = this.route.snapshot.queryParams;
+
+    if(queryParams['displayMethod']) {
+      const allDisplayMethods = this.displayMethods.map(dm => dm.id);
+
+      if(allDisplayMethods.includes(queryParams['displayMethod']))
+        this.selectedDisplayMethodId = queryParams['displayMethod'];
+      else {
+        console.error(`Invalid display method: ${queryParams['displayMethod']}`);
+        this.router.navigate([], {
+          queryParams: { displayMethod: this.selectedDisplayMethodId },
+          queryParamsHandling: 'merge'
+        });
+      }
+    }
   }
 
   onResize(event: Event) {
@@ -92,5 +116,13 @@ export class HoloDisplayComponent {
     } else {
       document.documentElement.requestFullscreen();
     }
+  }
+
+  updateQueryParams(key: string, value: string) {
+    console.log(`Updating query params: ${key}=${value}`);
+    this.router.navigate([], {
+      queryParams: { [key]: value },
+      queryParamsHandling: 'merge'
+    });
   }
 }
