@@ -393,7 +393,7 @@ export class LayeredDisplaySettingsComponent {
     this.settingsBroker.updateSettings(settings, this.MY_SETTINGS_BROKER_ID);
   }
 
-  changeImageBrightness(imageIndex: number) {
+  changeImageBrightness(imageIndex: number, action: 'brighter' | 'darker'): void {
     const settings = this.settingsBroker.getSettings();
     const image = settings.fileSettings[imageIndex];
 
@@ -403,7 +403,7 @@ export class LayeredDisplaySettingsComponent {
     }
 
     const oldValue = image.brightness;
-    let newValue = oldValue + this.BRIGHTNESS_STEP_SIZE;
+    let newValue = oldValue + this.BRIGHTNESS_STEP_SIZE * (action === 'brighter' ? 1 : -1);
 
     if(newValue < 0) newValue = 0;
 
