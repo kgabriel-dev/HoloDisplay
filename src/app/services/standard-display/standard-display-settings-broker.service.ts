@@ -57,29 +57,8 @@ export class StandardDisplaySettingsBrokerService {
   }
 
   public generateUniqueId(mimeType: string): string {
-    const settings = this.getSettings();
-
-    if(mimeType === 'image/gif') {
-      // count all the gifs
-      const gifCount = settings.fileSettings.filter((f) => f.mimeType === 'image/gif').length || 0;
-      return `gif-${gifCount}`;
-    }
-
-    else if(mimeType.startsWith('image')) {
-      // count all the images
-      const imageCount = settings.fileSettings.filter((f) => f.mimeType.startsWith('image')).length || 0;
-      return `img-${imageCount}`;
-    }
-
-    else if(mimeType.startsWith('video')) {
-      // count all the videos
-      const videoCount = settings.fileSettings.filter((f) => f.mimeType.startsWith('video')).length || 0;
-      return `vid-${videoCount}`;
-    }
-
-    // return an error id
-    const errorCount = settings.fileSettings.filter((f) => f.unique_id.startsWith('error')).length || 0;
-    return `error-${errorCount}`;
+    const fileSettings = this.getSettings().fileSettings;
+    return `${mimeType || 'unknown'}-${fileSettings.length > 0 ? fileSettings.length : 0}-${Math.floor(Math.random() * 1000000)}`;
   }
 
   public restoreDisplayIndexConsistency(fileSettings: StandardDisplayFileSettings[]): StandardDisplayFileSettings[] {
