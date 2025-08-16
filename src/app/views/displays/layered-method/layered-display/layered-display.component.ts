@@ -131,7 +131,7 @@ export class LayeredDisplayComponent implements OnInit, AfterViewInit {
                     this.requestDraw$.next();
                   });
                 }
-              });
+              }, 100);
 
               // load the images
               gifFrames.forEach((frame) => {
@@ -340,6 +340,9 @@ export class LayeredDisplayComponent implements OnInit, AfterViewInit {
 
             updatedSettings.fileSettings[updatedFileIndex] = updatedFile;
 
+            if(updatedFile.fps)
+              window.clearInterval(updatedFile.fps.intervalId);
+
             updatedSettings.fileSettings[updatedFileIndex].fps = {
               framerate: updatedFile.fps?.framerate || 10,
               intervalId: window.setInterval(() => {
@@ -401,6 +404,9 @@ export class LayeredDisplayComponent implements OnInit, AfterViewInit {
             }
 
             updatedSettings.fileSettings[updatedFileIndex] = updatedFile;
+
+            if(updatedFile.fps)
+              window.clearInterval(updatedFile.fps.intervalId);
 
             updatedSettings.fileSettings[updatedFileIndex].fps = {
               framerate: updatedFile.fps?.framerate || 30,
