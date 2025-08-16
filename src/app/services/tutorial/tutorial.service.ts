@@ -52,6 +52,10 @@ export class TutorialService {
       case 'standardDisplay':
         this.loadStandardDisplayTutorial();
         break;
+
+      case 'layeredDisplay':
+        this.doLayeredDisplayTutorial();
+        break;
     }
 
     this.tutorialEvents.next('start');
@@ -134,7 +138,7 @@ export class TutorialService {
           on: 'bottom'
         },
         title: $localize`Display methods`,
-        text: [$localize`Later, you can choose between different display methods here.`],
+        text: [$localize`Here you can choose between different display methods.`],
         canClickTarget: false
       },
       {
@@ -145,6 +149,141 @@ export class TutorialService {
         },
         title: $localize`Calculator`,
         text: [$localize`This button opens the calculator. It helps you to build everything you need to display a hologram.`],
+        canClickTarget: false
+      },
+      {
+        id: 'fullscreen',
+        attachTo: {
+          element: '#fullscreenToggleButton',
+          on: 'top'
+        },
+        title: $localize`Fullscreen`,
+        text: [$localize`This button toggles the fullscreen mode. In fullscreen mode, the application will use the whole screen, hiding the browser's address bar and other elements.`],
+        canClickTarget: false
+      },
+      {
+        id: 'imprint',
+        attachTo: {
+          element: '#imprintButton',
+          on: 'top'
+        },
+        title: $localize`Imprint`,
+        text: [$localize`This button opens the imprint containing some legal information about this page.`],
+        canClickTarget: false
+      },
+      {
+        id: 'github',
+        attachTo: {
+          element: '#githubButton',
+          on: 'top'
+        },
+        title: $localize`GitHub`,
+        text: [$localize`This button opens the GitHub page of this project. Here you can find some help, the source code and more.<br><br>If you want to, you can help me to improve this project by contributing to it there.`],
+        canClickTarget: false
+      },
+      {
+        id: 'finished',
+        attachTo: {
+          element: '#displayCanvas',
+          on: 'top'
+        },
+        buttons: this.getButtons([this.BUTTONS.back, this.BUTTONS.finish]),
+        title: $localize`Finished!`,
+        text: [$localize`You have finished the tutorial. I hope you enjoy creating holograms!`],
+        canClickTarget: false
+      }
+    ])
+  }
+
+  private doLayeredDisplayTutorial() {
+    this.shepherd.addSteps([
+      {
+        id: 'welcome',
+        attachTo: {
+          element: '#displayCanvas',
+          on: 'top'
+        },
+        buttons: this.getButtons([this.BUTTONS.exit, this.BUTTONS.next]),
+        title: $localize`Welcome to the tutorial!`,
+        text: [$localize`This is a tutorial to help you get started with the application.`],
+        canClickTarget: false
+      },
+      {
+        id: 'settings',
+        attachTo: {
+          element: '#settingsButton',
+          on: 'bottom'
+        },
+        title: $localize`Settings`,
+        text: [$localize`Click this button to open the settings menu.`],
+        beforeShowPromise: () => {
+          // make sure the buttons are shown
+          return new Promise<void>(async (resolve) => {
+            // preperations to later make sure the buttons are shown
+            let buttonsShown = false;
+            this.tutorialEvents.subscribe((event) => {
+              if(event === 'showButtons') buttonsShown = true;
+            });
+
+            // tell the component to show the buttons
+            this.tutorialEvents.next('showButtons');
+
+            // now make sure the buttons are shown
+            do await new Promise((resolve) => setTimeout(resolve, 2)); while(!buttonsShown);
+
+            resolve();
+          });
+        },
+        canClickTarget: false
+      },
+      {
+        id: 'language',
+        attachTo: {
+          element: '#languageButton',
+          on: 'bottom'
+        },
+        title: $localize`Language`,
+        text:[$localize`This buttons lets you change the language.<br><br>Currently, English and German are supported.`],
+        canClickTarget: false
+      },
+      {
+        id: 'tutorial',
+        attachTo: {
+          element: '#tutorialButton',
+          on: 'bottom'
+        },
+        title: $localize`Repeating the tutorial`,
+        text: [$localize`If you want to see this tutorial again, click this button.`],
+        canClickTarget: false
+      },
+      {
+        id: 'methods',
+        attachTo: {
+          element: '#displayMethodSelection',
+          on: 'bottom'
+        },
+        title: $localize`Display methods`,
+        text: [$localize`Here you can choose between different display methods.`],
+        canClickTarget: false
+      },
+      {
+        id: 'calculator',
+        attachTo: {
+          element: '#calculatorButton',
+          on: 'top'
+        },
+        title: $localize`Calculator`,
+        text: [$localize`This button opens the calculator. It helps you to build everything you need to display a hologram.`],
+        canClickTarget: false
+      },
+      {
+        id: 'fullscreen',
+        attachTo: {
+          element: '#fullscreenToggleButton',
+          on: 'top'
+        },
+        title: $localize`Fullscreen`,
+        text: [$localize`This button toggles the fullscreen mode. In fullscreen mode, the application will use the whole screen, hiding the browser's address bar and other elements.`],
         canClickTarget: false
       },
       {
@@ -209,5 +348,5 @@ export class TutorialService {
   }
 }
 
-type TutorialName = 'standardDisplay';
+type TutorialName = 'standardDisplay' | 'layeredDisplay';
 type Button = { text: string, action: 'next' | 'exit' | 'back' }

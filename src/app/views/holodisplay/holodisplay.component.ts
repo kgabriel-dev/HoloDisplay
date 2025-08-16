@@ -100,7 +100,7 @@ export class HoloDisplayComponent implements OnInit {
         break;
 
       case 'LayeredDisplayMethod':
-        // TODO: Implement tutorial for layered display
+        this.tutorial.startTutorial('layeredDisplay');
         break;
     }
   }
