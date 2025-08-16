@@ -599,9 +599,6 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
       this.canvasSize,
     );
 
-    this.calculatorImageWidthPx = canvas?.width || -1;
-    this.calculatorImageHeightPx = canvas?.height || -1;
-
     // download the image from the canvas
     if(canvas) {
       const link = document.createElement('a');

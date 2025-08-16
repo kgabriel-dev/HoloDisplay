@@ -63,7 +63,7 @@
 </div>
 
 <app-display-standard *ngIf="selectedDisplayMethodId === 'StandardDisplayMethod'" [calculate$]="this.doCalculation$.asObservable()" [resizeEvent$]="resizeEvent$.asObservable()" (window:resize)="onResize($event)" class="block w-full h-full bg-blue"></app-display-standard>
-<app-layered-display *ngIf="selectedDisplayMethodId == 'LayeredDisplayMethod'" [resizeEvent$]="resizeEvent$.asObservable()" (window:resize)="onResize($event)"></app-layered-display>
+<app-layered-display *ngIf="selectedDisplayMethodId == 'LayeredDisplayMethod'" [calculate$]="this.doCalculation$.asObservable()" [resizeEvent$]="resizeEvent$.asObservable()" (window:resize)="onResize($event)"></app-layered-display>
 
 <div class="hidden overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none" id="settingsModal">
     <div class="relative w-full md:w-2/3 my-6 mx-auto">

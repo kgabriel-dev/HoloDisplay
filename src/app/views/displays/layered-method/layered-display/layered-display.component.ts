@@ -1,6 +1,8 @@
 import { AfterViewInit, Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { decompressFrames, parseGIF } from 'gifuct-js';
 import { debounceTime, fromEvent, Observable, Subject } from 'rxjs';
+import { LayeredMethodCalculatorService } from 'src/app/services/calculators/layered-method/layered-method-calculator.service';
 import { LayeredDisplaySettingsBrokerService } from 'src/app/services/layered-display/layered-display-settings-broker.service';
 import { LayeredDisplayFileSettings, LayeredDisplayGeneralSettings, LayeredDisplaySettings, MetaDataKeys } from 'src/app/services/layered-display/layered-display-settings.type';
 
@@ -8,10 +10,12 @@ import { LayeredDisplayFileSettings, LayeredDisplayGeneralSettings, LayeredDispl
   selector: 'app-layered-display',
   standalone: true,
   templateUrl: './layered-display.component.html',
-  styleUrls: ['./layered-display.component.scss']
+  styleUrls: ['./layered-display.component.scss'],
+  imports: [FormsModule]
 })
 export class LayeredDisplayComponent implements OnInit, AfterViewInit {
   @Input() resizeEvent$!: Observable<Event>;
+  @Input() calculate$!: Observable<void>;
 
   private readonly requestDraw$ = new Subject<void>();
   private readonly MY_SETTINGS_BROKER_ID = "LayeredDisplayComponent";
@@ -21,7 +25,12 @@ export class LayeredDisplayComponent implements OnInit, AfterViewInit {
   @ViewChild('displayCanvas') displayCanvas!: ElementRef<HTMLCanvasElement>;
   @ViewChild('container') container!: ElementRef<HTMLDivElement>;
 
-  constructor(private settingsBroker: LayeredDisplaySettingsBrokerService) {
+  // variables for the calculator
+  calculatorDPI = 96;
+  calculatorJsPixelRatio = window.devicePixelRatio;
+  calculatorSlope = 45;
+
+  constructor(private settingsBroker: LayeredDisplaySettingsBrokerService, private calculator: LayeredMethodCalculatorService) {
     settingsBroker.settings$.subscribe(({settings, changedBy}) => {
       if(changedBy == this.MY_SETTINGS_BROKER_ID) {
         this.lastSettings = settings;
@@ -41,6 +50,10 @@ export class LayeredDisplayComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     this.resizeEvent$.pipe(debounceTime(100)).subscribe((event) => this.onCanvasResize((event.target as Window).innerWidth, (event.target as Window).innerHeight));
+
+    this.calculate$.subscribe(() => {
+      this.toggleModal('calculatorExtraSettingsModal');
+    });
   }
 
   ngAfterViewInit(): void {
@@ -577,5 +590,32 @@ export class LayeredDisplayComponent implements OnInit, AfterViewInit {
       ctx.lineTo(layerSize * (i+1), canvas.height);
       ctx.stroke();
     }
+  }
+
+  toggleModal(modalId: string): void {
+    if(!document.getElementById(modalId)) return;
+
+    document.getElementById(modalId)!.classList.toggle("hidden");
+  }
+
+  onCalculateClick(): void {
+    const settings = this.settingsBroker.getSettings();
+
+    const canvas = this.calculator.calculateImage(
+      settings.generalSettings.numberOfLayers,
+      this.calculatorSlope,
+      this.displayCanvas.nativeElement.width,
+      this.displayCanvas.nativeElement.height
+    );
+
+    // download the image from the canvas
+    if(canvas) {
+      const link = document.createElement('a');
+      link.download = 'mirror cutting template.png';
+      link.href = canvas.toDataURL();
+      link.click();
+    }
+
+    this.toggleModal('calculatorDownloadModal');
   }
 }
