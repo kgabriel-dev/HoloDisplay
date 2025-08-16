@@ -330,7 +330,7 @@ export class StandardDisplayComponent implements OnInit, AfterViewInit {
 
               // load the images
               gifFrames.forEach((frame) => {
-                let imageData = new ImageData(frame.patch, frame.dims.width, frame.dims.height);
+                let imageData = new ImageData(new Uint8ClampedArray(frame.patch), frame.dims.width, frame.dims.height);
                 let canvas = document.createElement('canvas');
                 canvas.width = frame.dims.width;
                 canvas.height = frame.dims.height;
