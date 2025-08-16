@@ -34,133 +34,227 @@
         <source>Welcome to the tutorial!</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/services/tutorial/tutorial.service.ts</context>
-          <context context-type="linenumber">78</context>
+          <context context-type="linenumber">82</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/services/tutorial/tutorial.service.ts</context>
+          <context context-type="linenumber">207</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1435018901522735944" datatype="html">
         <source>This is a tutorial to help you get started with the application.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/services/tutorial/tutorial.service.ts</context>
-          <context context-type="linenumber">79</context>
+          <context context-type="linenumber">83</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/services/tutorial/tutorial.service.ts</context>
+          <context context-type="linenumber">208</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4930506384627295710" datatype="html">
         <source>Settings</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/services/tutorial/tutorial.service.ts</context>
-          <context context-type="linenumber">88</context>
+          <context context-type="linenumber">92</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/services/tutorial/tutorial.service.ts</context>
+          <context context-type="linenumber">217</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3720221468678045515" datatype="html">
         <source>Click this button to open the settings menu.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/services/tutorial/tutorial.service.ts</context>
-          <context context-type="linenumber">89</context>
+          <context context-type="linenumber">93</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/services/tutorial/tutorial.service.ts</context>
+          <context context-type="linenumber">218</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2826581353496868063" datatype="html">
         <source>Language</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/services/tutorial/tutorial.service.ts</context>
-          <context context-type="linenumber">116</context>
+          <context context-type="linenumber">120</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/services/tutorial/tutorial.service.ts</context>
+          <context context-type="linenumber">245</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1483492340000668371" datatype="html">
         <source>This buttons lets you change the language.&lt;br&gt;&lt;br&gt;Currently, English and German are supported.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/services/tutorial/tutorial.service.ts</context>
-          <context context-type="linenumber">117</context>
+          <context context-type="linenumber">121</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/services/tutorial/tutorial.service.ts</context>
+          <context context-type="linenumber">246</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8852150591681243928" datatype="html">
         <source>Repeating the tutorial</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/services/tutorial/tutorial.service.ts</context>
-          <context context-type="linenumber">126</context>
+          <context context-type="linenumber">130</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/services/tutorial/tutorial.service.ts</context>
+          <context context-type="linenumber">255</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4691350677645820699" datatype="html">
         <source>If you want to see this tutorial again, click this button.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/services/tutorial/tutorial.service.ts</context>
-          <context context-type="linenumber">127</context>
+          <context context-type="linenumber">131</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/services/tutorial/tutorial.service.ts</context>
+          <context context-type="linenumber">256</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6315608776060848688" datatype="html">
         <source>Display methods</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/services/tutorial/tutorial.service.ts</context>
-          <context context-type="linenumber">136</context>
+          <context context-type="linenumber">140</context>
         </context-group>
-      </trans-unit>
-      <trans-unit id="6652128749555741098" datatype="html">
-        <source>Later, you can choose between different display methods here.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/services/tutorial/tutorial.service.ts</context>
-          <context context-type="linenumber">137</context>
+          <context context-type="linenumber">265</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1651504499483014169" datatype="html">
+        <source>Here you can choose between different display methods.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/services/tutorial/tutorial.service.ts</context>
+          <context context-type="linenumber">141</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/services/tutorial/tutorial.service.ts</context>
+          <context context-type="linenumber">266</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4939001214826529053" datatype="html">
         <source>Calculator</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/services/tutorial/tutorial.service.ts</context>
-          <context context-type="linenumber">146</context>
+          <context context-type="linenumber">150</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/services/tutorial/tutorial.service.ts</context>
+          <context context-type="linenumber">275</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6357252501014963046" datatype="html">
         <source>This button opens the calculator. It helps you to build everything you need to display a hologram.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/services/tutorial/tutorial.service.ts</context>
-          <context context-type="linenumber">147</context>
+          <context context-type="linenumber">151</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/services/tutorial/tutorial.service.ts</context>
+          <context context-type="linenumber">276</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="489844404897890427" datatype="html">
+        <source>Fullscreen</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/services/tutorial/tutorial.service.ts</context>
+          <context context-type="linenumber">160</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/services/tutorial/tutorial.service.ts</context>
+          <context context-type="linenumber">285</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1836348510761193303" datatype="html">
+        <source>This button toggles the fullscreen mode. In fullscreen mode, the application will use the whole screen, hiding the browser&apos;s address bar and other elements.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/services/tutorial/tutorial.service.ts</context>
+          <context context-type="linenumber">161</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/services/tutorial/tutorial.service.ts</context>
+          <context context-type="linenumber">286</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5891707175321515013" datatype="html">
         <source>Imprint</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/services/tutorial/tutorial.service.ts</context>
-          <context context-type="linenumber">156</context>
+          <context context-type="linenumber">170</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/services/tutorial/tutorial.service.ts</context>
+          <context context-type="linenumber">295</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8952123720546851302" datatype="html">
         <source>This button opens the imprint containing some legal information about this page.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/services/tutorial/tutorial.service.ts</context>
-          <context context-type="linenumber">157</context>
+          <context context-type="linenumber">171</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/services/tutorial/tutorial.service.ts</context>
+          <context context-type="linenumber">296</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1534029177398918729" datatype="html">
         <source>GitHub</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/services/tutorial/tutorial.service.ts</context>
-          <context context-type="linenumber">166</context>
+          <context context-type="linenumber">180</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/services/tutorial/tutorial.service.ts</context>
+          <context context-type="linenumber">305</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1794258288087557500" datatype="html">
         <source>This button opens the GitHub page of this project. Here you can find some help, the source code and more.&lt;br&gt;&lt;br&gt;If you want to, you can help me to improve this project by contributing to it there.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/services/tutorial/tutorial.service.ts</context>
-          <context context-type="linenumber">167</context>
+          <context context-type="linenumber">181</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/services/tutorial/tutorial.service.ts</context>
+          <context context-type="linenumber">306</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1052447297680426398" datatype="html">
         <source>Finished!</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/services/tutorial/tutorial.service.ts</context>
-          <context context-type="linenumber">177</context>
+          <context context-type="linenumber">191</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/services/tutorial/tutorial.service.ts</context>
+          <context context-type="linenumber">316</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6850517149194345360" datatype="html">
         <source>You have finished the tutorial. I hope you enjoy creating holograms!</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/services/tutorial/tutorial.service.ts</context>
-          <context context-type="linenumber">178</context>
+          <context context-type="linenumber">192</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/services/tutorial/tutorial.service.ts</context>
+          <context context-type="linenumber">317</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7016522512577884431" datatype="html">
         <source><x id="PH" equiv-text="framesExtracted"/> of <x id="PH_1" equiv-text="totalFrames"/> frames</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/views/displays/layered-method/layered-display/layered-display.component.ts</context>
-          <context context-type="linenumber">235</context>
+          <context context-type="linenumber">248</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/views/displays/standard-method/standard-display/standard-display.component.ts</context>
@@ -171,7 +265,7 @@
         <source>Finalizing...</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/views/displays/layered-method/layered-display/layered-display.component.ts</context>
-          <context context-type="linenumber">245</context>
+          <context context-type="linenumber">258</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/views/displays/standard-method/standard-display/standard-display.component.ts</context>
