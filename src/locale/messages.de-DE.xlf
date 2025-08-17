@@ -274,6 +274,154 @@
           <context context-type="linenumber">317</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="7959537768373262543" datatype="html">
+        <source> Extra values used by the calculator </source>
+        <target>Zusätzliche Werte für den Rechner</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/views/displays/layered-method/layered-display/layered-display.component.html</context>
+          <context context-type="linenumber">11,13</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/views/displays/standard-method/standard-display/standard-display.component.html</context>
+          <context context-type="linenumber">11,13</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="104989475315425815" datatype="html">
+        <source> This calculator calculates the size of the rectangles you need to build your mirror. Therefore it uses the settings from the Settings menu as far as possible, but some values are not available there. You can set them here. </source>
+        <target>Der Rechner berechnet die Größe der Scheiben, welche Sie für den Spiegel brauchen. Dafür nutzt er soweit möglich die Werte aus den Einstellungen. Es werden aber mehr Werte benötigt und diese können Sie hier eingeben.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/views/displays/layered-method/layered-display/layered-display.component.html</context>
+          <context context-type="linenumber">17,19</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6443798705403698668" datatype="html">
+        <source>DPI / PPI</source>
+        <target>DPI / PPI</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/views/displays/layered-method/layered-display/layered-display.component.html</context>
+          <context context-type="linenumber">21</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/views/displays/layered-method/layered-display/layered-display.component.html</context>
+          <context context-type="linenumber">23</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/views/displays/standard-method/standard-display/standard-display.component.html</context>
+          <context context-type="linenumber">21</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/views/displays/standard-method/standard-display/standard-display.component.html</context>
+          <context context-type="linenumber">23</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6834993831016462057" datatype="html">
+        <source>Here you can set the physical DPI (or PPI) of your display. You can either look this value up or calculate is using your screen size and resolution.</source>
+        <target>Hier können Sie die physischen DPI (auch PPI) Ihres Displays angeben. Den Wert können Sie nachschlagen oder aus der Größe und Auflösung Ihres Bildschirms berechnen.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/views/displays/layered-method/layered-display/layered-display.component.html</context>
+          <context context-type="linenumber">22</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/views/displays/standard-method/standard-display/standard-display.component.html</context>
+          <context context-type="linenumber">22</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3181913318911550490" datatype="html">
+        <source>JS Pixel Ratio</source>
+        <target>JS Pixel-Verhältnis</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/views/displays/layered-method/layered-display/layered-display.component.html</context>
+          <context context-type="linenumber">27</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/views/displays/layered-method/layered-display/layered-display.component.html</context>
+          <context context-type="linenumber">29</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/views/displays/standard-method/standard-display/standard-display.component.html</context>
+          <context context-type="linenumber">27</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/views/displays/standard-method/standard-display/standard-display.component.html</context>
+          <context context-type="linenumber">29</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5335999928864625662" datatype="html">
+        <source>The JavaScript pixel ratio represents the ratio of the size of one CSS pixel to the size of one physical pixel on your device. The default value should be correct, but you can double check it on websites like <x id="START_LINK" ctype="x-a" equiv-text="&lt;a class=&quot;underline&quot; target=&quot;_blank&quot; href=&quot;http://mydevice.io&quot;&gt;"/>mydevice.io<x id="CLOSE_LINK" ctype="x-a" equiv-text="&lt;/a&gt;"/>.</source>
+        <target>Das JavaScript-Pixel-Verhältnis beschreibt das Verhältnis der Größe eines CSS-Pixels zu der Größe eines physischen Pixels auf Ihrem Gerät. Der Standardwert sollte korrekt sein, aber Sie können ihn auf Websites wie <x id="START_LINK" ctype="x-a" equiv-text="&lt;a class=&quot;underline&quot; target=&quot;_blank&quot; href=&quot;http://mydevice.io&quot;&gt;"/>mydevice.io<x id="CLOSE_LINK" ctype="x-a" equiv-text="&lt;/a&gt;"/> überprüfen.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/views/displays/layered-method/layered-display/layered-display.component.html</context>
+          <context context-type="linenumber">28</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/views/displays/standard-method/standard-display/standard-display.component.html</context>
+          <context context-type="linenumber">28</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6827045482629030384" datatype="html">
+        <source>Slope</source>
+        <target>Anstiegswinkel</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/views/displays/layered-method/layered-display/layered-display.component.html</context>
+          <context context-type="linenumber">33</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/views/displays/standard-method/standard-display/standard-display.component.html</context>
+          <context context-type="linenumber">33</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8330143192607542961" datatype="html">
+        <source>This is the angle by which the mirror is tilted. A greater angle means that you look on the mirror from a higher position. A lower angle means a lower viewing point. The value of 45 degrees means that you look at it in one line with the table.</source>
+        <target>Dies ist der Winkel, um den der Spiegel geneigt ist. Ein größerer Winkel bedeutet, dass Sie den Spiegel aus einer höheren Position betrachten. Ein kleinerer Winkel bedeutet einen niedrigeren Betrachtungspunkt. Der Wert von 45 Grad bedeutet, dass Sie ihn in einer Linie mit dem Tisch betrachten.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/views/displays/layered-method/layered-display/layered-display.component.html</context>
+          <context context-type="linenumber">34</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/views/displays/standard-method/standard-display/standard-display.component.html</context>
+          <context context-type="linenumber">34</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8453924409426202572" datatype="html">
+        <source>Slope angle value</source>
+        <target>Anstiegswinkel</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/views/displays/layered-method/layered-display/layered-display.component.html</context>
+          <context context-type="linenumber">35</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/views/displays/standard-method/standard-display/standard-display.component.html</context>
+          <context context-type="linenumber">35</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5547981558491672240" datatype="html">
+        <source> Close </source>
+        <target>Schließen</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/views/displays/layered-method/layered-display/layered-display.component.html</context>
+          <context context-type="linenumber">40,42</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/views/displays/standard-method/standard-display/standard-display.component.html</context>
+          <context context-type="linenumber">40,42</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/views/displays/standard-method/standard-display/standard-display.component.html</context>
+          <context context-type="linenumber">73,75</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6152896200567627800" datatype="html">
+        <source> Generate image </source>
+        <target>Bild generieren</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/views/displays/layered-method/layered-display/layered-display.component.html</context>
+          <context context-type="linenumber">43,45</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/views/displays/standard-method/standard-display/standard-display.component.html</context>
+          <context context-type="linenumber">43,45</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="7016522512577884431" datatype="html">
         <source><x id="PH" equiv-text="framesExtracted"/> of <x id="PH_1" equiv-text="totalFrames"/> frames</source>
         <target><x id="PH" equiv-text="framesExtracted"/> von <x id="PH_1" equiv-text="totalFrames"/> Bildern</target>
@@ -852,6 +1000,38 @@
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/views/displays/standard-method/standard-settings/standard-settings.component.ts</context>
           <context context-type="linenumber">303</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="74085499442216017" datatype="html">
+        <source> This calculator calculates the size of the trapezes you need to build your mirror. Therefore it uses the settings from the Settings menu as far as possible, but some values are not available there. You can set them here. </source>
+        <target>Dieser Rechner berechnet die Größe der Trapeze, die Sie zum Bau Ihres Spiegels benötigen. Hierzu nutzt er die Einstellungen aus dem Einstellungsmenü, soweit möglich, aber einige Werte sind dort nicht verfügbar. Sie können diese Werte hier festlegen.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/views/displays/standard-method/standard-display/standard-display.component.html</context>
+          <context context-type="linenumber">17,19</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="142211122460853793" datatype="html">
+        <source> The calculated image showing the trapeze </source>
+        <target>Das berechnete Bild, welches die Trapeze zeigt</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/views/displays/standard-method/standard-display/standard-display.component.html</context>
+          <context context-type="linenumber">57,59</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2604050899220000131" datatype="html">
+        <source> The image you can download here shows the template to build your mirror. You will need <x id="INTERPOLATION" equiv-text="{{ settingsBroker.getSettings().generalSettings.numberOfSides }}"/> of these trapezes. The image is generated using the values you entered in the Settings Menu. If you want to change these values, please go back to the Settings Menu. </source>
+        <target>Das Bild, welches Sie hier herunterladen können, zeigt die Vorlage zum Bau Ihres Spiegels. Sie benötigen <x id="INTERPOLATION" equiv-text="{{ settingsBroker.getSettings().generalSettings.numberOfSides }}"/> dieser Trapeze. Das Bild wird mit den Werten generiert, die Sie im Einstellungsmenü eingegeben haben. Wenn Sie diese Werte ändern möchten, gehen Sie bitte zurück zum Einstellungsmenü.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/views/displays/standard-method/standard-display/standard-display.component.html</context>
+          <context context-type="linenumber">63,65</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8824582241255916436" datatype="html">
+        <source> Make sure to print the image at the correct size. The image is <x id="INTERPOLATION" equiv-text="{{ (calculatorImageWidthPx / calculatorDPI).toFixed(2) }}"/> x <x id="INTERPOLATION_1" equiv-text="{{ (calculatorImageHeightPx / calculatorDPI).toFixed(2) }}"/> inches or <x id="INTERPOLATION_2" equiv-text="{{ ((calculatorImageWidthPx * calculatorJsPixelRatio / calculatorDPI) * 2.54).toFixed(2) }}"/> x <x id="INTERPOLATION_3" equiv-text="{{ ((calculatorImageHeightPx * calculatorJsPixelRatio / calculatorDPI) * 2.54).toFixed(2) }}"/> cm. <x id="LINE_BREAK" ctype="lb" equiv-text="&lt;br&gt;"/> This often means to scale the image to more than 100% of its original size. If you print the image at 100% of its original size, it can be too small. Make sure to use the correct size. </source>
+        <target>Stellen Sie sicher, dass Sie das Bild in der richtigen Größe drucken. Das Bild ist <x id="INTERPOLATION" equiv-text="{{ (calculatorImageWidthPx / calculatorDPI).toFixed(2) }}"/> x <x id="INTERPOLATION_1" equiv-text="{{ (calculatorImageHeightPx / calculatorDPI).toFixed(2) }}"/> Zoll oder <x id="INTERPOLATION_2" equiv-text="{{ ((calculatorImageWidthPx * calculatorJsPixelRatio / calculatorDPI) * 2.54).toFixed(2) }}"/> x <x id="INTERPOLATION_3" equiv-text="{{ ((calculatorImageHeightPx * calculatorJsPixelRatio / calculatorDPI) * 2.54).toFixed(2) }}"/> cm groß. <x id="LINE_BREAK" ctype="lb" equiv-text="&lt;br&gt;"/> Dies bedeutet oft, dass das Bild auf mehr als 100% seiner Originalgröße skaliert werden muss. Wenn Sie das Bild in 100% seiner Originalgröße drucken, kann es zu klein sein. Stellen Sie sicher, dass Sie die richtige Größe verwenden.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/views/displays/standard-method/standard-display/standard-display.component.html</context>
+          <context context-type="linenumber">66,70</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7754035096622924583" datatype="html">
