@@ -29,8 +29,10 @@ export class LayeredDisplayComponent implements OnInit, AfterViewInit {
   calculatorDPI = 96;
   calculatorJsPixelRatio = window.devicePixelRatio;
   calculatorSlope = 45;
+  calculatorImageWidthPx = 0;
+  calculatorImageHeightPx = 0;
 
-  constructor(private settingsBroker: LayeredDisplaySettingsBrokerService, private calculator: LayeredMethodCalculatorService) {
+  constructor(public settingsBroker: LayeredDisplaySettingsBrokerService, private calculator: LayeredMethodCalculatorService) {
     settingsBroker.settings$.subscribe(({settings, changedBy}) => {
       if(changedBy == this.MY_SETTINGS_BROKER_ID) {
         this.lastSettings = settings;
@@ -615,6 +617,9 @@ export class LayeredDisplayComponent implements OnInit, AfterViewInit {
       link.href = canvas.toDataURL();
       link.click();
     }
+
+    this.calculatorImageWidthPx = canvas?.width ?? 0;
+    this.calculatorImageHeightPx = canvas?.height ?? 0;
 
     this.toggleModal('calculatorDownloadModal');
   }

@@ -47,3 +47,33 @@
     </div>
   </div>
 </div>
+
+<div class="hidden overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none" id="calculatorDownloadModal">
+  <div class="relative w-auto my-6 mx-auto max-w-3xl">
+    <!--content-->
+    <div class="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
+      <!--header-->
+      <div class="flex items-start justify-between p-5 border-b border-solid border-slate-200 rounded-t">
+        <h3 class="text-3xl font-semibold" i18n>
+          The calculated image showing the trapeze
+        </h3>
+      </div>
+      <!--body-->
+      <div class="relative p-6 flex-auto">
+        <p class="my-4 text-slate-500 text-lg leading-relaxed" i18n>
+          The image you can download here shows the template to build your mirror. You will need {{ settingsBroker.getSettings().generalSettings.numberOfLayers }} of these rectangles. The image is generated using the values you entered in the Settings Menu. If you want to change these values, please go back to the Settings Menu.
+        </p>
+        <p class="my-4 text-slate-500 tx-lg leading-relaxed" i18n>
+          Make sure to print the image at the correct size. The image is {{ (calculatorImageWidthPx / calculatorDPI).toFixed(2) }} x {{ (calculatorImageHeightPx / calculatorDPI).toFixed(2) }} inches or {{ ((calculatorImageWidthPx / calculatorDPI) * 2.54).toFixed(2) }} x {{ ((calculatorImageHeightPx / calculatorDPI) * 2.54).toFixed(2) }} cm.
+          <br>
+          This often means to scale the image to more than 100% of its original size. If you print the image at 100% of its original size, it can be too small. Make sure to use the correct size.
+        </p>
+      <!--footer-->
+      <div class="flex items-center justify-end p-6 border-t border-solid border-slate-200 rounded-b">
+        <button class="text-red-500 background-transparent font-bold uppercase px-6 py-2 text-sm outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150" type="button" (click)="toggleModal('calculatorDownloadModal')" i18n>
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

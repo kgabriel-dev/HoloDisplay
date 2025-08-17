@@ -368,6 +368,10 @@
           <context context-type="linenumber">40,42</context>
         </context-group>
         <context-group purpose="location">
+          <context context-type="sourcefile">src/app/views/displays/layered-method/layered-display/layered-display.component.html</context>
+          <context context-type="linenumber">73,75</context>
+        </context-group>
+        <context-group purpose="location">
           <context context-type="sourcefile">src/app/views/displays/standard-method/standard-display/standard-display.component.html</context>
           <context context-type="linenumber">40,42</context>
         </context-group>
@@ -387,11 +391,40 @@
           <context context-type="linenumber">43,45</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="142211122460853793" datatype="html">
+        <source> The calculated image showing the trapeze </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/views/displays/layered-method/layered-display/layered-display.component.html</context>
+          <context context-type="linenumber">57,59</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/views/displays/standard-method/standard-display/standard-display.component.html</context>
+          <context context-type="linenumber">57,59</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8504793309469264303" datatype="html">
+        <source> The image you can download here shows the template to build your mirror. You will need <x id="INTERPOLATION" equiv-text="{{ settingsBroker.getSettings().generalSettings.numberOfLayers }}"/> of these rectangles. The image is generated using the values you entered in the Settings Menu. If you want to change these values, please go back to the Settings Menu. </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/views/displays/layered-method/layered-display/layered-display.component.html</context>
+          <context context-type="linenumber">63,65</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8824582241255916436" datatype="html">
+        <source> Make sure to print the image at the correct size. The image is <x id="INTERPOLATION" equiv-text="{{ (calculatorImageWidthPx / calculatorDPI).toFixed(2) }}"/> x <x id="INTERPOLATION_1" equiv-text="{{ (calculatorImageHeightPx / calculatorDPI).toFixed(2) }}"/> inches or <x id="INTERPOLATION_2" equiv-text="{{ ((calculatorImageWidthPx * calculatorJsPixelRatio / calculatorDPI) * 2.54).toFixed(2) }}"/> x <x id="INTERPOLATION_3" equiv-text="{{ ((calculatorImageHeightPx * calculatorJsPixelRatio / calculatorDPI) * 2.54).toFixed(2) }}"/> cm. <x id="LINE_BREAK" ctype="lb" equiv-text="&lt;br&gt;"/> This often means to scale the image to more than 100% of its original size. If you print the image at 100% of its original size, it can be too small. Make sure to use the correct size. </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/views/displays/layered-method/layered-display/layered-display.component.html</context>
+          <context context-type="linenumber">66,70</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/views/displays/standard-method/standard-display/standard-display.component.html</context>
+          <context context-type="linenumber">66,70</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="7016522512577884431" datatype="html">
         <source><x id="PH" equiv-text="framesExtracted"/> of <x id="PH_1" equiv-text="totalFrames"/> frames</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/views/displays/layered-method/layered-display/layered-display.component.ts</context>
-          <context context-type="linenumber">248</context>
+          <context context-type="linenumber">250</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/views/displays/standard-method/standard-display/standard-display.component.ts</context>
@@ -402,7 +435,7 @@
         <source>Finalizing...</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/views/displays/layered-method/layered-display/layered-display.component.ts</context>
-          <context context-type="linenumber">258</context>
+          <context context-type="linenumber">260</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/views/displays/standard-method/standard-display/standard-display.component.ts</context>
@@ -922,25 +955,11 @@
           <context context-type="linenumber">17,19</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="142211122460853793" datatype="html">
-        <source> The calculated image showing the trapeze </source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/views/displays/standard-method/standard-display/standard-display.component.html</context>
-          <context context-type="linenumber">57,59</context>
-        </context-group>
-      </trans-unit>
       <trans-unit id="2604050899220000131" datatype="html">
         <source> The image you can download here shows the template to build your mirror. You will need <x id="INTERPOLATION" equiv-text="{{ settingsBroker.getSettings().generalSettings.numberOfSides }}"/> of these trapezes. The image is generated using the values you entered in the Settings Menu. If you want to change these values, please go back to the Settings Menu. </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/views/displays/standard-method/standard-display/standard-display.component.html</context>
           <context context-type="linenumber">63,65</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="8824582241255916436" datatype="html">
-        <source> Make sure to print the image at the correct size. The image is <x id="INTERPOLATION" equiv-text="{{ (calculatorImageWidthPx / calculatorDPI).toFixed(2) }}"/> x <x id="INTERPOLATION_1" equiv-text="{{ (calculatorImageHeightPx / calculatorDPI).toFixed(2) }}"/> inches or <x id="INTERPOLATION_2" equiv-text="{{ ((calculatorImageWidthPx * calculatorJsPixelRatio / calculatorDPI) * 2.54).toFixed(2) }}"/> x <x id="INTERPOLATION_3" equiv-text="{{ ((calculatorImageHeightPx * calculatorJsPixelRatio / calculatorDPI) * 2.54).toFixed(2) }}"/> cm. <x id="LINE_BREAK" ctype="lb" equiv-text="&lt;br&gt;"/> This often means to scale the image to more than 100% of its original size. If you print the image at 100% of its original size, it can be too small. Make sure to use the correct size. </source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/views/displays/standard-method/standard-display/standard-display.component.html</context>
-          <context context-type="linenumber">66,70</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7754035096622924583" datatype="html">
