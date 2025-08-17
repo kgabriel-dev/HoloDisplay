@@ -369,7 +369,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/views/displays/layered-method/layered-display/layered-display.component.html</context>
-          <context context-type="linenumber">73,75</context>
+          <context context-type="linenumber">75,77</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/views/displays/standard-method/standard-display/standard-display.component.html</context>
@@ -377,7 +377,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/views/displays/standard-method/standard-display/standard-display.component.html</context>
-          <context context-type="linenumber">73,75</context>
+          <context context-type="linenumber">75,77</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6152896200567627800" datatype="html">
@@ -409,15 +409,15 @@
           <context context-type="linenumber">63,65</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="8824582241255916436" datatype="html">
-        <source> Make sure to print the image at the correct size. The image is <x id="INTERPOLATION" equiv-text="{{ (calculatorImageWidthPx / calculatorDPI).toFixed(2) }}"/> x <x id="INTERPOLATION_1" equiv-text="{{ (calculatorImageHeightPx / calculatorDPI).toFixed(2) }}"/> inches or <x id="INTERPOLATION_2" equiv-text="{{ ((calculatorImageWidthPx * calculatorJsPixelRatio / calculatorDPI) * 2.54).toFixed(2) }}"/> x <x id="INTERPOLATION_3" equiv-text="{{ ((calculatorImageHeightPx * calculatorJsPixelRatio / calculatorDPI) * 2.54).toFixed(2) }}"/> cm. <x id="LINE_BREAK" ctype="lb" equiv-text="&lt;br&gt;"/> This often means to scale the image to more than 100% of its original size. If you print the image at 100% of its original size, it can be too small. Make sure to use the correct size. </source>
+      <trans-unit id="4569383890572884075" datatype="html">
+        <source> Make sure to print the image at the correct size. The image is <x id="INTERPOLATION" equiv-text="{{ (calculatorImageWidthPx / calculatorDPI).toFixed(2) }}"/> x <x id="INTERPOLATION_1" equiv-text="{{ (calculatorImageHeightPx / calculatorDPI).toFixed(2) }}"/> inches or <x id="INTERPOLATION_2" equiv-text="{{ ((calculatorImageWidthPx / calculatorDPI) * 2.54).toFixed(2) }}"/> x <x id="INTERPOLATION_3" equiv-text="{{ ((calculatorImageHeightPx / calculatorDPI) * 2.54).toFixed(2) }}"/> cm. <x id="LINE_BREAK" ctype="lb" equiv-text="&lt;br&gt;"/> This often means to scale the image to more than 100% of its original size. If you print the image at 100% of its original size, it can be too small. Make sure to use the correct size. <x id="LINE_BREAK" ctype="lb" equiv-text="&lt;br&gt;"/> Note that the size of the template is larger than the image on your screen. This is because the mirror is tilted. </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/views/displays/layered-method/layered-display/layered-display.component.html</context>
-          <context context-type="linenumber">66,70</context>
+          <context context-type="linenumber">66,72</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/views/displays/standard-method/standard-display/standard-display.component.html</context>
-          <context context-type="linenumber">66,70</context>
+          <context context-type="linenumber">66,72</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7016522512577884431" datatype="html">
